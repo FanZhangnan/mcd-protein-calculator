@@ -2,7 +2,7 @@
 
 After the day mode was removed there is exactly one JSON file under ``data/``:
 
-  state.json - store, date, per-meal reservation times, avoid list
+  state.json - store, date, per-meal reservation times
 
 Eaten records (``intake.json``) are archived in ``data/backup-fullday/`` and are
 never read again.
@@ -44,7 +44,6 @@ DEFAULT_STATE: dict[str, Any] = {
     "store": {"code": "1440054", "name": "麦当劳珠海屏湾一路餐厅", "beType": 1, "orderType": 1},
     "date": None,
     "meal_times": {"breakfast": "08:15", "lunch": "12:15", "dinner": "18:30"},
-    "prefs": {"avoid": []},
 }
 
 
@@ -66,7 +65,7 @@ class Store:
     def save_state(self, patch: dict[str, Any]) -> dict[str, Any]:
         state = self.get_state()
         for key, value in patch.items():
-            if key in ("store", "meal_times", "prefs") and isinstance(value, dict):
+            if key in ("store", "meal_times") and isinstance(value, dict):
                 state.setdefault(key, {})
                 state[key].update(value)
             else:

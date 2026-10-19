@@ -10,8 +10,5 @@
     "breakfast": "08:15",
     "lunch": "12:15",
     "dinner": "18:30"
-  },
-  "prefs": {
-    "avoid": []
   }
 }
