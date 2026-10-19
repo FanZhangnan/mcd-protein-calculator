@@ -9,7 +9,7 @@
 | 工具 | 用途 | 本项目的调用点 |
 |---|---|---|
 | `now-time-info` | 取服务器日期/时区，决定规划日期 | `Service.refresh()` |
-| `query-meals` | 按门店 + 餐次时间取菜单 | `refresh()` 三餐各一次 |
+| `query-meals` | 按门店 + 餐次时间取菜单 | `refresh()` 早/午/晚各一次 |
 | `list-nutrition-foods` | 全量营养表（160 行 / 158 个唯一名称） | `refresh()` 一次 |
 | `query-meal-detail` | 套餐 rounds、单品特调项 | `combo_swap()`、别名表构建 |
 | `calculate-price` | 单餐报价（带 `reservationDate`） | `Service.quote_meal()` |
@@ -114,11 +114,11 @@ export MCD_MCP_TOKEN="<你的 token>"
 ## 4. 数据落盘
 
 ```
-data/cache/<yyyy-MM-dd>.json   当日三时段菜单 + 营养表 + 抓取时间
-data/fixtures/*.json           真实响应快照（离线测试用，无 Token）
-data/aliases.json              code → 权威名称 + 证据
-data/state.json                目标/门店/时间/情景
-data/intake.json               已吃记录（含营养与价格快照）
+data/cache/<日期>__<门店>__<上下文哈希>.json   该上下文的菜单 + 营养表 + 抓取时间
+data/fixtures/*.json                          真实响应快照（离线测试用，无 Token）
+data/aliases.json                             code → 权威名称 + 证据
+data/state.json                               门店 / 日期 / 各餐次时间
+data/backup-fullday/                          历史归档，代码不读取
 ```
 
 缓存带 `fetched_at`，界面顶部显示数据来源（`live` / `cache` / `offline`）与时间，不会把旧数据当实时结果。
@@ -132,7 +132,7 @@ data/intake.json               已吃记录（含营养与价格快照）
 | 无 Token | `McpError(stage="auth")`，界面提示，不降级造假 |
 | 网络/超时 | `stage="transport"` |
 | 业务失败（如商品不可售） | 返回 `{status:"failed", message: 原始 message}`，金额为 `null` |
-| 报价失败 | 该餐显示"报价失败：…"，其余餐不受影响，方案仍可看 |
+| 报价失败 | 结果卡显示"试算失败：…"，金额与判定按菜单参考价，并注明 |
 | 缺营养 | SKU 列入"数据缺失"，不进入求解，合计标"缺项" |
 
 ---

@@ -44,25 +44,38 @@ def _num(value: Any, label: str, *, allow_none: bool = True,
     return number
 
 
-def validate_meal_request(body: dict[str, Any]) -> tuple[str, planner_mod.Targets, bool]:
-    """Validate ``POST /api/meal``. All three headline numbers are required."""
+def validate_meal_request(body: dict[str, Any]) -> tuple[str, planner_mod.Targets, bool, int]:
+    """Validate ``POST /api/meal``.
+
+    Required: meal, protein_min, budget. Everything else is optional and only
+    becomes a hard constraint when the user actually fills it in.
+    """
     meal = str(body.get("meal") or "")
     if meal not in planner_mod.MEALS:
         raise InputError("meal 必须是 breakfast / lunch / dinner")
     protein_min = _num(body.get("protein_min"), "蛋白质下限", allow_none=False, minimum=0)
-    fat_max = _num(body.get("fat_max"), "脂肪上限", allow_none=False, minimum=0)
     budget = _num(body.get("budget"), "价格上限", allow_none=False, minimum=0)
     if budget <= 0:
         raise InputError("价格上限必须大于 0")
+    fat_max = _num(body.get("fat_max"), "脂肪上限", minimum=0)
     kcal_min = _num(body.get("kcal_min"), "热量下限", minimum=0)
     kcal_max = _num(body.get("kcal_max"), "热量上限", minimum=0)
     if kcal_min is not None and kcal_max is not None and kcal_max <= kcal_min:
         raise InputError("热量上限必须大于下限")
+    max_mains = body.get("max_mains", 2)
+    if isinstance(max_mains, bool) or max_mains in ("", None):
+        raise InputError("主食数量上限必须是 1–3 的整数")
+    try:
+        max_mains = int(str(max_mains).strip())
+    except (TypeError, ValueError):
+        raise InputError("主食数量上限必须是 1–3 的整数")
+    if not 1 <= max_mains <= 3:
+        raise InputError("主食数量上限只能是 1、2 或 3")
     targets = planner_mod.Targets(
         protein_min=protein_min, budget=budget, fat_max=fat_max,
         kcal_min=kcal_min, kcal_max=kcal_max,
     )
-    return meal, targets, bool(body.get("allow_side", False))
+    return meal, targets, bool(body.get("allow_side", False)), max_mains
 
 
 def validate_settings(body: dict[str, Any]) -> dict[str, Any]:
@@ -142,6 +155,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._static(path.lstrip("/"))
         if path == "/api/bootstrap":
             return self._guarded(self._bootstrap)
+        if path == "/api/meal/landscape":
+            qs = parse_qs(parsed.query)
+            meal = (qs.get("meal") or ["lunch"])[0]
+            raw = (qs.get("max_mains") or ["2"])[0]
+            return self._guarded(lambda: self._landscape(meal, raw))
         if path == "/api/removable":
             qs = parse_qs(parsed.query)
             code = (qs.get("code") or [""])[0]
@@ -224,11 +242,23 @@ class Handler(BaseHTTPRequestHandler):
         self._json(payload, status)
 
     def _meal(self, body: dict[str, Any]) -> None:
-        """Single-meal mode. Does not read any history."""
-        meal, targets, allow_side = validate_meal_request(body)
+        """One meal. Does not read any history."""
+        meal, targets, allow_side, max_mains = validate_meal_request(body)
         payload = self.service.plan_meal(meal, targets, allow_side,
-                                         quote=bool(body.get("quote")))
+                                         quote=bool(body.get("quote")),
+                                         max_mains=max_mains)
         self._json(payload)
+
+    def _landscape(self, meal: str, raw_max_mains: str) -> None:
+        if meal not in planner_mod.MEALS:
+            raise InputError("meal 必须是 breakfast / lunch / dinner")
+        try:
+            max_mains = int(str(raw_max_mains).strip())
+        except (TypeError, ValueError):
+            raise InputError("max_mains 必须是 1–3 的整数")
+        if not 1 <= max_mains <= 3:
+            raise InputError("max_mains 只能是 1、2 或 3")
+        self._json(self.service.landscape(meal, max_mains))
 
     def _recompute(self, body: dict[str, Any]) -> None:
         payload = self.service.recompute(

@@ -231,11 +231,12 @@ class InputValidationTest(unittest.TestCase):
                 validate_meal_request(self._ok(budget=value))
 
     def test_accepts_valid_request(self):
-        meal, targets, allow_side = validate_meal_request(self._ok())
+        meal, targets, allow_side, max_mains = validate_meal_request(self._ok())
         self.assertEqual(meal, "lunch")
         self.assertEqual(targets.protein_min, 30.0)
         self.assertEqual(targets.budget, 30.0)
         self.assertFalse(allow_side)
+        self.assertEqual(max_mains, 2)
 
 
 class PurchaseQuantityTest(unittest.TestCase):

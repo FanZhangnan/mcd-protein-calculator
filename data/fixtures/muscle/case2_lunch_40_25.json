@@ -1,0 +1,197 @@
+{
+  "feasible": false,
+  "meals": [
+    {
+      "meal": "lunch",
+      "meal_label": "午餐",
+      "items": [
+        {
+          "code": "9900003586",
+          "name": "双层深海鳕鱼堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 2029.0,
+            "energyKcal": 485.0,
+            "protein": 28.0,
+            "fat": 21.0,
+            "carbohydrate": 46.0,
+            "sodium": 917.0,
+            "calcium": 147.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "is_estimate": false,
+          "price_ref": 25.0,
+          "quantity": 1.0,
+          "line_total_ref": 25.0,
+          "meal": "lunch",
+          "modification": [],
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2029.0,
+        "energyKcal": 485.0,
+        "protein": 28.0,
+        "fat": 21.0,
+        "carbohydrate": 46.0,
+        "sodium": 917.0,
+        "calcium": 147.0
+      },
+      "unknown": [],
+      "price_ref": 25.0,
+      "quote": null,
+      "is_estimate": false
+    }
+  ],
+  "items": [
+    {
+      "code": "9900003586",
+      "name": "双层深海鳕鱼堡",
+      "kind": "main",
+      "nutrition": {
+        "energyKj": 2029.0,
+        "energyKcal": 485.0,
+        "protein": 28.0,
+        "fat": 21.0,
+        "carbohydrate": 46.0,
+        "sodium": 917.0,
+        "calcium": 147.0
+      },
+      "nutrition_status": "official",
+      "nutrition_note": "",
+      "nutrition_basis": "official",
+      "removal_notes": [],
+      "is_estimate": false,
+      "price_ref": 25.0,
+      "quantity": 1.0,
+      "line_total_ref": 25.0,
+      "meal": "lunch",
+      "modification": [],
+      "removals": []
+    }
+  ],
+  "totals": {
+    "energyKj": 2029.0,
+    "energyKcal": 485.0,
+    "protein": 28.0,
+    "fat": 21.0,
+    "carbohydrate": 46.0,
+    "sodium": 917.0,
+    "calcium": 147.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 25.0,
+  "effective_cost": 25.0,
+  "money_basis": "reference",
+  "budget_status": "reference",
+  "protein_per_yuan": 1.1,
+  "violations": [
+    {
+      "constraint": "protein",
+      "label": "蛋白质",
+      "value": 28.0,
+      "target": "≥40",
+      "gap": -12.0,
+      "unit": "g"
+    }
+  ],
+  "targets": {
+    "protein_min": 40.0,
+    "budget": 25.0,
+    "fat_max": null,
+    "kcal_min": null,
+    "kcal_max": null
+  },
+  "signature": "2abc21a79a279a5c",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "live",
+    "fetched_at": "2026-10-20T01:17:51",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "3b1b8366538d"
+  },
+  "note": "当前方案不满足全部硬约束，不视为达标。",
+  "mode": "single",
+  "meal": "lunch",
+  "meal_label": "午餐",
+  "allow_side": false,
+  "max_mains": 2,
+  "strict_mode": true,
+  "nutrition_basis": "official_standard",
+  "removable": {
+    "ok": false,
+    "sku": {
+      "code": "9900003586",
+      "name": "双层深海鳕鱼堡"
+    },
+    "supportModify": false,
+    "groups": [],
+    "options": [],
+    "reason": "该 SKU 没有可去除的配料",
+    "meal": "lunch",
+    "checked_at": "2026-10-20T01:18:22"
+  },
+  "removables": {
+    "9900003586": {
+      "ok": false,
+      "sku": {
+        "code": "9900003586",
+        "name": "双层深海鳕鱼堡"
+      },
+      "supportModify": false,
+      "groups": [],
+      "options": [],
+      "reason": "该 SKU 没有可去除的配料",
+      "meal": "lunch",
+      "checked_at": "2026-10-20T01:18:22"
+    }
+  },
+  "suggestions": [],
+  "upgrade": null,
+  "upgrades": [],
+  "frontier": {
+    "max_protein": {
+      "code": "9900003586",
+      "name": "双层深海鳕鱼堡",
+      "protein": 28.0,
+      "fat": 21.0,
+      "kcal": 485.0,
+      "cost": 25.0,
+      "items": [
+        "双层深海鳕鱼堡"
+      ],
+      "protein_gap": 12.0
+    },
+    "reach_price": {
+      "code": "1120",
+      "name": "双层吉士汉堡",
+      "protein": 42.0,
+      "fat": 39.0,
+      "kcal": 798.0,
+      "cost": 39.0,
+      "items": [
+        "双层吉士汉堡",
+        "麦香鸡"
+      ],
+      "protein_gap": 0.0
+    },
+    "relax_fat": null,
+    "relax_kcal": null,
+    "reachable": true,
+    "candidates": 130,
+    "message": "",
+    "basis": "official_standard"
+  },
+  "basis": "single_meal"
+}

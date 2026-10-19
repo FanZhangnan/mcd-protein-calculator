@@ -35,6 +35,15 @@ def call(path: str, payload=None, method="GET"):
             return exc.code, {"raw": body}
 
 
+def fetch_text(path: str) -> str:
+    req = urllib.request.Request(BASE + path)
+    try:
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return resp.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError:
+        return ""
+
+
 def check(name: str, ok: bool, detail: str = "") -> None:
     RESULTS.append((name, ok, detail))
     print(f"{'PASS' if ok else 'FAIL'} · {name}" + (f" · {detail}" if detail else ""))
@@ -95,12 +104,68 @@ def main() -> int:
     for label, payload in [
         ("零价格 400", {**body, "budget": 0}),
         ("负蛋白 400", {**body, "protein_min": -1}),
-        ("缺蛋白质 400", {"meal": "lunch", "fat_max": 20, "budget": 30}),
+        ("缺蛋白质 400", {"meal": "lunch", "budget": 30}),
         ("未知餐次 400", {**body, "meal": "brunch"}),
         ("热量区间颠倒 400", {**body, "kcal_min": 900, "kcal_max": 500}),
+        ("负脂肪 400", {**body, "fat_max": -1}),
+        ("主食上限 0 拒绝 400", {**body, "max_mains": 0}),
+        ("主食上限 4 拒绝 400", {**body, "max_mains": 4}),
     ]:
         status, bad = call("/api/meal", payload, "POST")
         check(label, status == 400, str(bad.get("error")))
+
+    # ---------------------------------------------------------- structure N
+    status, one_main = call("/api/meal", {**body, "protein_min": 20, "max_mains": 1}, "POST")
+    one_mains = [i for i in one_main.get("items", []) if i.get("kind") == "main"]
+    check("N=1 时只有一个主食", status == 200 and len(one_mains) == 1,
+          str([(i["name"], i["quantity"]) for i in one_mains]))
+
+    status, two_mains = call("/api/meal", {**body, "protein_min": 40, "budget": 60,
+                                           "fat_max": 80, "max_mains": 2}, "POST")
+    two = [i for i in two_mains.get("items", []) if i.get("kind") == "main"]
+    check("N=2 时主食不超过 2 行", status == 200 and 1 <= len(two) <= 2,
+          str([(i["name"], i["quantity"]) for i in two]))
+    check("主食总份数不超过 N", sum(i["quantity"] for i in two) <= 2,
+          str(sum(i["quantity"] for i in two)))
+
+    # ------------------------------------------------------------ landscape
+    status, land = call("/api/meal/landscape?meal=lunch&max_mains=2")
+    check("landscape 200", status == 200, str(status))
+    rows = land.get("items") or []
+    check("landscape 只含官方营养主食",
+          bool(rows) and all(r.get("protein") is not None and r.get("price") for r in rows),
+          str(len(rows)))
+    check("landscape 每元蛋白质按降序",
+          all(rows[i]["protein_per_yuan"] >= rows[i + 1]["protein_per_yuan"]
+              for i in range(len(rows) - 1)),
+          str([r["protein_per_yuan"] for r in rows[:5]]))
+    check("landscape 给出预算→蛋白前沿", bool(land.get("frontier")),
+          str(len(land.get("frontier") or [])))
+
+    # ------------------------------------------------- no-solution contract
+    status, nofit = call("/api/meal", {**body, "protein_min": 99, "budget": 35,
+                                       "fat_max": 20, "max_mains": 2}, "POST")
+    cap = (nofit.get("frontier") or {}).get("max_protein")
+    check("无解主卡片仍在硬约束内",
+          status == 200 and nofit.get("feasible") is False
+          and bool(nofit.get("items"))
+          and (nofit.get("cost") or 99) <= 35
+          and ((nofit.get("totals") or {}).get("fat") or 99) <= 20,
+          str(cap))
+    status, nocards = call("/api/meal", {**body, "protein_min": 20, "budget": 5}, "POST")
+    check("硬约束下无组合时不返回商品卡片",
+          status == 200 and nocards.get("feasible") is False
+          and nocards.get("items") == [],
+          str(nocards.get("items")))
+
+    # ---------------------------------------------------------------- copy
+    page = fetch_text("/")
+    script = fetch_text("/app.js")
+    check("页面标题为增肌计算器", "麦当劳增肌计算器" in page, "index.html")
+    blob = f"{page}{script}"
+    check("页面文案不含禁用词",
+          all(word not in blob for word in ("减脂", "瘦", "加肉饼", "全天", "三餐")),
+          "checked 5 words")
 
     # ---------------------------------------------------------- deleted API
     for path, method, payload in [
@@ -119,6 +184,11 @@ def main() -> int:
         check(f"已删除接口 404 · {method} {path}", status == 404, str(status))
 
     # --------------------------------------------------------------- quote
+    # regenerate a clean plan: the probes above replaced the working snapshot
+    status, plan = call("/api/meal", body, "POST")
+    check("报价前重新生成方案", status == 200 and bool(plan.get("signature")), str(status))
+    totals = plan.get("totals") or {}
+    mains = [i for i in plan.get("items", []) if i.get("kind") == "main"]
     sig = plan.get("signature")
     status, quoted = call("/api/quote", {"signature": sig}, "POST")
     q = (quoted.get("quotes") or {}).get("lunch") or {}

@@ -1,0 +1,242 @@
+// 麦当劳增肌计算器 UI, real Chrome via CDP.
+// Usage: node tests/browser_muscle.mjs [url]
+//
+// Covers: scatter plot + top-3 + hover, target region, body-data prefill,
+// positive flow (N=2), removal suggestion + quote, no-solution fallback card,
+// and the "no combo under caps -> no card" branch.
+import { spawn } from "node:child_process";
+
+const URL_ = process.argv[2] || "http://127.0.0.1:8773/";
+const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const PORT = 9335;
+
+const results = [];
+const check = (name, ok, detail = "") => {
+  results.push({ name, ok, detail });
+  console.log(`${ok ? "PASS" : "FAIL"} · ${name}${detail ? " · " + detail : ""}`);
+};
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function main() {
+  const proc = spawn(CHROME, [
+    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+    `--remote-debugging-port=${PORT}`, "--user-data-dir=/tmp/chrome-cdp-muscle",
+    "about:blank",
+  ], { stdio: "ignore" });
+  await sleep(2500);
+
+  const version = await (await fetch(`http://127.0.0.1:${PORT}/json/version`)).json();
+  check("Chrome CDP 可用", !!version.webSocketDebuggerUrl, version.Browser);
+
+  const tab = await (await fetch(`http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(URL_)}`,
+    { method: "PUT" })).json();
+  const ws = new WebSocket(tab.webSocketDebuggerUrl);
+  await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });
+
+  let id = 0;
+  const pending = new Map();
+  ws.onmessage = (msg) => {
+    const data = JSON.parse(msg.data);
+    if (data.id && pending.has(data.id)) { pending.get(data.id)(data); pending.delete(data.id); }
+  };
+  const send = (method, params = {}) => new Promise((resolve) => {
+    const mid = ++id;
+    pending.set(mid, resolve);
+    ws.send(JSON.stringify({ id: mid, method, params }));
+  });
+
+  await send("Page.enable");
+  await send("Runtime.enable");
+
+  const evalJs = async (expr) => {
+    const r = await send("Runtime.evaluate", { expression: expr, awaitPromise: true, returnByValue: true });
+    if (r.result?.exceptionDetails) console.log("JS ERROR", JSON.stringify(r.result.exceptionDetails).slice(0, 300));
+    return r.result?.result?.value;
+  };
+  const waitFor = async (expr, label, timeout = 90000) => {
+    const t0 = Date.now();
+    while (Date.now() - t0 < timeout) {
+      if (await evalJs(expr)) return true;
+      await sleep(400);
+    }
+    check(`等待超时：${label}`, false, expr.slice(0, 80));
+    return false;
+  };
+
+  await send("Page.navigate", { url: URL_ });
+  await waitFor(`document.querySelector('#meta') && document.querySelector('#meta').textContent.includes('门店')`, "页面加载");
+  await waitFor(`typeof LAND !== 'undefined' && LAND && LAND.items && LAND.items.length > 0`, "性价比图");
+
+  check("标题与副标题",
+        (await evalJs(`document.title === '麦当劳增肌计算器'
+          && document.body.textContent.includes('每一块钱，买到最多的蛋白质')`)) === true);
+
+  // --------------------------------------------------------------- chart
+  const chart = await evalJs(`JSON.stringify({
+      dots: document.querySelectorAll('#chart circle.dot').length,
+      hot: document.querySelectorAll('#chart circle.hot').length,
+      labels: document.querySelectorAll('#chart text.dot-label').length,
+      rows: document.querySelectorAll('#rank-table tr').length - 1,
+      items: LAND.items.length
+    })`).then(JSON.parse);
+  check("散点图为主食数量", chart.dots === chart.items, JSON.stringify(chart));
+  check("前 3 高亮并标名", chart.hot === Math.min(3, chart.items) && chart.labels === chart.hot,
+        JSON.stringify(chart));
+  check("排行表最多 10 行", chart.rows === Math.min(10, chart.items), String(chart.rows));
+
+  await evalJs(`document.querySelector('#s_budget').value = 45;
+                document.querySelector('#s_budget').dispatchEvent(new Event('input'))`);
+  check("达标区域已绘制", (await evalJs(`!!document.querySelector('#chart rect.region')`)) === true);
+
+  await evalJs(`(() => {
+      const dot = document.querySelector('#chart circle.dot');
+      dot.dispatchEvent(new MouseEvent('mouseenter', {bubbles: true}));
+      dot.dispatchEvent(new MouseEvent('mousemove', {bubbles: true, clientX: 200, clientY: 150}));
+    })()`);
+  await sleep(300);
+  const tip = await evalJs(`(() => {
+      const t = document.querySelector('#chart-tip');
+      return JSON.stringify({hidden: t.hidden, text: t.textContent});
+    })()`).then(JSON.parse);
+  check("悬停显示名称/价格/蛋白质/脂肪/热量",
+        tip.hidden === false && ["价格", "蛋白质", "脂肪", "热量"].every((k) => tip.text.includes(k)),
+        tip.text.slice(0, 90));
+
+  // ---------------------------------------------------------- body estimate
+  await evalJs(`(() => {
+      document.querySelector('#s_sex').value = 'male';
+      document.querySelector('#s_age').value = 22;
+      document.querySelector('#s_height').value = 175;
+      document.querySelector('#s_weight').value = 70;
+      document.querySelector('#s_meals').value = 3;
+      document.querySelector('#s_goal').value = 'muscle';
+      document.querySelector('#s-calc').click();
+    })()`);
+  await sleep(300);
+  const body = await evalJs(`JSON.stringify({
+      protein: document.querySelector('#s_protein').value,
+      kcalMax: document.querySelector('#s_kcal_max').value,
+      hint: document.querySelector('#s-cap-hint').textContent,
+      note: document.querySelector('#s-calc-note').textContent
+    })`).then(JSON.parse);
+  check("身体数据预填蛋白质 47 g", body.protein === "47", body.protein);
+  check("热量只作参考、不预填约束", body.kcalMax === "", JSON.stringify(body.kcalMax));
+  check("显示预算内蛋白质上限提示",
+        body.hint.includes("最多能买到") && body.hint.includes("g 蛋白质"), body.hint);
+
+  // ---------------------------------------------------------- positive flow
+  await evalJs(`(() => {
+      document.querySelector('#s_protein').value = 40;
+      document.querySelector('#s_budget').value = 50;
+      document.querySelector('#s_fat').value = '';
+      document.querySelector('#s_max_mains').value = '2';
+      document.querySelector('#s_side').checked = false;
+      document.querySelector('#s-plan').click();
+    })()`);
+  await waitFor(`typeof S !== 'undefined' && S && S.items`, "增肌方案", 90000);
+  const pos = await evalJs(`JSON.stringify({
+      feasible: S.feasible,
+      mains: S.items.filter(i => i.kind === 'main').length,
+      qty: S.items.filter(i => i.kind === 'main').reduce((a, i) => a + i.quantity, 0),
+      protein: S.totals.protein, cost: S.cost,
+      ppy: S.protein_per_yuan,
+      ppyText: document.querySelector('#s-result').textContent.includes('每元蛋白质')
+    })`).then(JSON.parse);
+  check("正向：达标且最多 2 个主食",
+        pos.feasible === true && pos.mains >= 1 && pos.mains <= 2 && pos.qty <= 2,
+        JSON.stringify(pos));
+  check("正向：每元蛋白质保留一位小数",
+        Math.abs(pos.ppy - Math.round((pos.protein / pos.cost) * 10) / 10) < 0.05 && pos.ppyText,
+        `${pos.ppy}`);
+  check("结果卡显示官方标准版与达标",
+        (await evalJs(`document.querySelector('#s-result').textContent.includes('官方标准版')
+                       && document.querySelector('#s-result').textContent.includes('达标')`)) === true);
+
+  // ------------------------------------------------- removal + quote (N=1)
+  await evalJs(`(() => {
+      document.querySelector('#s_protein').value = 20;
+      document.querySelector('#s_budget').value = 24;
+      document.querySelector('#s_fat').value = 18;
+      document.querySelector('#s_max_mains').value = '1';
+      document.querySelector('#s-plan').click();
+    })()`);
+  await waitFor(`S && S.items && S.items.length === 1 && (S.suggestions || []).length > 0`, "带点单建议的方案");
+  const beforeKcal = await evalJs(`S.totals.energyKcal`);
+  await evalJs(`(() => {
+      const d = document.querySelector('details.sugg-box');
+      if (d) d.open = true;
+      const el = document.querySelector('input.srem');
+      if (!el) return false;
+      el.checked = true;
+      el.dispatchEvent(new Event('change', {bubbles: true}));
+      return true;
+    })()`);
+  await waitFor(`S && S.items[0].nutrition_basis === 'standard_unadjusted'`, "点单建议重算");
+  const removed = await evalJs(`JSON.stringify({
+      kcal: S.totals.energyKcal, protein: S.totals.protein,
+      mod: S.items[0].modification, notes: S.items[0].removal_notes
+    })`).then(JSON.parse);
+  check("去料后营养不变", removed.kcal === beforeKcal);
+  check("严格模式文案", removed.notes.some((n) => n.includes("标准版数值")),
+        JSON.stringify(removed.notes).slice(0, 100));
+
+  await evalJs(`document.querySelector('#s-quote').click()`);
+  await waitFor(`S && S.quotes && S.quotes.lunch && S.quotes.lunch.status === 'ok'`, "去料后报价");
+  const quote = await evalJs(`JSON.stringify({
+      amount: S.quotes.lunch.amount,
+      requested: S.quotes.lunch.requested_items[0],
+      status: document.querySelector('#s-status').textContent
+    })`).then(JSON.parse);
+  check("报价带整组去料参数", quote.requested.modification.values.length === removed.mod.length,
+        JSON.stringify(quote.requested.modification).slice(0, 120));
+  check("报价显示试算价", quote.status.includes("试算成功"), quote.status.slice(0, 60));
+
+  // ------------------------------------------------------- no-solution card
+  await evalJs(`(() => {
+      document.querySelector('#s_protein').value = 99;
+      document.querySelector('#s_budget').value = 35;
+      document.querySelector('#s_fat').value = 20;
+      document.querySelector('#s_max_mains').value = '2';
+      document.querySelector('#s-plan').click();
+    })()`);
+  await waitFor(`S && S.feasible === false && S.frontier`, "无解方案");
+  const neg = await evalJs(`JSON.stringify({
+      text: document.querySelector('#s-result').textContent,
+      capBadge: document.querySelector('#s-result').textContent.includes('预算内最多'),
+      cost: S.cost, fat: S.totals.fat,
+      items: S.items.length
+    })`).then(JSON.parse);
+  check("无解第一行文案",
+        neg.text.includes("当前条件下没有满足全部要求的方案"), neg.text.slice(0, 80));
+  check("无解主卡片=预算内最多且不超价格/脂肪",
+        neg.capBadge && neg.items > 0 && neg.cost <= 35 && neg.fat <= 20,
+        JSON.stringify({cost: neg.cost, fat: neg.fat}));
+  check("放宽方案为文字说明", neg.text.includes("只放宽价格"), neg.text.slice(-160));
+
+  // ---------------------------------------------------- no card under caps
+  await evalJs(`(() => {
+      document.querySelector('#s_budget').value = 5;
+      document.querySelector('#s-plan').click();
+    })()`);
+  await waitFor(`S && S.feasible === false && S.items.length === 0`, "无卡片分支");
+  const noCard = await evalJs(`JSON.stringify({
+      text: document.querySelector('#s-result').textContent,
+      cards: document.querySelectorAll('#s-result .item').length
+    })`).then(JSON.parse);
+  check("硬约束下无组合时不显示商品卡片",
+        noCard.cards === 0 && noCard.text.includes("不显示商品卡片"),
+        JSON.stringify(noCard.cards));
+
+  await sleep(400);
+  try { ws.close(); } catch {}
+  try { proc.kill("SIGKILL"); } catch {}
+
+  const failed = results.filter((r) => !r.ok);
+  console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
+  if (failed.length) {
+    for (const f of failed) console.log("FAILED:", f.name, f.detail);
+    process.exitCode = 1;
+  }
+}
+
+main().catch((e) => { console.error("FATAL", e); process.exit(2); });

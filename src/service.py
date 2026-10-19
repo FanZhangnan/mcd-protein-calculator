@@ -18,14 +18,21 @@ from store import Store, data_dir
 MEALS = planner_mod.MEALS
 MEAL_LABEL = planner_mod.MEAL_LABEL
 
-#: strict-mode rule 5 — a removal that may lower the protein number
+#: strict-mode rule 5 — a removal that may lower the protein number.
+#: A name containing 酱 is always excluded: sauce carries fat, not protein.
 PROTEIN_RISK_HINTS = ("芝士", "吉士", "干酪", "培根", "蛋")
+#: muscle-building warning shown on the removal option itself
+MUSCLE_WARNING_HINTS = ("芝士", "吉士", "干酪", "培根", "蛋")
+MUSCLE_WARNING = "增肌时不建议去掉，会减少蛋白质"
 #: default „point-order suggestion“ list
 SUGGEST_REMOVE_HINTS = ("酱", "芝士", "吉士", "干酪", "培根", "黄油")
 #: only one customisation action survives the day-mode removal
 SUPPORTED_CUSTOMIZATIONS = ("suggest_remove",)
 SINGLE_DRINK_HINTS = ("零度可乐", "美式", "纯牛奶")
 SINGLE_DRINK_MAX_KCAL = 20.0
+#: product default: two mains per meal (the same SKU twice is allowed)
+DEFAULT_MAX_MAINS = 2
+MAX_MAINS_LIMIT = 3
 
 
 class UnsupportedCustomization(ValueError):
@@ -460,7 +467,10 @@ class Service:
                 options.append({
                     **entry,
                     "group": gi,
-                    "protein_risk": any(h in name for h in PROTEIN_RISK_HINTS),
+                    "protein_risk": self.protein_risk(name),
+                    "muscle_warning": any(h in name for h in MUSCLE_WARNING_HINTS),
+                    "muscle_note": (MUSCLE_WARNING if any(
+                        h in name for h in MUSCLE_WARNING_HINTS) else ""),
                     "default_suggestion": any(h in name for h in SUGGEST_REMOVE_HINTS),
                 })
             if values:
@@ -478,6 +488,17 @@ class Service:
 
     # ------------------------------------------------------------------ single meal
     @staticmethod
+    def protein_risk(name: str) -> bool:
+        """Could removing this component lower the displayed protein?
+
+        A sauce (name contains 酱) never counts: it contributes fat and sugar,
+        so 醇香芝士风味酱 is ``False`` while 高达干酪片 is ``True``.
+        """
+        if not name or "酱" in name:
+            return False
+        return any(hint in name for hint in PROTEIN_RISK_HINTS)
+
+    @staticmethod
     def is_single_drink(item: planner_mod.Item) -> bool:
         """Whitelist: zero Coke / Americano / plain milk by name, or < 20 kcal."""
         name = item.name or ""
@@ -493,6 +514,62 @@ class Service:
             "side": pool["side"] if allow_side else [],
             "drink": [d for d in pool["drink"] if self.is_single_drink(d)],
         }}
+
+    def landscape(self, meal: str, max_mains: int = DEFAULT_MAX_MAINS) -> dict[str, Any]:
+        """Every main with official nutrition, plus the price→protein frontier.
+
+        ``items`` is what the scatter plot draws (one dot per SKU);
+        ``frontier`` is the "with ≤ B yuan, the most protein you can buy"
+        curve used by the prefill hint. Only official standard values enter.
+        """
+        pool = self.pools(meal)
+        rows: list[dict[str, Any]] = []
+        for item in pool["main"]:
+            nutrition = item.nutrition or {}
+            protein = nutrition.get("protein")
+            kcal = nutrition.get("energyKcal")
+            if protein is None or item.price_ref in (None, 0) or kcal is None:
+                continue
+            price = float(item.price_ref)
+            rows.append({
+                "code": item.code,
+                "name": item.name,
+                "protein": round(float(protein), 1),
+                "fat": None if nutrition.get("fat") is None else round(float(nutrition["fat"]), 1),
+                "kcal": round(float(kcal), 1),
+                "price": round(price, 2),
+                "protein_per_yuan": round(float(protein) / price, 1),
+            })
+        rows.sort(key=lambda r: (-r["protein_per_yuan"], r["price"], r["code"]))
+
+        combos = planner_mod.build_meal_options(pool["main"], [], [], max_mains=max_mains)
+        points: list[tuple[float, float, list[str]]] = []
+        for combo in combos:
+            totals, _ = planner_mod.sum_nutrition(combo)
+            cost = planner_mod.sum_reference_cost(combo)
+            protein = totals.get("protein")
+            if protein is None or cost is None:
+                continue
+            points.append((round(cost, 2), round(float(protein), 1),
+                           [i.name if i.quantity == 1 else f"{i.name} ×{int(i.quantity)}"
+                            for i in combo]))
+        points.sort(key=lambda p: (p[0], -p[1]))
+        frontier: list[dict[str, Any]] = []
+        best = -1.0
+        for cost, protein, names in points:
+            if protein > best + 1e-9:
+                best = protein
+                frontier.append({"price": cost, "protein": protein, "items": names})
+
+        return {
+            "meal": meal,
+            "meal_label": MEAL_LABEL.get(meal, meal),
+            "items": rows,
+            "frontier": frontier,
+            "max_mains": max_mains,
+            "basis": "official_standard",
+            "note": "严格模式：仅官方标准版整款数据；未匹配到官方营养的主食不进入本图。",
+        }
 
     def upgrade_ladder(self) -> list[dict[str, Any]]:
         if self._ladder is None:
@@ -522,10 +599,9 @@ class Service:
             dp = float(target.nutrition.get("protein") or 0) - float(current.nutrition.get("protein") or 0)
             df = float(target.nutrition.get("fat") or 0) - float(current.nutrition.get("fat") or 0)
             dc = round(float(target.price_ref) - float(current.price_ref), 2)
-            per_10 = None
-            if dp > 0:
-                per_10 = {"extra_price": round(dc / dp * 10, 2),
-                          "extra_fat": round(df / dp * 10, 1)}
+            # "每多 1 元多多少 g 蛋白质" only makes sense when the step adds a
+            # meaningful amount of protein and actually costs more.
+            show_conversion = dp >= 5 and dc > 0
             return {
                 "from": {"code": current.code, "name": current.name,
                          "protein": current.nutrition.get("protein"),
@@ -538,14 +614,15 @@ class Service:
                 "delta_protein": round(dp, 1),
                 "delta_fat": round(df, 1),
                 "delta_price": dc,
-                "per_10g_protein": per_10,
+                "protein_per_extra_yuan": round(dp / dc, 1) if show_conversion else None,
+                "show_conversion": show_conversion,
                 "basis": "official_standard",
             }
         return None
 
     def plan_meal(self, meal: str, targets: planner_mod.Targets,
                   allow_side: bool = False, *, quote: bool = False,
-                  max_mains: int = 1) -> dict[str, Any]:
+                  max_mains: int = DEFAULT_MAX_MAINS) -> dict[str, Any]:
         """One meal, strict mode: 1..N mains, official standard values only."""
         pools = self.single_pools(meal, allow_side)
         result = planner_mod.plan_open(
@@ -557,12 +634,24 @@ class Service:
         result.basis = "single_meal"
 
         meal_plan = result.meals[0] if result.meals else None
-        main = next((i for i in (meal_plan.items if meal_plan else []) if i.kind == "main"), None)
-        removable: dict[str, Any] = {"ok": False, "options": [], "groups": [], "reason": "没有主食"}
-        if main:
-            removable = self.removable_options(main.code, meal)
-        suggestions = [o for o in removable.get("options", []) if o.get("default_suggestion")]
-        upgrade = self.upgrade_for(main.code, meal, pools[meal]) if main else None
+        mains = [i for i in (meal_plan.items if meal_plan else []) if i.kind == "main"]
+        removables_map: dict[str, dict[str, Any]] = {}
+        suggestions: list[dict[str, Any]] = []
+        upgrades: list[dict[str, Any]] = []
+        for main in mains:
+            cap = self.removable_options(main.code, meal)
+            removables_map[str(main.code)] = cap
+            for option in cap.get("options", []):
+                if option.get("default_suggestion"):
+                    suggestions.append({**option, "target_code": main.code,
+                                        "target_name": main.name})
+            step = self.upgrade_for(main.code, meal, pools[meal])
+            if step:
+                upgrades.append(step)
+        removable = (next(iter(removables_map.values()))
+                     if removables_map else {"ok": False, "options": [], "groups": [],
+                                        "reason": "没有主食"})
+        upgrade = upgrades[0] if upgrades else None
         frontier = None
         if not result.feasible:
             frontier = planner_mod.single_meal_frontier(pools, targets, meal,
@@ -582,8 +671,10 @@ class Service:
             "strict_mode": True,
             "nutrition_basis": "official_standard",
             "removable": removable,
+            "removables": removables_map,
             "suggestions": suggestions,
             "upgrade": upgrade,
+            "upgrades": upgrades,
             "frontier": frontier,
             "basis": "single_meal",
             "targets": targets.as_dict(),

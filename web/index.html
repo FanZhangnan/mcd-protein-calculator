@@ -3,17 +3,37 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>麦麦健身餐管家</title>
+<title>麦当劳增肌计算器</title>
 <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <header>
-  <h1>麦麦健身餐管家</h1>
+  <div>
+    <h1>麦当劳增肌计算器</h1>
+    <div class="tagline">每一块钱，买到最多的蛋白质</div>
+  </div>
   <div id="meta" class="meta">加载中…</div>
 </header>
 
-<section class="panel">
-  <h2>这一顿的要求</h2>
+<!-- ============================ 蛋白质性价比图 ============================ -->
+<section class="panel" id="chart-panel">
+  <h2>这一餐的蛋白质性价比</h2>
+  <div class="chart-wrap">
+    <svg id="chart" viewBox="0 0 680 330" role="img" aria-label="价格与蛋白质散点图"></svg>
+    <div id="chart-tip" class="chart-tip" hidden></div>
+  </div>
+  <div class="chart-legend">
+    <span><i class="dot brand"></i>每元蛋白质前 3</span>
+    <span><i class="dot muted"></i>其他主食</span>
+    <span><i class="box"></i>达标区域（蛋白质 ≥ 目标 且 价格 ≤ 上限）</span>
+  </div>
+  <table id="rank-table" class="rank"></table>
+  <div class="sub">严格模式：官方标准版数据。</div>
+</section>
+
+<!-- ================================ 输入 ================================ -->
+<section class="panel" id="input-panel">
+  <h2>你的要求</h2>
   <div class="grid">
     <label>餐次
       <select id="s_meal">
@@ -22,27 +42,42 @@
         <option value="dinner">晚餐</option>
       </select>
     </label>
-    <label>蛋白质下限 g<input id="s_protein" type="number" step="1" value="30"></label>
-    <label>脂肪上限 g<input id="s_fat" type="number" step="1" value="20"></label>
-    <label>价格上限 元<input id="s_budget" type="number" step="1" value="30"></label>
+    <label>蛋白质下限 g<input id="s_protein" type="number" step="1" value="40"></label>
+    <label>价格上限 元<input id="s_budget" type="number" step="1" value="45"></label>
   </div>
+
   <details>
     <summary>更多选项</summary>
     <div class="grid">
-      <label>热量下限 kcal<input id="s_kcal_min" type="number" step="10"></label>
-      <label>热量上限 kcal<input id="s_kcal_max" type="number" step="10"></label>
+      <label>脂肪上限 g<input id="s_fat" type="number" step="1" placeholder="不设"></label>
+      <label>热量上限 kcal<input id="s_kcal_max" type="number" step="10" placeholder="不设"></label>
+      <label>热量下限 kcal<input id="s_kcal_min" type="number" step="10" placeholder="不设"></label>
+      <label>主食数量上限
+        <select id="s_max_mains">
+          <option value="1">1 个</option>
+          <option value="2" selected>2 个</option>
+        </select>
+      </label>
       <label class="check"><input id="s_side" type="checkbox"> 允许配菜（最多 1 份）</label>
     </div>
   </details>
+
   <details>
     <summary>按身体数据估算（可选，可改）</summary>
     <div class="grid">
       <label>性别
         <select id="s_sex"><option value="male">男</option><option value="female">女</option></select>
       </label>
-      <label>年龄<input id="s_age" type="number" step="1" value="30"></label>
+      <label>年龄<input id="s_age" type="number" step="1" value="22"></label>
       <label>身高 cm<input id="s_height" type="number" step="1" value="175"></label>
       <label>体重 kg<input id="s_weight" type="number" step="0.5" value="70"></label>
+      <label>每天餐数<input id="s_meals" type="number" step="1" value="3"></label>
+      <label>目标
+        <select id="s_goal">
+          <option value="muscle" selected>增肌</option>
+          <option value="maintain">维持</option>
+        </select>
+      </label>
       <label>活动水平
         <select id="s_activity">
           <option value="1.2">久坐</option>
@@ -52,43 +87,55 @@
           <option value="1.9">运动员</option>
         </select>
       </label>
-      <label>每天餐数<input id="s_meals" type="number" step="1" value="3"></label>
     </div>
     <div class="row"><button id="s-calc" class="ghost">填入建议值</button></div>
     <div id="s-calc-note" class="status"></div>
+    <div id="s-cap-hint" class="cap-hint"></div>
+    <div class="sub">蛋白质按 2.0 g/kg（增肌）或 1.6 g/kg（维持）除以每天餐数；热量用 Mifflin-St Jeor 算 BMR，乘活动系数得 TDEE，增肌加 300 kcal，只作参考显示，不预填为约束。</div>
   </details>
+
   <div class="row">
-    <button id="s-plan" class="primary">推荐这一餐</button>
-    <button id="s-quote" class="ghost" title="只按当前这一餐的商品/定制试算，不会重新选餐">为当前这一餐报价</button>
+    <button id="s-plan" class="primary">算这一餐</button>
+    <button id="s-quote" class="ghost" title="只按当前这一餐的商品/定制试算，不会重新选餐">为当前方案报价</button>
   </div>
   <div id="s-status" class="status"></div>
 </section>
 
+<!-- ================================ 结果 ================================ -->
 <section class="panel" id="s-result-panel" hidden>
-  <h2>推荐结果（严格模式）</h2>
+  <h2>推荐结果</h2>
   <div id="s-result"></div>
 </section>
 
+<!-- ============================== 门店与数据 ============================== -->
 <section class="panel">
-  <h2>门店与数据</h2>
-  <div class="grid">
-    <label>日期<input id="date" type="date"></label>
-    <label>门店代码<input id="store_code" type="text"></label>
-    <label>早餐时间<input id="t_breakfast" type="time"></label>
-    <label>午餐时间<input id="t_lunch" type="time"></label>
-    <label>晚餐时间<input id="t_dinner" type="time"></label>
-  </div>
-  <div class="row">
-    <button id="btn-save" class="ghost">保存门店与时段</button>
-    <button id="btn-refresh" class="ghost">刷新真实菜单（MCP）</button>
-  </div>
-  <div id="status" class="status"></div>
+  <details>
+    <summary>门店与数据（当前：珠海屏湾一路 1440054）</summary>
+    <div class="grid">
+      <label>日期<input id="date" type="date"></label>
+      <label>门店代码<input id="store_code" type="text"></label>
+      <label>早餐时间<input id="t_breakfast" type="time"></label>
+      <label>午餐时间<input id="t_lunch" type="time"></label>
+      <label>晚餐时间<input id="t_dinner" type="time"></label>
+    </div>
+    <div class="row">
+      <button id="btn-save" class="ghost">保存门店与时段</button>
+      <button id="btn-refresh" class="ghost">刷新真实菜单（MCP）</button>
+    </div>
+    <div id="status" class="status"></div>
+  </details>
 </section>
 
 <section class="panel" id="unknown-panel">
-  <h2>数据缺失说明</h2>
-  <div id="unknown" class="unknown"></div>
+  <details>
+    <summary>数据缺失说明</summary>
+    <div id="unknown" class="unknown"></div>
+  </details>
 </section>
+
+<footer>
+  营养数据为麦当劳官方标准版，仅供参考，不构成营养建议。
+</footer>
 
 <script src="/app.js"></script>
 </body>
