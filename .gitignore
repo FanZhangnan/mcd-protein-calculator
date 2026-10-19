@@ -1,11 +1,26 @@
+# ---- per-install runtime data: never commit ----
 data/cache/
 data/backup-*/
 data/backup-fullday/
+data/intake.json
+data/state.json
+data/baseline.json
 data/detail_cache.json
 data/last_live_run.json
-data/baseline.json
+
+# ---- secrets / credentials: never commit ----
+.env
+.env.*
+*.pem
+*.key
+data/*token*
+data/*secret*
+data/*credential*
+
+# ---- local noise ----
 __pycache__/
 *.pyc
 .DS_Store
+.tmp/
 tests/*.png
 data/fixtures/single_meal/*.png
