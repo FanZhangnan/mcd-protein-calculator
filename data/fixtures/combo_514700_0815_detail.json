@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "code": 200,
+  "message": "请求成功",
+  "data": {
+    "code": "514700",
+    "name": "原味板烧鸡腿炒双蛋堡",
+    "supportModify": true,
+    "modification": {
+      "items": [
+        {
+          "name": null,
+          "values": [
+            {
+              "code": "102201",
+              "name": "烤味酱",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
