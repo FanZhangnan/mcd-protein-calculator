@@ -1,0 +1,227 @@
+{
+  "feasible": true,
+  "meals": [
+    {
+      "meal": "breakfast",
+      "meal_label": "早餐",
+      "items": [
+        {
+          "code": "514700",
+          "name": "原味板烧鸡腿炒双蛋堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1754.0,
+            "energyKcal": 419.0,
+            "protein": 27.0,
+            "fat": 21.0,
+            "carbohydrate": 30.0,
+            "sodium": 715.0,
+            "calcium": 116.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "is_estimate": false,
+          "price_ref": 18.5,
+          "quantity": 1.0,
+          "line_total_ref": 18.5,
+          "meal": "breakfast",
+          "modification": [],
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 1754.0,
+        "energyKcal": 419.0,
+        "protein": 27.0,
+        "fat": 21.0,
+        "carbohydrate": 30.0,
+        "sodium": 715.0,
+        "calcium": 116.0
+      },
+      "unknown": [],
+      "price_ref": 18.5,
+      "quote": null,
+      "is_estimate": false
+    }
+  ],
+  "items": [
+    {
+      "code": "514700",
+      "name": "原味板烧鸡腿炒双蛋堡",
+      "kind": "main",
+      "nutrition": {
+        "energyKj": 1754.0,
+        "energyKcal": 419.0,
+        "protein": 27.0,
+        "fat": 21.0,
+        "carbohydrate": 30.0,
+        "sodium": 715.0,
+        "calcium": 116.0
+      },
+      "nutrition_status": "official",
+      "nutrition_note": "",
+      "nutrition_basis": "official",
+      "removal_notes": [],
+      "is_estimate": false,
+      "price_ref": 18.5,
+      "quantity": 1.0,
+      "line_total_ref": 18.5,
+      "meal": "breakfast",
+      "modification": [],
+      "removals": []
+    }
+  ],
+  "totals": {
+    "energyKj": 1754.0,
+    "energyKcal": 419.0,
+    "protein": 27.0,
+    "fat": 21.0,
+    "carbohydrate": 30.0,
+    "sodium": 715.0,
+    "calcium": 116.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 18.5,
+  "effective_cost": 18.5,
+  "money_basis": "reference",
+  "budget_status": "reference",
+  "protein_per_yuan": 1.5,
+  "violations": [],
+  "targets": {
+    "protein_min": 25.0,
+    "budget": 20.0,
+    "fat_max": null,
+    "kcal_min": null,
+    "kcal_max": null
+  },
+  "signature": "0187203abe050761",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "live",
+    "fetched_at": "2026-10-20T03:43:20",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "3b1b8366538d",
+    "menu_warnings": {}
+  },
+  "note": "",
+  "mode": "single",
+  "meal": "breakfast",
+  "meal_label": "早餐",
+  "allow_side": false,
+  "max_mains": 2,
+  "strict_mode": true,
+  "nutrition_basis": "official_standard",
+  "context_warning": "",
+  "removable": {
+    "ok": true,
+    "sku": {
+      "code": "514700",
+      "name": "原味板烧鸡腿炒双蛋堡"
+    },
+    "supportModify": true,
+    "groups": [
+      {
+        "index": 0,
+        "name": null,
+        "values": [
+          {
+            "code": "102201",
+            "name": "烤味酱",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          }
+        ]
+      }
+    ],
+    "options": [
+      {
+        "code": "102201",
+        "name": "烤味酱",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": true
+      }
+    ],
+    "reason": "",
+    "meal": "breakfast",
+    "checked_at": "2026-10-20T03:43:21"
+  },
+  "removables": {
+    "514700": {
+      "ok": true,
+      "sku": {
+        "code": "514700",
+        "name": "原味板烧鸡腿炒双蛋堡"
+      },
+      "supportModify": true,
+      "groups": [
+        {
+          "index": 0,
+          "name": null,
+          "values": [
+            {
+              "code": "102201",
+              "name": "烤味酱",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "code": "102201",
+          "name": "烤味酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": true
+        }
+      ],
+      "reason": "",
+      "meal": "breakfast",
+      "checked_at": "2026-10-20T03:43:21"
+    }
+  },
+  "suggestions": [
+    {
+      "code": "102201",
+      "name": "烤味酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "muscle_warning": false,
+      "muscle_note": "",
+      "default_suggestion": true,
+      "target_code": "514700",
+      "target_name": "原味板烧鸡腿炒双蛋堡"
+    }
+  ],
+  "upgrade": null,
+  "upgrades": [],
+  "frontier": null,
+  "basis": "single_meal"
+}

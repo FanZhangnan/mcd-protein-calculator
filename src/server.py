@@ -54,6 +54,10 @@ def validate_meal_request(body: dict[str, Any]) -> tuple[str, planner_mod.Target
     if meal not in planner_mod.MEALS:
         raise InputError("meal 必须是 breakfast / lunch / dinner")
     protein_min = _num(body.get("protein_min"), "蛋白质下限", allow_none=False, minimum=0)
+    if protein_min <= 0:
+        # 0 would silently mean "no goal" and return the cheapest item, which is
+        # not what a muscle-building calculator is being asked for.
+        raise InputError("蛋白质下限必须大于 0")
     budget = _num(body.get("budget"), "价格上限", allow_none=False, minimum=0)
     if budget <= 0:
         raise InputError("价格上限必须大于 0")

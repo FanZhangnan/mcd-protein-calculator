@@ -1,0 +1,172 @@
+{
+  "feasible": false,
+  "meals": [
+    {
+      "meal": "lunch",
+      "meal_label": "午餐",
+      "items": [
+        {
+          "code": "1600",
+          "name": "麦香鱼",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1359.0,
+            "energyKcal": 325.0,
+            "protein": 16.0,
+            "fat": 13.0,
+            "carbohydrate": 35.0,
+            "sodium": 556.0,
+            "calcium": 99.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "standard_unadjusted",
+          "removal_notes": [
+            "建议去掉吉士。去掉后的营养官方未提供，此处显示标准版数值。",
+            "去掉吉士后，蛋白质可能低于显示值。"
+          ],
+          "is_estimate": false,
+          "price_ref": 22.0,
+          "quantity": 2,
+          "line_total_ref": 44.0,
+          "meal": "lunch",
+          "modification": [
+            {
+              "code": "100126",
+              "key": "0-1",
+              "quantity": 1
+            },
+            {
+              "code": "100141",
+              "key": "0-0",
+              "quantity": 1
+            }
+          ],
+          "removals": [
+            {
+              "component": "吉士",
+              "component_code": "100141",
+              "scenario": "standard_unadjusted"
+            }
+          ]
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2718.0,
+        "energyKcal": 650.0,
+        "protein": 32.0,
+        "fat": 26.0,
+        "carbohydrate": 70.0,
+        "sodium": 1112.0,
+        "calcium": 198.0
+      },
+      "unknown": [],
+      "price_ref": 44.0,
+      "quote": null,
+      "is_estimate": false
+    }
+  ],
+  "items": [
+    {
+      "code": "1600",
+      "name": "麦香鱼",
+      "kind": "main",
+      "nutrition": {
+        "energyKj": 1359.0,
+        "energyKcal": 325.0,
+        "protein": 16.0,
+        "fat": 13.0,
+        "carbohydrate": 35.0,
+        "sodium": 556.0,
+        "calcium": 99.0
+      },
+      "nutrition_status": "official",
+      "nutrition_note": "",
+      "nutrition_basis": "standard_unadjusted",
+      "removal_notes": [
+        "建议去掉吉士。去掉后的营养官方未提供，此处显示标准版数值。",
+        "去掉吉士后，蛋白质可能低于显示值。"
+      ],
+      "is_estimate": false,
+      "price_ref": 22.0,
+      "quantity": 2,
+      "line_total_ref": 44.0,
+      "meal": "lunch",
+      "modification": [
+        {
+          "code": "100126",
+          "key": "0-1",
+          "quantity": 1
+        },
+        {
+          "code": "100141",
+          "key": "0-0",
+          "quantity": 1
+        }
+      ],
+      "removals": [
+        {
+          "component": "吉士",
+          "component_code": "100141",
+          "scenario": "standard_unadjusted"
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "energyKj": 2718.0,
+    "energyKcal": 650.0,
+    "protein": 32.0,
+    "fat": 26.0,
+    "carbohydrate": 70.0,
+    "sodium": 1112.0,
+    "calcium": 198.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 44.0,
+  "effective_cost": 44.0,
+  "money_basis": "reference",
+  "budget_status": "reference",
+  "protein_per_yuan": 0.7,
+  "violations": [
+    {
+      "constraint": "protein",
+      "label": "蛋白质",
+      "value": 32.0,
+      "target": "≥40",
+      "gap": -8.0,
+      "unit": "g"
+    }
+  ],
+  "targets": {
+    "protein_min": 40.0,
+    "budget": 45.0,
+    "fat_max": 30.0,
+    "kcal_min": null,
+    "kcal_max": null
+  },
+  "signature": "3d91721f8130658f",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "live",
+    "fetched_at": "2026-10-20T03:43:20",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "3b1b8366538d",
+    "menu_warnings": {}
+  },
+  "note": "当前方案不满足全部硬约束，不视为达标。",
+  "mode": "single",
+  "baseline_created_at": "2026-10-20T03:43:26",
+  "plan_version": "b9232eaa1afee971",
+  "issues": [],
+  "meal": "lunch",
+  "meal_label": "午餐"
+}

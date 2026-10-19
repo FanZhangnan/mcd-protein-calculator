@@ -1,0 +1,368 @@
+{
+  "feasible": false,
+  "meals": [
+    {
+      "meal": "lunch",
+      "meal_label": "午餐",
+      "items": [
+        {
+          "code": "1600",
+          "name": "麦香鱼",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1359.0,
+            "energyKcal": 325.0,
+            "protein": 16.0,
+            "fat": 13.0,
+            "carbohydrate": 35.0,
+            "sodium": 556.0,
+            "calcium": 99.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "is_estimate": false,
+          "price_ref": 22.0,
+          "quantity": 2.0,
+          "line_total_ref": 44.0,
+          "meal": "lunch",
+          "modification": [],
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2718.0,
+        "energyKcal": 650.0,
+        "protein": 32.0,
+        "fat": 26.0,
+        "carbohydrate": 70.0,
+        "sodium": 1112.0,
+        "calcium": 198.0
+      },
+      "unknown": [],
+      "price_ref": 44.0,
+      "quote": null,
+      "is_estimate": false
+    }
+  ],
+  "items": [
+    {
+      "code": "1600",
+      "name": "麦香鱼",
+      "kind": "main",
+      "nutrition": {
+        "energyKj": 1359.0,
+        "energyKcal": 325.0,
+        "protein": 16.0,
+        "fat": 13.0,
+        "carbohydrate": 35.0,
+        "sodium": 556.0,
+        "calcium": 99.0
+      },
+      "nutrition_status": "official",
+      "nutrition_note": "",
+      "nutrition_basis": "official",
+      "removal_notes": [],
+      "is_estimate": false,
+      "price_ref": 22.0,
+      "quantity": 2.0,
+      "line_total_ref": 44.0,
+      "meal": "lunch",
+      "modification": [],
+      "removals": []
+    }
+  ],
+  "totals": {
+    "energyKj": 2718.0,
+    "energyKcal": 650.0,
+    "protein": 32.0,
+    "fat": 26.0,
+    "carbohydrate": 70.0,
+    "sodium": 1112.0,
+    "calcium": 198.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 44.0,
+  "effective_cost": 44.0,
+  "money_basis": "reference",
+  "budget_status": "reference",
+  "protein_per_yuan": 0.7,
+  "violations": [
+    {
+      "constraint": "protein",
+      "label": "蛋白质",
+      "value": 32.0,
+      "target": "≥40",
+      "gap": -8.0,
+      "unit": "g"
+    }
+  ],
+  "targets": {
+    "protein_min": 40.0,
+    "budget": 45.0,
+    "fat_max": 30.0,
+    "kcal_min": null,
+    "kcal_max": null
+  },
+  "signature": "b9232eaa1afee971",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "live",
+    "fetched_at": "2026-10-20T03:43:20",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "3b1b8366538d",
+    "menu_warnings": {}
+  },
+  "note": "当前方案不满足全部硬约束，不视为达标。",
+  "mode": "single",
+  "meal": "lunch",
+  "meal_label": "午餐",
+  "allow_side": false,
+  "max_mains": 2,
+  "strict_mode": true,
+  "nutrition_basis": "official_standard",
+  "context_warning": "",
+  "removable": {
+    "ok": true,
+    "sku": {
+      "code": "1600",
+      "name": "麦香鱼"
+    },
+    "supportModify": true,
+    "groups": [
+      {
+        "index": 0,
+        "name": null,
+        "values": [
+          {
+            "code": "100126",
+            "name": "麦香鱼酱",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "100141",
+            "name": "吉士",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          }
+        ]
+      }
+    ],
+    "options": [
+      {
+        "code": "100126",
+        "name": "麦香鱼酱",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": true
+      },
+      {
+        "code": "100141",
+        "name": "吉士",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": true,
+        "muscle_warning": true,
+        "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+        "default_suggestion": true
+      }
+    ],
+    "reason": "",
+    "meal": "lunch",
+    "checked_at": "2026-10-20T03:43:26"
+  },
+  "removables": {
+    "1600": {
+      "ok": true,
+      "sku": {
+        "code": "1600",
+        "name": "麦香鱼"
+      },
+      "supportModify": true,
+      "groups": [
+        {
+          "index": 0,
+          "name": null,
+          "values": [
+            {
+              "code": "100126",
+              "name": "麦香鱼酱",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "100141",
+              "name": "吉士",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "code": "100126",
+          "name": "麦香鱼酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": true
+        },
+        {
+          "code": "100141",
+          "name": "吉士",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": true,
+          "muscle_warning": true,
+          "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+          "default_suggestion": true
+        }
+      ],
+      "reason": "",
+      "meal": "lunch",
+      "checked_at": "2026-10-20T03:43:26"
+    }
+  },
+  "suggestions": [
+    {
+      "code": "100126",
+      "name": "麦香鱼酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "muscle_warning": false,
+      "muscle_note": "",
+      "default_suggestion": true,
+      "target_code": "1600",
+      "target_name": "麦香鱼"
+    },
+    {
+      "code": "100141",
+      "name": "吉士",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": true,
+      "muscle_warning": true,
+      "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+      "default_suggestion": true,
+      "target_code": "1600",
+      "target_name": "麦香鱼"
+    }
+  ],
+  "upgrade": {
+    "from": {
+      "code": "1600",
+      "name": "麦香鱼",
+      "protein": 16.0,
+      "fat": 13.0,
+      "price": 22.0
+    },
+    "to": {
+      "code": "9900003586",
+      "name": "双层深海鳕鱼堡",
+      "protein": 28.0,
+      "fat": 21.0,
+      "price": 25.0
+    },
+    "label": "麦香鱼 → 双层深海鳕鱼堡",
+    "evidence": "麦香鱼为 1 块鳕鱼排，双层深海鳕鱼堡为 2 块；两款均在 1440054 午餐菜单在售，官方整款蛋白质 16 g → 28 g，价格 22 → 25 元",
+    "delta_protein": 12.0,
+    "delta_fat": 8.0,
+    "delta_price": 3.0,
+    "protein_per_extra_yuan": 4.0,
+    "show_conversion": true,
+    "basis": "official_standard"
+  },
+  "upgrades": [
+    {
+      "from": {
+        "code": "1600",
+        "name": "麦香鱼",
+        "protein": 16.0,
+        "fat": 13.0,
+        "price": 22.0
+      },
+      "to": {
+        "code": "9900003586",
+        "name": "双层深海鳕鱼堡",
+        "protein": 28.0,
+        "fat": 21.0,
+        "price": 25.0
+      },
+      "label": "麦香鱼 → 双层深海鳕鱼堡",
+      "evidence": "麦香鱼为 1 块鳕鱼排，双层深海鳕鱼堡为 2 块；两款均在 1440054 午餐菜单在售，官方整款蛋白质 16 g → 28 g，价格 22 → 25 元",
+      "delta_protein": 12.0,
+      "delta_fat": 8.0,
+      "delta_price": 3.0,
+      "protein_per_extra_yuan": 4.0,
+      "show_conversion": true,
+      "basis": "official_standard"
+    }
+  ],
+  "frontier": {
+    "max_protein": {
+      "code": "1600",
+      "name": "麦香鱼",
+      "protein": 32.0,
+      "fat": 26.0,
+      "kcal": 650.0,
+      "cost": 44.0,
+      "items": [
+        "麦香鱼 ×2"
+      ],
+      "protein_gap": 8.0
+    },
+    "reach_price": null,
+    "relax_fat": {
+      "code": "1120",
+      "name": "双层吉士汉堡",
+      "protein": 43.0,
+      "fat": 35.0,
+      "kcal": 754.0,
+      "cost": 44.5,
+      "items": [
+        "双层吉士汉堡",
+        "麦香鱼"
+      ],
+      "protein_gap": 0.0
+    },
+    "relax_kcal": null,
+    "reachable": true,
+    "candidates": 130,
+    "message": "",
+    "basis": "official_standard"
+  },
+  "basis": "single_meal"
+}

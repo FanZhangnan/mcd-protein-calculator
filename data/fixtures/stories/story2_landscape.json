@@ -1,0 +1,235 @@
+{
+  "meal": "dinner",
+  "meal_label": "晚餐",
+  "items": [
+    {
+      "code": "1120",
+      "name": "双层吉士汉堡",
+      "protein": 27.0,
+      "fat": 22.0,
+      "kcal": 429.0,
+      "price": 22.5,
+      "protein_per_yuan": 1.2
+    },
+    {
+      "code": "9900003586",
+      "name": "双层深海鳕鱼堡",
+      "protein": 28.0,
+      "fat": 21.0,
+      "kcal": 485.0,
+      "price": 25.0,
+      "protein_per_yuan": 1.1
+    },
+    {
+      "code": "4648",
+      "name": "不素之霸双层牛堡",
+      "protein": 28.0,
+      "fat": 27.0,
+      "kcal": 493.0,
+      "price": 26.5,
+      "protein_per_yuan": 1.1
+    },
+    {
+      "code": "1440",
+      "name": "麦辣鸡腿汉堡",
+      "protein": 24.0,
+      "fat": 24.0,
+      "kcal": 485.0,
+      "price": 23.0,
+      "protein_per_yuan": 1.0
+    },
+    {
+      "code": "1406",
+      "name": "板烧鸡腿堡",
+      "protein": 23.0,
+      "fat": 17.0,
+      "kcal": 391.0,
+      "price": 24.0,
+      "protein_per_yuan": 1.0
+    },
+    {
+      "code": "1106",
+      "name": "培根蔬萃双层牛堡",
+      "protein": 24.0,
+      "fat": 23.0,
+      "kcal": 442.0,
+      "price": 24.5,
+      "protein_per_yuan": 1.0
+    },
+    {
+      "code": "511782",
+      "name": "芝士安格斯厚牛堡",
+      "protein": 32.0,
+      "fat": 44.0,
+      "kcal": 696.0,
+      "price": 31.5,
+      "protein_per_yuan": 1.0
+    },
+    {
+      "code": "511781",
+      "name": "培根安格斯厚牛堡",
+      "protein": 34.0,
+      "fat": 44.0,
+      "kcal": 707.0,
+      "price": 34.5,
+      "protein_per_yuan": 1.0
+    },
+    {
+      "code": "1450",
+      "name": "麦香鸡",
+      "protein": 15.0,
+      "fat": 17.0,
+      "kcal": 369.0,
+      "price": 16.5,
+      "protein_per_yuan": 0.9
+    },
+    {
+      "code": "1600",
+      "name": "麦香鱼",
+      "protein": 16.0,
+      "fat": 13.0,
+      "kcal": 325.0,
+      "price": 22.0,
+      "protein_per_yuan": 0.7
+    }
+  ],
+  "frontier": [
+    {
+      "price": 16.5,
+      "protein": 15.0,
+      "items": [
+        "麦香鸡"
+      ]
+    },
+    {
+      "price": 22.0,
+      "protein": 16.0,
+      "items": [
+        "麦香鱼"
+      ]
+    },
+    {
+      "price": 22.5,
+      "protein": 27.0,
+      "items": [
+        "双层吉士汉堡"
+      ]
+    },
+    {
+      "price": 25.0,
+      "protein": 28.0,
+      "items": [
+        "双层深海鳕鱼堡"
+      ]
+    },
+    {
+      "price": 31.5,
+      "protein": 32.0,
+      "items": [
+        "芝士安格斯厚牛堡"
+      ]
+    },
+    {
+      "price": 34.5,
+      "protein": 34.0,
+      "items": [
+        "培根安格斯厚牛堡"
+      ]
+    },
+    {
+      "price": 39.0,
+      "protein": 42.0,
+      "items": [
+        "双层吉士汉堡",
+        "麦香鸡"
+      ]
+    },
+    {
+      "price": 41.5,
+      "protein": 43.0,
+      "items": [
+        "双层深海鳕鱼堡",
+        "麦香鸡"
+      ]
+    },
+    {
+      "price": 45.0,
+      "protein": 54.0,
+      "items": [
+        "双层吉士汉堡 ×2"
+      ]
+    },
+    {
+      "price": 47.5,
+      "protein": 55.0,
+      "items": [
+        "双层深海鳕鱼堡",
+        "双层吉士汉堡"
+      ]
+    },
+    {
+      "price": 50.0,
+      "protein": 56.0,
+      "items": [
+        "双层深海鳕鱼堡 ×2"
+      ]
+    },
+    {
+      "price": 54.0,
+      "protein": 59.0,
+      "items": [
+        "芝士安格斯厚牛堡",
+        "双层吉士汉堡"
+      ]
+    },
+    {
+      "price": 56.5,
+      "protein": 60.0,
+      "items": [
+        "芝士安格斯厚牛堡",
+        "双层深海鳕鱼堡"
+      ]
+    },
+    {
+      "price": 57.0,
+      "protein": 61.0,
+      "items": [
+        "培根安格斯厚牛堡",
+        "双层吉士汉堡"
+      ]
+    },
+    {
+      "price": 59.5,
+      "protein": 62.0,
+      "items": [
+        "培根安格斯厚牛堡",
+        "双层深海鳕鱼堡"
+      ]
+    },
+    {
+      "price": 63.0,
+      "protein": 64.0,
+      "items": [
+        "芝士安格斯厚牛堡 ×2"
+      ]
+    },
+    {
+      "price": 66.0,
+      "protein": 66.0,
+      "items": [
+        "培根安格斯厚牛堡",
+        "芝士安格斯厚牛堡"
+      ]
+    },
+    {
+      "price": 69.0,
+      "protein": 68.0,
+      "items": [
+        "培根安格斯厚牛堡 ×2"
+      ]
+    }
+  ],
+  "max_mains": 2,
+  "basis": "official_standard",
+  "note": "严格模式：仅官方标准版整款数据；未匹配到官方营养的主食不进入本图。"
+}

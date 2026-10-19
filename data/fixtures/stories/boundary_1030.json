@@ -1,0 +1,301 @@
+{
+  "cache": {
+    "source": "live",
+    "fetched_at": "2026-10-20T02:45:04",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "10:30",
+      "dinner": "18:30"
+    },
+    "cache_key": "92c004be46f1",
+    "menu_warnings": {
+      "lunch": "午餐时段 10:30 返回的菜单与早餐完全相同（88 个 SKU），可能正处在两个供餐时段之间；以下结果按这份菜单的实际在售商品计算，请确认取餐时间。"
+    }
+  },
+  "state": {
+    "store": {
+      "code": "1440054",
+      "name": "麦当劳珠海屏湾一路餐厅",
+      "beType": 1,
+      "orderType": 1
+    },
+    "date": "2026-10-20",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "10:30",
+      "dinner": "18:30"
+    }
+  },
+  "plan": {
+    "feasible": false,
+    "meals": [
+      {
+        "meal": "lunch",
+        "meal_label": "午餐",
+        "items": [
+          {
+            "code": "5889",
+            "name": "大脆鸡扒麦满分",
+            "kind": "main",
+            "nutrition": {
+              "energyKj": 1510.0,
+              "energyKcal": 361.0,
+              "protein": 16.0,
+              "fat": 17.0,
+              "carbohydrate": 35.0,
+              "sodium": 804.0,
+              "calcium": 130.0
+            },
+            "nutrition_status": "official",
+            "nutrition_note": "",
+            "nutrition_basis": "official",
+            "removal_notes": [],
+            "is_estimate": false,
+            "price_ref": 11.0,
+            "quantity": 2.0,
+            "line_total_ref": 22.0,
+            "meal": "lunch",
+            "modification": [],
+            "removals": []
+          }
+        ],
+        "nutrition": {
+          "energyKj": 3020.0,
+          "energyKcal": 722.0,
+          "protein": 32.0,
+          "fat": 34.0,
+          "carbohydrate": 70.0,
+          "sodium": 1608.0,
+          "calcium": 260.0
+        },
+        "unknown": [],
+        "price_ref": 22.0,
+        "quote": null,
+        "is_estimate": false
+      }
+    ],
+    "items": [
+      {
+        "code": "5889",
+        "name": "大脆鸡扒麦满分",
+        "kind": "main",
+        "nutrition": {
+          "energyKj": 1510.0,
+          "energyKcal": 361.0,
+          "protein": 16.0,
+          "fat": 17.0,
+          "carbohydrate": 35.0,
+          "sodium": 804.0,
+          "calcium": 130.0
+        },
+        "nutrition_status": "official",
+        "nutrition_note": "",
+        "nutrition_basis": "official",
+        "removal_notes": [],
+        "is_estimate": false,
+        "price_ref": 11.0,
+        "quantity": 2.0,
+        "line_total_ref": 22.0,
+        "meal": "lunch",
+        "modification": [],
+        "removals": []
+      }
+    ],
+    "totals": {
+      "energyKj": 3020.0,
+      "energyKcal": 722.0,
+      "protein": 32.0,
+      "fat": 34.0,
+      "carbohydrate": 70.0,
+      "sodium": 1608.0,
+      "calcium": 260.0
+    },
+    "unknowns": [],
+    "is_estimate": false,
+    "cost": 22.0,
+    "effective_cost": 22.0,
+    "money_basis": "reference",
+    "budget_status": "reference",
+    "protein_per_yuan": 1.5,
+    "violations": [
+      {
+        "constraint": "protein",
+        "label": "蛋白质",
+        "value": 32.0,
+        "target": "≥35",
+        "gap": -3.0,
+        "unit": "g"
+      }
+    ],
+    "targets": {
+      "protein_min": 35.0,
+      "budget": 25.0,
+      "fat_max": null,
+      "kcal_min": null,
+      "kcal_max": null
+    },
+    "signature": "67ac500b438d3deb",
+    "quotes": {},
+    "quotes_valid": false,
+    "cache": {
+      "source": "live",
+      "fetched_at": "2026-10-20T02:45:04",
+      "date": "2026-10-20",
+      "store_code": "1440054",
+      "meal_times": {
+        "breakfast": "08:15",
+        "lunch": "10:30",
+        "dinner": "18:30"
+      },
+      "cache_key": "92c004be46f1",
+      "menu_warnings": {
+        "lunch": "午餐时段 10:30 返回的菜单与早餐完全相同（88 个 SKU），可能正处在两个供餐时段之间；以下结果按这份菜单的实际在售商品计算，请确认取餐时间。"
+      }
+    },
+    "note": "当前方案不满足全部硬约束，不视为达标。",
+    "mode": "single",
+    "meal": "lunch",
+    "meal_label": "午餐",
+    "allow_side": false,
+    "max_mains": 2,
+    "strict_mode": true,
+    "nutrition_basis": "official_standard",
+    "context_warning": "午餐时段 10:30 返回的菜单与早餐完全相同（88 个 SKU），可能正处在两个供餐时段之间；以下结果按这份菜单的实际在售商品计算，请确认取餐时间。",
+    "removable": {
+      "ok": true,
+      "sku": {
+        "code": "5889",
+        "name": "大脆鸡扒麦满分"
+      },
+      "supportModify": true,
+      "groups": [
+        {
+          "index": 0,
+          "name": null,
+          "values": [
+            {
+              "code": "100136",
+              "name": "麦香鸡酱",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "code": "100136",
+          "name": "麦香鸡酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": true
+        }
+      ],
+      "reason": "",
+      "meal": "lunch",
+      "checked_at": "2026-10-20T03:38:31"
+    },
+    "removables": {
+      "5889": {
+        "ok": true,
+        "sku": {
+          "code": "5889",
+          "name": "大脆鸡扒麦满分"
+        },
+        "supportModify": true,
+        "groups": [
+          {
+            "index": 0,
+            "name": null,
+            "values": [
+              {
+                "code": "100136",
+                "name": "麦香鸡酱",
+                "selectedKey": "0-1",
+                "unselectedKey": "0-0",
+                "price": 0
+              }
+            ]
+          }
+        ],
+        "options": [
+          {
+            "code": "100136",
+            "name": "麦香鸡酱",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0,
+            "group": 0,
+            "protein_risk": false,
+            "muscle_warning": false,
+            "muscle_note": "",
+            "default_suggestion": true
+          }
+        ],
+        "reason": "",
+        "meal": "lunch",
+        "checked_at": "2026-10-20T03:38:31"
+      }
+    },
+    "suggestions": [
+      {
+        "code": "100136",
+        "name": "麦香鸡酱",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": true,
+        "target_code": "5889",
+        "target_name": "大脆鸡扒麦满分"
+      }
+    ],
+    "upgrade": null,
+    "upgrades": [],
+    "frontier": {
+      "max_protein": {
+        "code": "5889",
+        "name": "大脆鸡扒麦满分",
+        "protein": 32.0,
+        "fat": 34.0,
+        "kcal": 722.0,
+        "cost": 22.0,
+        "items": [
+          "大脆鸡扒麦满分 ×2"
+        ],
+        "protein_gap": 3.0
+      },
+      "reach_price": {
+        "code": "5022",
+        "name": "猪柳蛋麦满分",
+        "protein": 37.0,
+        "fat": 33.0,
+        "kcal": 648.0,
+        "cost": 29.0,
+        "items": [
+          "猪柳蛋麦满分",
+          "火腿扒麦满分"
+        ],
+        "protein_gap": 0.0
+      },
+      "relax_fat": null,
+      "relax_kcal": null,
+      "reachable": true,
+      "candidates": 154,
+      "message": "",
+      "basis": "official_standard"
+    },
+    "basis": "single_meal"
+  }
+}

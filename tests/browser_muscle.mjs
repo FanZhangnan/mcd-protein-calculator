@@ -227,6 +227,20 @@ async function main() {
         noCard.cards === 0 && noCard.text.includes("不显示商品卡片"),
         JSON.stringify(noCard.cards));
 
+  const money = await evalJs(`document.querySelector('#s-result .single-head').textContent`);
+  check("无商品时不显示 0.00 元", !/0\.00\s*元/.test(money) && money.includes("未选到商品"),
+        money.replace(/\s+/g, " ").slice(0, 70));
+
+  // -------------------------------------------------- zero protein rejected
+  await evalJs(`(() => {
+      document.querySelector('#s_protein').value = 0;
+      document.querySelector('#s-plan').click();
+    })()`);
+  await sleep(300);
+  check("蛋白质填 0 时前端拦截",
+        (await evalJs(`document.querySelector('#s-status').textContent`)).includes("必须大于 0"),
+        await evalJs(`document.querySelector('#s-status').textContent`));
+
   await sleep(400);
   try { ws.close(); } catch {}
   try { proc.kill("SIGKILL"); } catch {}

@@ -28,7 +28,7 @@ import planner as planner_mod  # noqa: E402
 import quantity as quantity_mod  # noqa: E402
 from quantity import InvalidQuantity  # noqa: E402
 from server import InputError, validate_meal_request  # noqa: E402
-from service import Service  # noqa: E402
+from service import Service, menu_warnings  # noqa: E402
 from helpers import (meal_plan, new_service, new_svc, item, one_meal,  # noqa: E402
                      REMOVABLE)
 
@@ -230,6 +230,12 @@ class InputValidationTest(unittest.TestCase):
             with self.assertRaises(InputError):
                 validate_meal_request(self._ok(budget=value))
 
+    def test_rejects_zero_protein(self):
+        """0 g would mean “no goal” and quietly return the cheapest item."""
+        with self.assertRaises(InputError) as ctx:
+            validate_meal_request(self._ok(protein_min=0))
+        self.assertIn("大于 0", str(ctx.exception))
+
     def test_accepts_valid_request(self):
         meal, targets, allow_side, max_mains = validate_meal_request(self._ok())
         self.assertEqual(meal, "lunch")
@@ -280,6 +286,16 @@ class PurchaseQuantityTest(unittest.TestCase):
         self.assertEqual(self.svc.plan_signature(cache, [a]),
                          self.svc.plan_signature(cache, [b]))
 
+    def test_rejected_edit_keeps_previous_signature_quotable(self):
+        """A 400 must not destroy the plan the user is still looking at."""
+        before = self.svc.working_signature()
+        with self.assertRaises(InvalidQuantity):
+            self.svc.recompute({"lunch": {self.code: 0.5}}, {})
+        self.assertEqual(self.svc.working_signature(), before)
+        payload, status = self.svc.quote_working(before)
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["items"][0]["quantity"], 1)
+
     def test_purchase_two_reaches_nutrition_and_mcp(self):
         base = planner_mod.PlanResult(
             feasible=True, meals=[self.svc._meal_from_dict({"meal": "lunch",
@@ -317,6 +333,40 @@ class PurchaseQuantityTest(unittest.TestCase):
         self.assertEqual(out["totals"]["protein"], 25.0)
         self.assertEqual(out["items"][0]["nutrition_basis"], "standard_unadjusted")
         self.assertEqual(len(out["items"][0]["modification"]), 4)
+
+
+class ServingWindowTest(unittest.TestCase):
+    """10:30 sits between two serving periods; the POS just answers with the
+    breakfast menu, so the only honest thing the app can do is say so."""
+
+    TIMES = {"breakfast": "08:15", "lunch": "12:15", "dinner": "18:30"}
+
+    @staticmethod
+    def _menu(*codes: str) -> dict:
+        return {"success": True, "data": {"meals": {c: {"name": c} for c in codes}}}
+
+    def test_lunch_that_returns_the_breakfast_menu_is_flagged(self):
+        menus = {"breakfast": self._menu("A", "B"), "lunch": self._menu("A", "B"),
+                 "dinner": self._menu("C", "D")}
+        warn = menu_warnings(menus, {**self.TIMES, "lunch": "10:30"})
+        self.assertIn("lunch", warn)
+        self.assertIn("10:30", warn["lunch"])
+        self.assertNotIn("dinner", warn)
+
+    def test_lunch_and_dinner_sharing_one_menu_is_normal(self):
+        menus = {"breakfast": self._menu("A"), "lunch": self._menu("B"),
+                 "dinner": self._menu("B")}
+        self.assertEqual(menu_warnings(menus, self.TIMES), {})
+
+    def test_only_the_misaligned_slot_is_flagged(self):
+        """At 10:30 breakfast is correct; only the lunch slot is wrong."""
+        menus = {"breakfast": self._menu("A", "B"), "lunch": self._menu("A", "B"),
+                 "dinner": self._menu("C", "D")}
+        warn = menu_warnings(menus, {**self.TIMES, "lunch": "10:30"})
+        self.assertEqual(set(warn), {"lunch"})
+
+    def test_no_menus_means_no_warning(self):
+        self.assertEqual(menu_warnings({}, self.TIMES), {})
 
 
 if __name__ == "__main__":

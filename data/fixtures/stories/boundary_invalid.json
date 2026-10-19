@@ -1,0 +1,65 @@
+{
+  "蛋白 0": {
+    "status": 400,
+    "body": {
+      "error": "蛋白质下限必须大于 0",
+      "kind": "input"
+    }
+  },
+  "价格 0": {
+    "status": 400,
+    "body": {
+      "error": "价格上限必须大于 0",
+      "kind": "input"
+    }
+  },
+  "蛋白 -5": {
+    "status": 400,
+    "body": {
+      "error": "蛋白质下限不能小于 0",
+      "kind": "input"
+    }
+  },
+  "价格 -1": {
+    "status": 400,
+    "body": {
+      "error": "价格上限不能小于 0",
+      "kind": "input"
+    }
+  },
+  "蛋白非数字": {
+    "status": 400,
+    "body": {
+      "error": "蛋白质下限必须是数字",
+      "kind": "input"
+    }
+  },
+  "价格非数字": {
+    "status": 400,
+    "body": {
+      "error": "价格上限必须是数字",
+      "kind": "input"
+    }
+  },
+  "价格为空": {
+    "status": 400,
+    "body": {
+      "error": "价格上限不能为空",
+      "kind": "input"
+    }
+  },
+  "主食上限 0": {
+    "status": 400,
+    "body": {
+      "error": "主食数量上限只能是 1、2 或 3",
+      "kind": "input"
+    }
+  },
+  "主食上限 4": {
+    "status": 400,
+    "body": {
+      "error": "主食数量上限只能是 1、2 或 3",
+      "kind": "input"
+    }
+  }
+}

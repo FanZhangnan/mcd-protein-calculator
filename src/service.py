@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass
 from datetime import date as date_cls, datetime, timedelta
 from pathlib import Path
@@ -144,6 +145,10 @@ class OfflineProvider:
         but never quote it.
         """
         self.price_calls.append({"items": items, "when": when, "store": store_code})
+        if os.environ.get("MAI_MAI_QUOTE_FAIL"):
+            # test hook: prove the UI never turns a failed quote into ¥0
+            return {"success": False, "code": 60006,
+                    "message": "离线桩：模拟试算失败", "datetime": "offline", "data": None}
         total = 0.0
         for line in items:
             code = str(line.get("productCode"))
@@ -159,6 +164,41 @@ class OfflineProvider:
                 "datetime": "offline",
                 "data": {"price": fen, "originalPrice": fen, "discount": 0,
                          "takeWayList": [{"code": "eat-in", "title": "堂食"}]}}
+
+
+# ------------------------------------------------------------ serving windows
+def _menu_codes(payload: dict | None) -> set[str]:
+    data = (payload or {}).get("data") or {}
+    return set((data.get("meals") or {}).keys())
+
+
+def menu_warnings(menus: dict[str, dict], meal_times: dict[str, str]) -> dict[str, str]:
+    """Flag a meal slot that silently served another serving period's menu.
+
+    The POS exposes no serving-window field, so the only evidence available is
+    the menu itself. When the lunch slot returns exactly the breakfast menu
+    (10:30 sits in the 10:15–10:44 gap), every number below would be correct
+    for breakfast and wrong for the label on the card. Comparing the three
+    menus we already fetch is enough to say so.
+
+    Lunch and dinner legitimately share one menu, so only the
+    breakfast↔(lunch|dinner) pairs are compared. Breakfast itself is never
+    flagged: when its menu equals lunch's, the usual cause is a lunch slot that
+    fell into the gap (10:30), and flagging both would be noise.
+    """
+    sets = {meal: _menu_codes(payload) for meal, payload in (menus or {}).items()}
+    breakfast = sets.get("breakfast") or set()
+    if not breakfast:
+        return {}
+    out: dict[str, str] = {}
+    for meal in ("lunch", "dinner"):
+        if sets.get(meal) and sets[meal] == breakfast:
+            out[meal] = (
+                f"{MEAL_LABEL[meal]}时段 {meal_times.get(meal, '')} 返回的菜单与早餐完全相同"
+                f"（{len(breakfast)} 个 SKU），可能正处在两个供餐时段之间；"
+                "以下结果按这份菜单的实际在售商品计算，请确认取餐时间。"
+            )
+    return out
 
 
 # ---------------------------------------------------------------------- service
@@ -248,6 +288,7 @@ class Service:
             "server_time": (menus.get("lunch") or {}).get("datetime"),
             "menus": menus,
             "nutrition": nutrition,
+            "menu_warnings": menu_warnings(menus, ctx.meal_times),
         }
         self._cache_path(ctx).write_text(json.dumps(payload, ensure_ascii=False, indent=2), "utf-8")
         self._cache = payload
@@ -320,6 +361,7 @@ class Service:
             "store_code": cache.get("store_code"),
             "meal_times": cache.get("meal_times"),
             "cache_key": cache.get("cache_key"),
+            "menu_warnings": cache.get("menu_warnings") or {},
         }
 
     # ------------------------------------------------------------------- catalog
@@ -349,14 +391,11 @@ class Service:
         data = (cache["menus"].get(meal) or {}).get("data") or {}
         meals_map: dict[str, Any] = data.get("meals") or {}
         cat = self.catalog()
-        avoid = [a for a in (self.store.get_state().get("prefs", {}).get("avoid") or []) if a]
 
         buckets: dict[str, list[planner_mod.Item]] = {"main": [], "side": [], "drink": [], "other": []}
         for code, info in meals_map.items():
             name = (info or {}).get("name") or ""
             if not name or catalog_mod.is_combo_name(name):
-                continue
-            if any(word in name for word in avoid):
                 continue
             kind = catalog_mod.classify(name)
             if kind == "other":
@@ -670,6 +709,7 @@ class Service:
             "max_mains": max_mains,
             "strict_mode": True,
             "nutrition_basis": "official_standard",
+            "context_warning": (self.ensure_cache().get("menu_warnings") or {}).get(meal, ""),
             "removable": removable,
             "removables": removables_map,
             "suggestions": suggestions,

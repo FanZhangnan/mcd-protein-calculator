@@ -103,6 +103,7 @@ def main() -> int:
 
     for label, payload in [
         ("零价格 400", {**body, "budget": 0}),
+        ("零蛋白 400", {**body, "protein_min": 0}),
         ("负蛋白 400", {**body, "protein_min": -1}),
         ("缺蛋白质 400", {"meal": "lunch", "budget": 30}),
         ("未知餐次 400", {**body, "meal": "brunch"}),

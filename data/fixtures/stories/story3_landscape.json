@@ -1,0 +1,206 @@
+{
+  "meal": "breakfast",
+  "meal_label": "早餐",
+  "items": [
+    {
+      "code": "5889",
+      "name": "大脆鸡扒麦满分",
+      "protein": 16.0,
+      "fat": 17.0,
+      "kcal": 361.0,
+      "price": 11.0,
+      "protein_per_yuan": 1.5
+    },
+    {
+      "code": "514700",
+      "name": "原味板烧鸡腿炒双蛋堡",
+      "protein": 27.0,
+      "fat": 21.0,
+      "kcal": 419.0,
+      "price": 18.5,
+      "protein_per_yuan": 1.5
+    },
+    {
+      "code": "502773",
+      "name": "猪柳炒双蛋堡",
+      "protein": 25.0,
+      "fat": 24.0,
+      "kcal": 437.0,
+      "price": 18.5,
+      "protein_per_yuan": 1.4
+    },
+    {
+      "code": "520830",
+      "name": "双层猪柳蛋麦满分",
+      "protein": 29.0,
+      "fat": 32.0,
+      "kcal": 513.0,
+      "price": 21.0,
+      "protein_per_yuan": 1.4
+    },
+    {
+      "code": "1254",
+      "name": "火腿扒麦满分",
+      "protein": 14.0,
+      "fat": 12.0,
+      "kcal": 261.0,
+      "price": 11.0,
+      "protein_per_yuan": 1.3
+    },
+    {
+      "code": "5022",
+      "name": "猪柳蛋麦满分",
+      "protein": 23.0,
+      "fat": 21.0,
+      "kcal": 387.0,
+      "price": 18.0,
+      "protein_per_yuan": 1.3
+    },
+    {
+      "code": "4989",
+      "name": "双层原味板烧鸡腿麦满分",
+      "protein": 23.0,
+      "fat": 17.0,
+      "kcal": 355.0,
+      "price": 19.0,
+      "protein_per_yuan": 1.2
+    },
+    {
+      "code": "5024",
+      "name": "猪柳麦满分",
+      "protein": 16.0,
+      "fat": 16.0,
+      "kcal": 308.0,
+      "price": 14.0,
+      "protein_per_yuan": 1.1
+    },
+    {
+      "code": "6800",
+      "name": "原味板烧鸡腿麦满分",
+      "protein": 15.0,
+      "fat": 9.0,
+      "kcal": 246.0,
+      "price": 15.0,
+      "protein_per_yuan": 1.0
+    },
+    {
+      "code": "513112",
+      "name": "火腿扒早安营养卷",
+      "protein": 16.0,
+      "fat": 24.0,
+      "kcal": 444.0,
+      "price": 15.5,
+      "protein_per_yuan": 1.0
+    },
+    {
+      "code": "513113",
+      "name": "图林根香肠早安营养卷",
+      "protein": 14.0,
+      "fat": 23.0,
+      "kcal": 425.0,
+      "price": 16.5,
+      "protein_per_yuan": 0.8
+    }
+  ],
+  "frontier": [
+    {
+      "price": 11.0,
+      "protein": 16.0,
+      "items": [
+        "大脆鸡扒麦满分"
+      ]
+    },
+    {
+      "price": 18.0,
+      "protein": 23.0,
+      "items": [
+        "猪柳蛋麦满分"
+      ]
+    },
+    {
+      "price": 18.5,
+      "protein": 27.0,
+      "items": [
+        "原味板烧鸡腿炒双蛋堡"
+      ]
+    },
+    {
+      "price": 21.0,
+      "protein": 29.0,
+      "items": [
+        "双层猪柳蛋麦满分"
+      ]
+    },
+    {
+      "price": 22.0,
+      "protein": 32.0,
+      "items": [
+        "大脆鸡扒麦满分 ×2"
+      ]
+    },
+    {
+      "price": 29.0,
+      "protein": 39.0,
+      "items": [
+        "猪柳蛋麦满分",
+        "大脆鸡扒麦满分"
+      ]
+    },
+    {
+      "price": 29.5,
+      "protein": 43.0,
+      "items": [
+        "原味板烧鸡腿炒双蛋堡",
+        "大脆鸡扒麦满分"
+      ]
+    },
+    {
+      "price": 32.0,
+      "protein": 45.0,
+      "items": [
+        "双层猪柳蛋麦满分",
+        "大脆鸡扒麦满分"
+      ]
+    },
+    {
+      "price": 36.0,
+      "protein": 46.0,
+      "items": [
+        "猪柳蛋麦满分 ×2"
+      ]
+    },
+    {
+      "price": 36.5,
+      "protein": 50.0,
+      "items": [
+        "原味板烧鸡腿炒双蛋堡",
+        "猪柳蛋麦满分"
+      ]
+    },
+    {
+      "price": 37.0,
+      "protein": 54.0,
+      "items": [
+        "原味板烧鸡腿炒双蛋堡 ×2"
+      ]
+    },
+    {
+      "price": 39.5,
+      "protein": 56.0,
+      "items": [
+        "双层猪柳蛋麦满分",
+        "原味板烧鸡腿炒双蛋堡"
+      ]
+    },
+    {
+      "price": 42.0,
+      "protein": 58.0,
+      "items": [
+        "双层猪柳蛋麦满分 ×2"
+      ]
+    }
+  ],
+  "max_mains": 2,
+  "basis": "official_standard",
+  "note": "严格模式：仅官方标准版整款数据；未匹配到官方营养的主食不进入本图。"
+}

@@ -5,6 +5,7 @@ let S = null;              // current result payload
 let SSIG = "";             // signature of the current plan
 let SREMOVED = {};         // { mainCode: [optionCode, ...] }
 let SLAST = null;          // last valid payload
+let WARN = {};             // { meal: "该时段返回的是另一餐次的菜单" }
 
 const STATUS_LABEL = {
   official: ["官方", "official"],
@@ -48,6 +49,7 @@ async function boot() {
   $("t_dinner").value = s.meal_times?.dinner || "18:30";
 
   const c = BOOT.cache || {};
+  WARN = c.menu_warnings || {};
   const srcLabel = { live: "实时", cache: "缓存", offline: "离线", none: "未加载", unavailable: "不可用" }[c.source] || c.source;
   $("meta").innerHTML =
     `<span class="pill">${srcLabel}</span> 数据时间 ${c.fetched_at || "—"} · 门店 ${c.store_code || "—"}` +
@@ -84,6 +86,7 @@ async function loadLandscape() {
   drawChart();
   updateCapHint();
   renderUnknown();
+  if (WARN[meal] && !S) setSStatus(WARN[meal]);
 }
 
 function renderRankTable() {
@@ -282,6 +285,7 @@ function singleValidate(body) {
     if (body[key] < 0) return `${label}不能是负数`;
   }
   if (body.budget <= 0) return "价格上限必须大于 0";
+  if (!(body.protein_min > 0)) return "蛋白质下限必须大于 0";
   for (const [key, label] of [["fat_max", "脂肪上限"], ["kcal_min", "热量下限"], ["kcal_max", "热量上限"]]) {
     if (body[key] !== undefined && (!Number.isFinite(body[key]) || body[key] < 0)) {
       return `${label}必须是不小于 0 的数字`;
@@ -302,27 +306,33 @@ function singleQuoteLine(q) {
   return `试算失败：${q.message || q.status}`;
 }
 
+function comboName(o) {
+  if (!o) return "";
+  if (Array.isArray(o.items) && o.items.length) return o.items.join(" + ");
+  return o.name || "";
+}
+
 function relaxLines(s) {
   const f = s.frontier || {};
   const tg = s.targets || {};
   const out = [];
   if (f.reach_price) {
-    out.push(`只放宽价格：达到 ${num(tg.protein_min, 0)} g 蛋白质最低需 <b>${num(f.reach_price.cost, 2)} 元</b>（${f.reach_price.name}）。`);
+    out.push(`只放宽价格：达到 ${num(tg.protein_min, 0)} g 蛋白质最低需 <b>${num(f.reach_price.cost, 2)} 元</b>（${comboName(f.reach_price)}）。`);
   } else {
     out.push(`只放宽价格，仍达不到 ${num(tg.protein_min, 0)} g 蛋白质。`);
   }
   if (tg.fat_max !== null && tg.fat_max !== undefined) {
     out.push(f.relax_fat
-      ? `只放宽脂肪：需要放宽到 <b>${num(f.relax_fat.fat)} g</b>（${f.relax_fat.name}，${num(f.relax_fat.cost, 2)} 元）。`
+      ? `只放宽脂肪：需要放宽到 <b>${num(f.relax_fat.fat)} g</b>（${comboName(f.relax_fat)}，${num(f.relax_fat.cost, 2)} 元）。`
       : "只放宽脂肪，仍达不到蛋白质目标。");
   }
   if (tg.kcal_max !== null && tg.kcal_max !== undefined) {
     out.push(f.relax_kcal
-      ? `只放宽热量上限：需要放宽到 <b>${num(f.relax_kcal.kcal, 0)} kcal</b>（${f.relax_kcal.name}）。`
+      ? `只放宽热量上限：需要放宽到 <b>${num(f.relax_kcal.kcal, 0)} kcal</b>（${comboName(f.relax_kcal)}）。`
       : "只放宽热量上限，仍达不到蛋白质目标。");
   } else if (tg.kcal_min !== null && tg.kcal_min !== undefined) {
     out.push(f.relax_kcal
-      ? `只放宽热量下限：需要放宽到 <b>${num(f.relax_kcal.kcal, 0)} kcal</b>（${f.relax_kcal.name}）。`
+      ? `只放宽热量下限：需要放宽到 <b>${num(f.relax_kcal.kcal, 0)} kcal</b>（${comboName(f.relax_kcal)}）。`
       : "只放宽热量下限，仍达不到蛋白质目标。");
   }
   return out;
@@ -334,7 +344,9 @@ function renderSingle(s) {
   const t = s.totals || {};
   const q = s.quotes && s.quotes[s.meal];
   const main = items.find((i) => i.kind === "main");
-  const money = q && q.status === "ok" ? `试算价 ${q.amount} 元` : `参考价 ${num(s.cost, 2)} 元`;
+  const money = !items.length
+    ? "—（未选到商品）"
+    : (q && q.status === "ok" ? `试算价 ${q.amount} 元` : `参考价 ${num(s.cost, 2)} 元`);
   const fallback = !s.feasible && items.length > 0;
   const noCard = !s.feasible && items.length === 0;
 
@@ -378,7 +390,7 @@ function renderSingle(s) {
     noSolution = `<div class="violations">
       <div class="v title">当前条件下没有满足全部要求的方案</div>
       ${noCard ? `<div class="v">没有任何组合同时满足价格、脂肪与热量上限，因此不显示商品卡片。</div>`
-        : `<div class="v">预算内最多：${cap ? `${num(cap.protein)} g 蛋白质${gap}（${cap.name}，${num(cap.cost, 2)} 元）` : "—"}</div>`}
+        : `<div class="v">预算内最多：${cap ? `${num(cap.protein)} g 蛋白质${gap}（${comboName(cap)}，${num(cap.cost, 2)} 元）` : "—"}</div>`}
       ${lines}
     </div>`;
   }
@@ -434,9 +446,10 @@ async function singlePlan() {
     S = out; SLAST = out; SSIG = out.signature || "";
     SREMOVED = {};
     renderSingle(S);
-    setSStatus(out.feasible
-      ? `已找到满足全部硬约束的方案（参考价 ${num(out.cost, 2)} 元）。`
-      : "当前条件下无解；主卡片只显示预算内蛋白质最高的组合，放宽方案见下方。");
+    setSStatus((out.context_warning ? `${out.context_warning} ` : "")
+      + (out.feasible
+        ? `已找到满足全部硬约束的方案（参考价 ${num(out.cost, 2)} 元）。`
+        : "当前条件下无解；主卡片只显示预算内蛋白质最高的组合，放宽方案见下方。"));
   } catch (e) {
     S = SLAST;
     setSStatus("计算失败：" + e.message);
@@ -497,7 +510,12 @@ async function singleQuote() {
 $("s_meal").addEventListener("change", () => { invalidateResult(); loadLandscape(); });
 $("s_max_mains").addEventListener("change", () => { invalidateResult(); loadLandscape(); });
 $("s_budget").addEventListener("input", () => { invalidateResult(); updateCapHint(); drawChart(); });
-$("s_protein").addEventListener("input", () => { invalidateResult(); drawChart(); });
+$("s_protein").addEventListener("input", () => {
+  // the body-data note describes a prefill that no longer applies
+  $("s-calc-note").textContent = "";
+  invalidateResult();
+  drawChart();
+});
 ["s_fat", "s_kcal_min", "s_kcal_max"].forEach((id) => {
   $(id).addEventListener("input", () => invalidateResult());
 });
