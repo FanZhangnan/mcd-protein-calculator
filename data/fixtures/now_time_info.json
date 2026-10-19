@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "code": 200,
+  "message": "请求成功",
+  "datetime": "2026-10-19 00:14:13",
+  "traceId": "e67f717bacc5c25e10f6108d97873b23",
+  "data": {
+    "timestamp": 1792340053209,
+    "datetime": "2026-10-19T00:14:13.209",
+    "formatted": "2026-10-19 00:14:13",
+    "date": "2026-10-19",
+    "year": 2026,
+    "month": 10,
+    "day": 19,
+    "dayOfWeek": "MONDAY",
+    "timezone": "GMT+08:00",
+    "offset": "+08:00",
+    "utc": "2026-10-18T16:14:13.209Z"
+  }
+}

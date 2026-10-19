@@ -1,0 +1,12 @@
+{
+  "status": 400,
+  "body": {
+    "error": "不支持的定制动作「add_patty」。本版本只支持 remove_sauce、suggest_remove（remove_sauce = 去酱估算，suggest_remove = 单餐点单建议）；不支持在标准款之外追加配料。",
+    "kind": "unsupported_customization",
+    "supported": [
+      "remove_sauce",
+      "suggest_remove"
+    ],
+    "action": "add_patty"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "code": 60006,
+  "message": "商品已售罄或不可售，换一个商品或检查orderType/beType",
+  "datetime": "2026-10-19 00:14:56",
+  "traceId": "b5f0779fba2ff6bae7cb93959a9d2f29"
+}

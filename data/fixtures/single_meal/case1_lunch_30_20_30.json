@@ -1,0 +1,305 @@
+{
+  "feasible": false,
+  "meals": [
+    {
+      "meal": "lunch",
+      "meal_label": "午餐",
+      "items": [
+        {
+          "code": "511782",
+          "name": "芝士安格斯厚牛堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 2914.0,
+            "energyKcal": 696.0,
+            "protein": 32.0,
+            "fat": 44.0,
+            "carbohydrate": 43.0,
+            "sodium": 897.0,
+            "calcium": 150.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 31.5,
+          "quantity": 1.0,
+          "line_total_ref": 31.5,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "lunch",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2914.0,
+        "energyKcal": 696.0,
+        "protein": 32.0,
+        "fat": 44.0,
+        "carbohydrate": 43.0,
+        "sodium": 897.0,
+        "calcium": 150.0
+      },
+      "unknown": [],
+      "price_ref": 31.5,
+      "amount_actual": null,
+      "amount_source": "reference",
+      "quote": null,
+      "is_estimate": false,
+      "locked": false
+    }
+  ],
+  "totals": {
+    "energyKj": 2914.0,
+    "energyKcal": 696.0,
+    "protein": 32.0,
+    "fat": 44.0,
+    "carbohydrate": 43.0,
+    "sodium": 897.0,
+    "calcium": 150.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 31.5,
+  "reference_total": 31.5,
+  "open_reference_total": 31.5,
+  "booked_total": 0,
+  "booked_known": true,
+  "quote_total": null,
+  "budget_status": "reference",
+  "money_basis": "reference",
+  "violations": [
+    {
+      "constraint": "fat",
+      "label": "脂肪",
+      "value": 44.0,
+      "target": "≤20",
+      "gap": 24.0,
+      "unit": "g"
+    },
+    {
+      "constraint": "budget",
+      "label": "预算",
+      "value": 31.5,
+      "target": "≤30.00",
+      "gap": 1.5,
+      "unit": "元"
+    }
+  ],
+  "summary": {
+    "gaps": {
+      "kcal": -49304.0,
+      "protein": 2.0,
+      "fat": 24.0,
+      "carbo": 43.0,
+      "budget": -1.5
+    },
+    "budget": 30.0,
+    "cost": 31.5,
+    "reference_total": 31.5,
+    "quote_total": null,
+    "booked_total": 0
+  },
+  "targets": {
+    "kcal_min": 0.0,
+    "kcal_max": 100000.0,
+    "protein_min": 30.0,
+    "fat_min": null,
+    "fat_max": 20.0,
+    "carb_min": null,
+    "carb_max": null,
+    "budget": 30.0
+  },
+  "signature": "dd0082dcb41047c5",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "cache",
+    "fetched_at": "2026-10-19T03:18:37",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "3b1b8366538d"
+  },
+  "note": "当前方案不满足全部硬约束（含未评估项），不视为达标，也不代表全局无解。",
+  "mode": "single",
+  "meal": "lunch",
+  "meal_label": "午餐",
+  "allow_side": false,
+  "strict_mode": true,
+  "nutrition_basis": "official_standard",
+  "removable": {
+    "ok": true,
+    "sku": {
+      "code": "511782",
+      "name": "芝士安格斯厚牛堡"
+    },
+    "supportModify": true,
+    "groups": [
+      {
+        "index": 0,
+        "name": null,
+        "values": [
+          {
+            "code": "100201",
+            "name": "醇香芝士风味酱",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "102215",
+            "name": "高达干酪片",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "102225",
+            "name": "番茄片",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "120160",
+            "name": "黄油",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          }
+        ]
+      }
+    ],
+    "options": [
+      {
+        "code": "100201",
+        "name": "醇香芝士风味酱",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": true,
+        "default_suggestion": true
+      },
+      {
+        "code": "102215",
+        "name": "高达干酪片",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": true,
+        "default_suggestion": true
+      },
+      {
+        "code": "102225",
+        "name": "番茄片",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "default_suggestion": false
+      },
+      {
+        "code": "120160",
+        "name": "黄油",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "default_suggestion": true
+      }
+    ],
+    "reason": "",
+    "meal": "lunch",
+    "checked_at": "2026-10-19T23:30:24"
+  },
+  "suggestions": [
+    {
+      "code": "100201",
+      "name": "醇香芝士风味酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": true,
+      "default_suggestion": true
+    },
+    {
+      "code": "102215",
+      "name": "高达干酪片",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": true,
+      "default_suggestion": true
+    },
+    {
+      "code": "120160",
+      "name": "黄油",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "default_suggestion": true
+    }
+  ],
+  "upgrade": {
+    "from": {
+      "code": "511782",
+      "name": "芝士安格斯厚牛堡",
+      "protein": 32.0,
+      "fat": 44.0,
+      "price": 31.5
+    },
+    "to": {
+      "code": "511781",
+      "name": "培根安格斯厚牛堡",
+      "protein": 34.0,
+      "fat": 44.0,
+      "price": 34.5
+    },
+    "label": "芝士安格斯厚牛堡 → 培根安格斯厚牛堡",
+    "evidence": "两款均在 1440054 午餐菜单中，均为官方营养条目（32g→34g 蛋白）",
+    "delta_protein": 2.0,
+    "delta_fat": 0.0,
+    "delta_price": 3.0,
+    "per_10g_protein": {
+      "extra_price": 15.0,
+      "extra_fat": 0.0
+    },
+    "basis": "official_standard"
+  },
+  "frontier": {
+    "max_protein": {
+      "code": "1406",
+      "name": "板烧鸡腿堡",
+      "protein": 23.0,
+      "fat": 17.0,
+      "carb": 35.0,
+      "kcal": 391.0,
+      "cost": 24.0,
+      "items": [
+        "板烧鸡腿堡"
+      ]
+    },
+    "relax_fat": null,
+    "relax_price": null,
+    "reachable": true,
+    "candidates": 20,
+    "message": "只放宽脂肪或只放宽价格，仍然达不到蛋白质目标",
+    "basis": "official_standard"
+  },
+  "basis": "single_meal"
+}

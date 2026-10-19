@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "sku": {
+    "code": "514700",
+    "name": "原味板烧鸡腿炒双蛋堡"
+  },
+  "supportModify": true,
+  "groups": [
+    {
+      "index": 0,
+      "name": null,
+      "values": [
+        {
+          "code": "102201",
+          "name": "烤味酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "code": "102201",
+      "name": "烤味酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "default_suggestion": true
+    }
+  ],
+  "reason": "",
+  "meal": "breakfast",
+  "checked_at": "2026-10-19T23:30:24"
+}

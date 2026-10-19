@@ -1,0 +1,29 @@
+{
+  "targets": {
+    "kcal_min": 1700,
+    "kcal_max": 2000,
+    "protein_min": 85,
+    "fat_min": null,
+    "fat_max": 85,
+    "carb_min": null,
+    "carb_max": 250,
+    "budget": 100
+  },
+  "store": {
+    "code": "1440054",
+    "name": "麦当劳珠海屏湾一路餐厅",
+    "beType": 1,
+    "orderType": 1
+  },
+  "date": "2026-10-20",
+  "meal_times": {
+    "breakfast": "08:15",
+    "lunch": "12:15",
+    "dinner": "18:30"
+  },
+  "prefs": {
+    "avoid": []
+  },
+  "estimate_scenario": "official_only",
+  "takeaway": "eat-in"
+}

@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "code": 200,
+  "message": "请求成功",
+  "datetime": "2026-10-19 00:15:47",
+  "traceId": "90e5586a3465e63ae1eb5664c9ce8b1b",
+  "data": {
+    "code": "4810",
+    "name": "中薯条",
+    "rounds": [],
+    "image": "https://menu-img.mcd.cn/pcm/prod/menu/20250423/product/MS_4810_600_1745199801147.png",
+    "supportModify": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "success": true,
+  "code": 200,
+  "message": "请求成功",
+  "datetime": "2026-10-19 00:19:38",
+  "traceId": "a581980be10a91f69c23fb9b6475cb29",
+  "data": {
+    "productOriginalPrice": 3550,
+    "productPrice": 3550,
+    "originalPrice": 3550,
+    "discount": 0,
+    "price": 3550,
+    "productList": [
+      {
+        "productCode": "9900005462",
+        "productName": "板烧鸡腿堡三件套",
+        "quantity": 1,
+        "originalSubtotal": 3550,
+        "subtotal": 3550
+      }
+    ],
+    "takeWayList": [
+      {
+        "code": "eat-in",
+        "title": "堂食",
+        "subtitle": "店内用餐"
+      },
+      {
+        "code": "locker-out",
+        "title": "外带",
+        "subtitle": "店外取餐柜"
+      }
+    ]
+  }
+}

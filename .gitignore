@@ -1,0 +1,11 @@
+data/cache/
+data/backup-*/
+data/backup-fullday/
+data/detail_cache.json
+data/last_live_run.json
+data/baseline.json
+__pycache__/
+*.pyc
+.DS_Store
+tests/*.png
+data/fixtures/single_meal/*.png

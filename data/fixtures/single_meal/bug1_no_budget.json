@@ -1,0 +1,502 @@
+{
+  "feasible": true,
+  "meals": [
+    {
+      "meal": "breakfast",
+      "meal_label": "早餐",
+      "items": [
+        {
+          "code": "5022",
+          "name": "猪柳蛋麦满分",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1618.0,
+            "energyKcal": 387.0,
+            "protein": 23.0,
+            "fat": 21.0,
+            "carbohydrate": 25.0,
+            "sodium": 846.0,
+            "calcium": 243.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 18.0,
+          "quantity": 1.0,
+          "line_total_ref": 18.0,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "breakfast",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        },
+        {
+          "code": "505235",
+          "name": "德式图林根香肠",
+          "kind": "side",
+          "nutrition": {
+            "energyKj": 366.0,
+            "energyKcal": 87.0,
+            "protein": 5.0,
+            "fat": 6.0,
+            "carbohydrate": 2.0,
+            "sodium": 293.0,
+            "calcium": 5.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 9.5,
+          "quantity": 1.0,
+          "line_total_ref": 9.5,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "breakfast",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        },
+        {
+          "code": "2430",
+          "name": "【美汁源】“黄金橙橙”",
+          "kind": "drink",
+          "nutrition": {
+            "energyKj": 691.0,
+            "energyKcal": 165.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbohydrate": 41.0,
+            "sodium": 53.0,
+            "calcium": 0.0
+          },
+          "nutrition_status": "official_alias",
+          "nutrition_note": "套餐 9900005462 round 3 的 choices 中，该 code 被标注为「【美汁源】“黄金橙橙”」",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 13.0,
+          "quantity": 1.0,
+          "line_total_ref": 13.0,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "breakfast",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2675.0,
+        "energyKcal": 639.0,
+        "protein": 28.0,
+        "fat": 27.0,
+        "carbohydrate": 68.0,
+        "sodium": 1192.0,
+        "calcium": 248.0
+      },
+      "unknown": [],
+      "price_ref": 40.5,
+      "amount_actual": null,
+      "amount_source": "reference",
+      "quote": {
+        "status": "ok",
+        "amount": 40.5,
+        "amount_fen": 4050,
+        "original_fen": 4050,
+        "discount_fen": 0,
+        "unit": "CNY",
+        "queried_at": "2026-10-19 21:30:51",
+        "reservation_date": "2026-10-20 08:15",
+        "quote_kind": "slot_quote",
+        "take_way": [
+          "eat-in",
+          "take-in-store"
+        ],
+        "message": "请求成功",
+        "signature": "01f2f6decb2fe4d1",
+        "source": "live",
+        "requested_items": [
+          {
+            "productCode": "5022",
+            "quantity": 1
+          },
+          {
+            "productCode": "505235",
+            "quantity": 1
+          },
+          {
+            "productCode": "2430",
+            "quantity": 1
+          }
+        ]
+      },
+      "is_estimate": false,
+      "locked": false
+    },
+    {
+      "meal": "lunch",
+      "meal_label": "午餐",
+      "items": [
+        {
+          "code": "1406",
+          "name": "板烧鸡腿堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1638.0,
+            "energyKcal": 391.0,
+            "protein": 23.0,
+            "fat": 17.0,
+            "carbohydrate": 35.0,
+            "sodium": 1041.0,
+            "calcium": 93.0
+          },
+          "nutrition_status": "official_alias",
+          "nutrition_note": "套餐 9900005462 round 1 的 choices 中，该 code 被标注为「板烧鸡腿堡」",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 24.0,
+          "quantity": 1.0,
+          "line_total_ref": 24.0,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "lunch",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        },
+        {
+          "code": "1401",
+          "name": "麦乐鸡",
+          "kind": "side",
+          "nutrition": {
+            "energyKj": 890.0,
+            "energyKcal": 213.0,
+            "protein": 12.0,
+            "fat": 12.0,
+            "carbohydrate": 13.0,
+            "sodium": 422.0,
+            "calcium": 9.0
+          },
+          "nutrition_status": "official_alias",
+          "nutrition_note": "套餐 rounds 选配项中该 code 的名称标注",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 14.5,
+          "quantity": 1.0,
+          "line_total_ref": 14.5,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "lunch",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2528.0,
+        "energyKcal": 604.0,
+        "protein": 35.0,
+        "fat": 29.0,
+        "carbohydrate": 48.0,
+        "sodium": 1463.0,
+        "calcium": 102.0
+      },
+      "unknown": [],
+      "price_ref": 38.5,
+      "amount_actual": null,
+      "amount_source": "reference",
+      "quote": {
+        "status": "ok",
+        "amount": 38.5,
+        "amount_fen": 3850,
+        "original_fen": 3850,
+        "discount_fen": 0,
+        "unit": "CNY",
+        "queried_at": "2026-10-19 21:30:57",
+        "reservation_date": "2026-10-20 12:15",
+        "quote_kind": "slot_quote",
+        "take_way": [
+          "eat-in",
+          "take-in-store"
+        ],
+        "message": "请求成功",
+        "signature": "d5bebdb1915dfccf",
+        "source": "live",
+        "requested_items": [
+          {
+            "productCode": "1406",
+            "quantity": 1
+          },
+          {
+            "productCode": "1401",
+            "quantity": 1
+          }
+        ]
+      },
+      "is_estimate": false,
+      "locked": false
+    },
+    {
+      "meal": "dinner",
+      "meal_label": "晚餐",
+      "items": [
+        {
+          "code": "1106",
+          "name": "培根蔬萃双层牛堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1850.0,
+            "energyKcal": 442.0,
+            "protein": 24.0,
+            "fat": 23.0,
+            "carbohydrate": 34.0,
+            "sodium": 728.0,
+            "calcium": 73.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 24.5,
+          "quantity": 1.0,
+          "line_total_ref": 24.5,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "dinner",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        },
+        {
+          "code": "2430",
+          "name": "【美汁源】“黄金橙橙”",
+          "kind": "drink",
+          "nutrition": {
+            "energyKj": 691.0,
+            "energyKcal": 165.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbohydrate": 41.0,
+            "sodium": 53.0,
+            "calcium": 0.0
+          },
+          "nutrition_status": "official_alias",
+          "nutrition_note": "套餐 9900005462 round 3 的 choices 中，该 code 被标注为「【美汁源】“黄金橙橙”」",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 13.0,
+          "quantity": 1.0,
+          "line_total_ref": 13.0,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "dinner",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2541.0,
+        "energyKcal": 607.0,
+        "protein": 24.0,
+        "fat": 23.0,
+        "carbohydrate": 75.0,
+        "sodium": 781.0,
+        "calcium": 73.0
+      },
+      "unknown": [],
+      "price_ref": 37.5,
+      "amount_actual": null,
+      "amount_source": "reference",
+      "quote": {
+        "status": "ok",
+        "amount": 37.5,
+        "amount_fen": 3750,
+        "original_fen": 3750,
+        "discount_fen": 0,
+        "unit": "CNY",
+        "queried_at": "2026-10-19 21:31:01",
+        "reservation_date": "2026-10-20 18:30",
+        "quote_kind": "slot_quote",
+        "take_way": [
+          "eat-in",
+          "take-in-store"
+        ],
+        "message": "请求成功",
+        "signature": "99d2313c2e45027c",
+        "source": "live",
+        "requested_items": [
+          {
+            "productCode": "1106",
+            "quantity": 1
+          },
+          {
+            "productCode": "2430",
+            "quantity": 1
+          }
+        ]
+      },
+      "is_estimate": false,
+      "locked": false
+    }
+  ],
+  "totals": {
+    "energyKj": 7744.0,
+    "energyKcal": 1850.0,
+    "protein": 87.0,
+    "fat": 79.0,
+    "carbohydrate": 191.0,
+    "sodium": 3436.0,
+    "calcium": 423.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 116.5,
+  "reference_total": 116.5,
+  "open_reference_total": 116.5,
+  "booked_total": 0,
+  "booked_known": true,
+  "quote_total": 116.5,
+  "budget_status": "no_budget",
+  "money_basis": "quoted",
+  "violations": [],
+  "summary": {
+    "gaps": {
+      "kcal": 0.0,
+      "protein": 2.0,
+      "fat": -6.0,
+      "carbo": -59.0,
+      "budget": null
+    },
+    "budget": null,
+    "cost": 116.5,
+    "reference_total": 116.5,
+    "quote_total": 116.5,
+    "booked_total": 0
+  },
+  "targets": {
+    "kcal_min": 1700.0,
+    "kcal_max": 2000.0,
+    "protein_min": 85.0,
+    "fat_min": null,
+    "fat_max": 85.0,
+    "carb_min": null,
+    "carb_max": 250.0,
+    "budget": null
+  },
+  "signature": "f3aad46ab81097d7",
+  "quotes": {
+    "breakfast": {
+      "status": "ok",
+      "amount": 40.5,
+      "amount_fen": 4050,
+      "original_fen": 4050,
+      "discount_fen": 0,
+      "unit": "CNY",
+      "queried_at": "2026-10-19 21:30:51",
+      "reservation_date": "2026-10-20 08:15",
+      "quote_kind": "slot_quote",
+      "take_way": [
+        "eat-in",
+        "take-in-store"
+      ],
+      "message": "请求成功",
+      "signature": "01f2f6decb2fe4d1",
+      "source": "live",
+      "requested_items": [
+        {
+          "productCode": "5022",
+          "quantity": 1
+        },
+        {
+          "productCode": "505235",
+          "quantity": 1
+        },
+        {
+          "productCode": "2430",
+          "quantity": 1
+        }
+      ]
+    },
+    "lunch": {
+      "status": "ok",
+      "amount": 38.5,
+      "amount_fen": 3850,
+      "original_fen": 3850,
+      "discount_fen": 0,
+      "unit": "CNY",
+      "queried_at": "2026-10-19 21:30:57",
+      "reservation_date": "2026-10-20 12:15",
+      "quote_kind": "slot_quote",
+      "take_way": [
+        "eat-in",
+        "take-in-store"
+      ],
+      "message": "请求成功",
+      "signature": "d5bebdb1915dfccf",
+      "source": "live",
+      "requested_items": [
+        {
+          "productCode": "1406",
+          "quantity": 1
+        },
+        {
+          "productCode": "1401",
+          "quantity": 1
+        }
+      ]
+    },
+    "dinner": {
+      "status": "ok",
+      "amount": 37.5,
+      "amount_fen": 3750,
+      "original_fen": 3750,
+      "discount_fen": 0,
+      "unit": "CNY",
+      "queried_at": "2026-10-19 21:31:01",
+      "reservation_date": "2026-10-20 18:30",
+      "quote_kind": "slot_quote",
+      "take_way": [
+        "eat-in",
+        "take-in-store"
+      ],
+      "message": "请求成功",
+      "signature": "99d2313c2e45027c",
+      "source": "live",
+      "requested_items": [
+        {
+          "productCode": "1106",
+          "quantity": 1
+        },
+        {
+          "productCode": "2430",
+          "quantity": 1
+        }
+      ]
+    }
+  },
+  "quotes_valid": true,
+  "cache": {
+    "source": "cache",
+    "fetched_at": "2026-10-19T03:18:37",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "3b1b8366538d"
+  },
+  "note": "",
+  "quoting": {
+    "attempted": true,
+    "status": "no_budget",
+    "failed_meals": [],
+    "effective_cost": 116.5,
+    "signature": "f3aad46ab81097d7",
+    "note": ""
+  }
+}

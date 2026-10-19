@@ -1,0 +1,89 @@
+{
+  "ok": true,
+  "sku": {
+    "code": "511782",
+    "name": "芝士安格斯厚牛堡"
+  },
+  "supportModify": true,
+  "groups": [
+    {
+      "index": 0,
+      "name": null,
+      "values": [
+        {
+          "code": "100201",
+          "name": "醇香芝士风味酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0
+        },
+        {
+          "code": "102215",
+          "name": "高达干酪片",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0
+        },
+        {
+          "code": "102225",
+          "name": "番茄片",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0
+        },
+        {
+          "code": "120160",
+          "name": "黄油",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "code": "100201",
+      "name": "醇香芝士风味酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": true,
+      "default_suggestion": true
+    },
+    {
+      "code": "102215",
+      "name": "高达干酪片",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": true,
+      "default_suggestion": true
+    },
+    {
+      "code": "102225",
+      "name": "番茄片",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "default_suggestion": false
+    },
+    {
+      "code": "120160",
+      "name": "黄油",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "default_suggestion": true
+    }
+  ],
+  "reason": "",
+  "meal": "lunch",
+  "checked_at": "2026-10-19T23:30:34"
+}

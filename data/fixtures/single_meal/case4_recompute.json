@@ -1,0 +1,158 @@
+{
+  "feasible": true,
+  "meals": [
+    {
+      "meal": "lunch",
+      "meal_label": "午餐",
+      "items": [
+        {
+          "code": "511782",
+          "name": "芝士安格斯厚牛堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 2914.0,
+            "energyKcal": 696.0,
+            "protein": 32.0,
+            "fat": 44.0,
+            "carbohydrate": 43.0,
+            "sodium": 897.0,
+            "calcium": 150.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "standard_unadjusted",
+          "removal_notes": [
+            "建议去掉高达干酪片。去掉后的营养官方未提供，此处显示标准版数值。",
+            "去掉高达干酪片后，蛋白质可能低于显示值。"
+          ],
+          "price_ref": 31.5,
+          "quantity": 1.0,
+          "line_total_ref": 31.5,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "lunch",
+          "modification": [
+            {
+              "code": "100201",
+              "key": "0-1",
+              "quantity": 1
+            },
+            {
+              "code": "102215",
+              "key": "0-0",
+              "quantity": 1
+            },
+            {
+              "code": "102225",
+              "key": "0-1",
+              "quantity": 1
+            },
+            {
+              "code": "120160",
+              "key": "0-1",
+              "quantity": 1
+            }
+          ],
+          "can_remove_sauce": false,
+          "removals": [
+            {
+              "component": "高达干酪片",
+              "component_code": "102215",
+              "scenario": "standard_unadjusted"
+            }
+          ]
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2914.0,
+        "energyKcal": 696.0,
+        "protein": 32.0,
+        "fat": 44.0,
+        "carbohydrate": 43.0,
+        "sodium": 897.0,
+        "calcium": 150.0
+      },
+      "unknown": [],
+      "price_ref": 31.5,
+      "amount_actual": null,
+      "amount_source": "reference",
+      "quote": null,
+      "is_estimate": false,
+      "locked": false
+    }
+  ],
+  "totals": {
+    "energyKj": 2914.0,
+    "energyKcal": 696.0,
+    "protein": 32.0,
+    "fat": 44.0,
+    "carbohydrate": 43.0,
+    "sodium": 897.0,
+    "calcium": 150.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 31.5,
+  "reference_total": 31.5,
+  "open_reference_total": 31.5,
+  "booked_total": 0,
+  "booked_known": true,
+  "quote_total": null,
+  "budget_status": "reference",
+  "money_basis": "reference",
+  "violations": [],
+  "summary": {
+    "gaps": {
+      "kcal": -49304.0,
+      "protein": 2.0,
+      "fat": -16.0,
+      "carbo": 43.0,
+      "budget": 8.5
+    },
+    "budget": 40.0,
+    "cost": 31.5,
+    "reference_total": 31.5,
+    "quote_total": null,
+    "booked_total": 0
+  },
+  "targets": {
+    "kcal_min": 0.0,
+    "kcal_max": 100000.0,
+    "protein_min": 30.0,
+    "fat_min": null,
+    "fat_max": 60.0,
+    "carb_min": null,
+    "carb_max": null,
+    "budget": 40.0
+  },
+  "signature": "57372222a440fba6",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "cache",
+    "fetched_at": "2026-10-19T03:18:37",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "3b1b8366538d"
+  },
+  "note": "",
+  "mode": "single",
+  "baseline_created_at": "2026-10-19T23:30:34",
+  "plan_version": "dd0082dcb41047c5",
+  "issues": [],
+  "open_targets": {
+    "kcal_min": 0.0,
+    "kcal_max": 100000.0,
+    "protein_min": 30.0,
+    "fat_min": null,
+    "fat_max": 60.0,
+    "carb_min": null,
+    "carb_max": null,
+    "budget": 40.0
+  }
+}

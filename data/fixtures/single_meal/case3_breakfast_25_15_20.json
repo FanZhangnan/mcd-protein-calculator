@@ -1,0 +1,212 @@
+{
+  "feasible": false,
+  "meals": [
+    {
+      "meal": "breakfast",
+      "meal_label": "早餐",
+      "items": [
+        {
+          "code": "514700",
+          "name": "原味板烧鸡腿炒双蛋堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1754.0,
+            "energyKcal": 419.0,
+            "protein": 27.0,
+            "fat": 21.0,
+            "carbohydrate": 30.0,
+            "sodium": 715.0,
+            "calcium": 116.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "price_ref": 18.5,
+          "quantity": 1.0,
+          "line_total_ref": 18.5,
+          "is_estimate": false,
+          "estimate": null,
+          "meal": "breakfast",
+          "modification": [],
+          "can_remove_sauce": false,
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 1754.0,
+        "energyKcal": 419.0,
+        "protein": 27.0,
+        "fat": 21.0,
+        "carbohydrate": 30.0,
+        "sodium": 715.0,
+        "calcium": 116.0
+      },
+      "unknown": [],
+      "price_ref": 18.5,
+      "amount_actual": null,
+      "amount_source": "reference",
+      "quote": null,
+      "is_estimate": false,
+      "locked": false
+    }
+  ],
+  "totals": {
+    "energyKj": 1754.0,
+    "energyKcal": 419.0,
+    "protein": 27.0,
+    "fat": 21.0,
+    "carbohydrate": 30.0,
+    "sodium": 715.0,
+    "calcium": 116.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 18.5,
+  "reference_total": 18.5,
+  "open_reference_total": 18.5,
+  "booked_total": 0,
+  "booked_known": true,
+  "quote_total": null,
+  "budget_status": "reference",
+  "money_basis": "reference",
+  "violations": [
+    {
+      "constraint": "fat",
+      "label": "脂肪",
+      "value": 21.0,
+      "target": "≤15",
+      "gap": 6.0,
+      "unit": "g"
+    }
+  ],
+  "summary": {
+    "gaps": {
+      "kcal": -49581.0,
+      "protein": 2.0,
+      "fat": 6.0,
+      "carbo": 30.0,
+      "budget": 1.5
+    },
+    "budget": 20.0,
+    "cost": 18.5,
+    "reference_total": 18.5,
+    "quote_total": null,
+    "booked_total": 0
+  },
+  "targets": {
+    "kcal_min": 0.0,
+    "kcal_max": 100000.0,
+    "protein_min": 25.0,
+    "fat_min": null,
+    "fat_max": 15.0,
+    "carb_min": null,
+    "carb_max": null,
+    "budget": 20.0
+  },
+  "signature": "6e938fd5dcf3dc51",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "cache",
+    "fetched_at": "2026-10-19T03:18:37",
+    "date": "2026-10-20",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "3b1b8366538d"
+  },
+  "note": "当前方案不满足全部硬约束（含未评估项），不视为达标，也不代表全局无解。",
+  "mode": "single",
+  "meal": "breakfast",
+  "meal_label": "早餐",
+  "allow_side": false,
+  "strict_mode": true,
+  "nutrition_basis": "official_standard",
+  "removable": {
+    "ok": true,
+    "sku": {
+      "code": "514700",
+      "name": "原味板烧鸡腿炒双蛋堡"
+    },
+    "supportModify": true,
+    "groups": [
+      {
+        "index": 0,
+        "name": null,
+        "values": [
+          {
+            "code": "102201",
+            "name": "烤味酱",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          }
+        ]
+      }
+    ],
+    "options": [
+      {
+        "code": "102201",
+        "name": "烤味酱",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "default_suggestion": true
+      }
+    ],
+    "reason": "",
+    "meal": "breakfast",
+    "checked_at": "2026-10-19T23:30:24"
+  },
+  "suggestions": [
+    {
+      "code": "102201",
+      "name": "烤味酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "default_suggestion": true
+    }
+  ],
+  "upgrade": null,
+  "frontier": {
+    "max_protein": {
+      "code": "6800",
+      "name": "原味板烧鸡腿麦满分",
+      "protein": 15.0,
+      "fat": 9.0,
+      "carb": 25.0,
+      "kcal": 246.0,
+      "cost": 15.0,
+      "items": [
+        "原味板烧鸡腿麦满分"
+      ]
+    },
+    "relax_fat": {
+      "code": "514700",
+      "name": "原味板烧鸡腿炒双蛋堡",
+      "protein": 27.0,
+      "fat": 21.0,
+      "carb": 30.0,
+      "kcal": 419.0,
+      "cost": 18.5,
+      "items": [
+        "原味板烧鸡腿炒双蛋堡"
+      ]
+    },
+    "relax_price": null,
+    "reachable": true,
+    "candidates": 22,
+    "message": "只放宽价格仍然达不到蛋白质目标",
+    "basis": "official_standard"
+  },
+  "basis": "single_meal"
+}

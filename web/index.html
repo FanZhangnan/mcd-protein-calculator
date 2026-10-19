@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>麦麦健身餐管家</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<header>
+  <h1>麦麦健身餐管家</h1>
+  <div id="meta" class="meta">加载中…</div>
+</header>
+
+<div class="mode-switch">
+  <button id="mode-single" class="mode active">单餐</button>
+  <button id="mode-day" class="mode">全天</button>
+  <span class="mode-hint">单餐：每次吃之前，先算这一顿怎么点。严格模式，营养只取官方标准版。</span>
+</div>
+
+<!-- ============================== 单餐模式 ============================== -->
+<div id="single-mode">
+  <section class="panel">
+    <h2>这一顿的要求</h2>
+    <div class="grid">
+      <label>餐次
+        <select id="s_meal">
+          <option value="breakfast">早餐</option>
+          <option value="lunch" selected>午餐</option>
+          <option value="dinner">晚餐</option>
+        </select>
+      </label>
+      <label>蛋白质下限 g<input id="s_protein" type="number" step="1" value="30"></label>
+      <label>脂肪上限 g<input id="s_fat" type="number" step="1" value="20"></label>
+      <label>价格上限 元<input id="s_budget" type="number" step="1" value="30"></label>
+    </div>
+    <details>
+      <summary>更多选项</summary>
+      <div class="grid">
+        <label>碳水上限 g<input id="s_carb" type="number" step="5"></label>
+        <label>热量下限 kcal<input id="s_kcal_min" type="number" step="10"></label>
+        <label>热量上限 kcal<input id="s_kcal_max" type="number" step="10"></label>
+        <label class="check"><input id="s_side" type="checkbox"> 允许配菜（最多 1 份）</label>
+      </div>
+    </details>
+    <details>
+      <summary>按身体数据估算（可选，可改）</summary>
+      <div class="grid">
+        <label>性别
+          <select id="s_sex"><option value="male">男</option><option value="female">女</option></select>
+        </label>
+        <label>年龄<input id="s_age" type="number" step="1" value="30"></label>
+        <label>身高 cm<input id="s_height" type="number" step="1" value="175"></label>
+        <label>体重 kg<input id="s_weight" type="number" step="0.5" value="70"></label>
+        <label>活动水平
+          <select id="s_activity">
+            <option value="1.2">久坐</option>
+            <option value="1.375" selected>轻度</option>
+            <option value="1.55">中度</option>
+            <option value="1.725">高强度</option>
+            <option value="1.9">运动员</option>
+          </select>
+        </label>
+        <label>每天餐数<input id="s_meals" type="number" step="1" value="3"></label>
+      </div>
+      <div class="row">
+        <button id="s-calc" class="ghost">填入建议值</button>
+      </div>
+      <div id="s-calc-note" class="status"></div>
+      <div class="sub">公式：Mifflin-St Jeor 算 BMR，乘活动系数得 TDEE，减脂取 TDEE − 500，按餐数平均；蛋白质按 1.6 g/kg 体重分配到每餐。只是预填，随时可改。</div>
+    </details>
+    <div class="row">
+      <button id="s-plan" class="primary">推荐这一餐</button>
+      <button id="s-quote" class="ghost" title="只按当前这一餐的商品/定制试算，不会重新选餐">为当前这一餐报价</button>
+    </div>
+    <div id="s-status" class="status"></div>
+  </section>
+
+  <section class="panel" id="s-result-panel" hidden>
+    <h2>推荐结果（严格模式）</h2>
+    <div id="s-result"></div>
+  </section>
+</div>
+
+<!-- ============================== 全天模式 ============================== -->
+<div id="day-mode" hidden>
+  <section class="panel">
+    <h2>1 · 目标与门店</h2>
+    <div class="grid">
+      <label>热量下限 kcal<input id="kcal_min" type="number" step="10"></label>
+      <label>热量上限 kcal<input id="kcal_max" type="number" step="10"></label>
+      <label>蛋白质下限 g<input id="protein_min" type="number" step="1"></label>
+      <label>脂肪上限 g<input id="fat_max" type="number" step="1"></label>
+      <label>碳水上限 g<input id="carb_max" type="number" step="5"></label>
+      <label>日预算 元<input id="budget" type="number" step="1"></label>
+      <label>日期<input id="date" type="date"></label>
+      <label>门店代码<input id="store_code" type="text"></label>
+      <label>早餐时间<input id="t_breakfast" type="time"></label>
+      <label>午餐时间<input id="t_lunch" type="time"></label>
+      <label>晚餐时间<input id="t_dinner" type="time"></label>
+      <label>去酱估算情景
+        <select id="scenario"></select>
+      </label>
+    </div>
+    <div class="row">
+      <button id="btn-save" class="ghost">保存目标</button>
+      <button id="btn-refresh" class="ghost">刷新真实菜单（MCP）</button>
+      <button id="btn-plan" class="primary" title="重新选餐，会清空当前数量与定制">重新生成方案</button>
+      <button id="btn-quote" class="ghost" title="只按当前商品/数量/定制试算，不会替换你的选择">为当前方案报价</button>
+    </div>
+    <div id="status" class="status"></div>
+  </section>
+
+  <section class="panel" id="summary-panel" hidden>
+    <h2>2 · 全天汇总</h2>
+    <div id="totals" class="totals"></div>
+    <div id="violations" class="violations"></div>
+  </section>
+
+  <section class="panel" id="plan-panel" hidden>
+    <h2>3 · 三餐方案</h2>
+    <div id="meals" class="meals"></div>
+  </section>
+
+  <section class="panel">
+    <h2>4 · 已吃记录与重排</h2>
+    <div id="intake" class="intake"></div>
+    <div class="row">
+      <button id="btn-replan" class="primary">按已吃记录重排剩余餐次</button>
+    </div>
+    <div id="remaining" class="status"></div>
+  </section>
+
+  <section class="panel" id="unknown-panel">
+    <h2>5 · 数据缺失与估算说明</h2>
+    <div id="unknown" class="unknown"></div>
+  </section>
+</div>
+
+<dialog id="est-dialog">
+  <h3>估算来源与假设</h3>
+  <div id="est-body"></div>
+  <button id="est-close" class="ghost">关闭</button>
+</dialog>
+
+<script src="/app.js"></script>
+</body>
+</html>
