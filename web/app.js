@@ -6,6 +6,7 @@ let SSIG = "";             // signature of the current plan
 let SREMOVED = {};         // { mainCode: [optionCode, ...] }
 let SLAST = null;          // last valid payload
 let WARN = {};             // { meal: "该时段返回的是另一餐次的菜单" }
+let RANK_EXPANDED = false;
 
 const STATUS_LABEL = {
   official: ["官方", "official"],
@@ -31,11 +32,14 @@ async function api(path, body, method = "POST") {
 
 const setStatus = (t) => { $("status").textContent = t || ""; };
 const setSStatus = (t) => { $("s-status").textContent = t || ""; };
-const num = (v, d = 1) => (v === null || v === undefined ? "—" : Number(v).toFixed(d));
+const num = (v, d = 1) => (v === null || v === undefined || Number.isNaN(Number(v))
+  ? "—" : Number(v).toFixed(d));
+const isNarrow = () => window.matchMedia("(max-width: 600px)").matches;
 
-function badge(status) {
-  const [label, cls] = STATUS_LABEL[status] || [status || "未知", "unknown"];
-  return `<span class="badge ${cls}">${label}</span>`;
+function comboName(o) {
+  if (!o) return "";
+  if (Array.isArray(o.items) && o.items.length) return o.items.join(" + ");
+  return o.name || "";
 }
 
 // ---------------------------------------------------------------- bootstrap
@@ -54,7 +58,7 @@ async function boot() {
   $("meta").innerHTML =
     `<span class="pill">${srcLabel}</span> 数据时间 ${c.fetched_at || "—"} · 门店 ${c.store_code || "—"}` +
     ` · 时段 早${c.meal_times?.breakfast || "—"} / 午${c.meal_times?.lunch || "—"} / 晚${c.meal_times?.dinner || "—"}` +
-    ` · 营养条目 ${BOOT.catalog.rows || 0}/${BOOT.catalog.unique_names || 0}` +
+    ` · 营养条目 ${BOOT.catalog?.rows || 0}/${BOOT.catalog?.unique_names || 0}` +
     (c.error ? ` · <b class="err">${c.error}</b>` : "");
   renderUnknown();
 }
@@ -64,9 +68,9 @@ function renderUnknown() {
   const unk = (BOOT && BOOT.unknown || {})[meal] || [];
   const rows = unk.map((u) => `<tr><td>${u.name}</td><td>${u.code}</td><td>${u.status}</td><td>${u.note || ""}</td></tr>`);
   $("unknown").innerHTML = rows.length
-    ? `<div>本餐次以下 SKU 无法唯一匹配官方营养，<b>未纳入计算</b>（不会按 0 处理）：</div>
-       <table><tr><th>名称</th><th>code</th><th>状态</th><th>原因</th></tr>${rows.join("")}</table>`
-    : "本餐次参与计算的所有 SKU 均有可核实的官方营养来源。";
+    ? `<div class="sub">本餐次以下 SKU 无法唯一匹配官方营养，<b>未纳入计算</b>（不会按 0 处理）：</div>
+       <table class="unknown-table"><tr><th>名称</th><th>code</th><th>状态</th><th>原因</th></tr>${rows.join("")}</table>`
+    : `<div class="sub">本餐次参与计算的所有 SKU 均有可核实的官方营养来源。</div>`;
 }
 
 // ------------------------------------------------------------------ landscape
@@ -79,23 +83,32 @@ async function loadLandscape() {
   } catch (e) {
     LAND = null;
     $("rank-table").innerHTML = "";
-    $("chart").innerHTML = `<text x="340" y="160" text-anchor="middle" class="tick">性价比图加载失败：${e.message}</text>`;
+    $("rank-cards").innerHTML = "";
+    $("chart").innerHTML = `<text x="340" y="200" text-anchor="middle" class="tick">性价比图加载失败：${e.message}</text>`;
     return;
   }
-  renderRankTable();
+  renderRank();
   drawChart();
   updateCapHint();
   renderUnknown();
   if (WARN[meal] && !S) setSStatus(WARN[meal]);
 }
 
-function renderRankTable() {
-  if (!LAND || !LAND.items.length) {
+function renderRank() {
+  const items = (LAND && LAND.items) || [];
+  const shown = items.slice(0, RANK_EXPANDED ? 10 : 5);
+  const planCodes = new Set((S && S.items || [])
+    .filter((i) => i.kind === "main").map((i) => String(i.code)));
+
+  if (!items.length) {
     $("rank-table").innerHTML = "<tr><td class='sub'>本餐次没有匹配到官方营养的主食。</td></tr>";
+    $("rank-cards").innerHTML = "";
+    $("rank-toggle").hidden = true;
     return;
   }
-  const rows = LAND.items.slice(0, 10).map((it, idx) => `
-    <tr class="${idx < 3 ? "hot" : ""}">
+
+  const rows = shown.map((it, idx) => `
+    <tr class="${idx < 3 ? "hot" : ""} ${planCodes.has(String(it.code)) ? "in-plan" : ""}">
       <td>${idx + 1}</td>
       <td class="name">${it.name}</td>
       <td>${num(it.price, 2)} 元</td>
@@ -105,131 +118,207 @@ function renderRankTable() {
       <td>${num(it.protein_per_yuan)} g/元</td>
     </tr>`).join("");
   $("rank-table").innerHTML =
-    `<tr><th>#</th><th>主食</th><th>价格</th><th>蛋白质</th><th>脂肪</th><th>热量</th><th>每元蛋白质</th></tr>${rows}`;
+    `<tr><th>#</th><th class="name">主食</th><th>价格</th><th>蛋白质</th><th>脂肪</th><th>热量</th><th>每元蛋白质</th></tr>${rows}`;
+
+  $("rank-cards").innerHTML = shown.map((it) => `
+    <div class="rank-card ${planCodes.has(String(it.code)) ? "in-plan" : ""}">
+      <div class="rc-name">${it.name}</div>
+      <div class="rc-meta">${num(it.protein)} g · ${num(it.price, 2)} 元 · ${num(it.protein_per_yuan)} g/元</div>
+    </div>`).join("");
+
+  const toggle = $("rank-toggle");
+  toggle.hidden = items.length <= 5;
+  toggle.textContent = RANK_EXPANDED ? "收起" : "展开全部（前 10）";
 }
 
 const fmtTick = (v) => (Number.isInteger(v) ? String(v) : Number(v).toFixed(1));
+const axisMax = (value) => Math.max(5, Math.ceil((Math.max(0, value) * 1.15) / 5) * 5);
 
-const niceProteinMax = (v) => (v <= 10 ? 8 : Math.ceil(v / 20) * 20);
+const CHART_W = 680;
+const PAD = { l: 56, r: 18, t: 24, b: 46 };
+// a taller canvas on phones keeps the plot >= 240 px at 390 px wide
+const chartHeight = () => (isNarrow() ? 500 : 420);
 
-const niceMax = (value) => {
-  if (!Number.isFinite(value) || value <= 0) return 10;
-  const step = value > 80 ? 20 : value > 40 ? 10 : 5;
-  return Math.ceil((value * 1.15) / step) * step;
-};
+function planPoint(s) {
+  if (!s || !s.items || !s.items.length || !(Number(s.cost) > 0)) return null;
+  const t = s.totals || {};
+  if (t.protein === null || t.protein === undefined) return null;
+  return {
+    name: `推荐方案：${comboName(s)}`,
+    price: Number(s.cost), protein: Number(t.protein),
+    fat: Number(t.fat), kcal: Number(t.energyKcal),
+    ppy: s.protein_per_yuan, kind: "plan",
+  };
+}
+
+function saverPoint(s) {
+  if (!s || !s.saver) return null;
+  const v = s.saver;
+  if (v.protein === null || v.protein === undefined) return null;
+  return {
+    name: `省钱选项：${comboName(v)}`,
+    price: Number(v.cost), protein: Number(v.protein),
+    fat: Number(v.fat), kcal: Number(v.kcal),
+    ppy: v.protein_per_yuan, kind: "saver",
+  };
+}
+
+function starPath(cx, cy, outer, inner) {
+  const pts = [];
+  for (let i = 0; i < 10; i += 1) {
+    const r = i % 2 === 0 ? outer : inner;
+    const a = -Math.PI / 2 + (i * Math.PI) / 5;
+    pts.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
+  }
+  return `M${pts.join("L")}Z`;
+}
 
 function drawChart() {
   const svg = $("chart");
-  if (!LAND || !LAND.items.length) {
-    svg.innerHTML = `<text x="340" y="160" text-anchor="middle" class="tick">本餐次暂无可绘制的主食</text>`;
+  const H = chartHeight();
+  svg.setAttribute("viewBox", `0 0 ${CHART_W} ${H}`);
+  const items = (LAND && LAND.items) || [];
+  if (!items.length) {
+    svg.innerHTML = `<text x="340" y="${H / 2}" text-anchor="middle" class="tick">本餐次暂无可绘制的主食</text>`;
     return;
   }
-  const W = 680, H = 330, pad = { l: 56, r: 20, t: 18, b: 46 };
-  const maxPrice = niceMax(Math.max(...LAND.items.map((d) => d.price)));
-  const proteinTarget = Number($("s_protein").value);
-  const maxProtein = niceProteinMax(Math.max(
-    ...LAND.items.map((d) => d.protein),
-    Number.isFinite(proteinTarget) && proteinTarget > 0 ? proteinTarget : 0,
-  ));
-  const x = (v) => pad.l + (v / maxPrice) * (W - pad.l - pad.r);
-  const y = (v) => H - pad.b - (v / maxProtein) * (H - pad.t - pad.b);
-
+  const target = Number($("s_protein").value);
   const budget = Number($("s_budget").value);
-  const protein = Number($("s_protein").value);
-  const hasTarget = Number.isFinite(budget) && budget > 0 && Number.isFinite(protein) && protein >= 0;
+  const rec = planPoint(S);
+  const saver = saverPoint(S);
+
+  const xs = items.map((d) => d.price).concat([Number.isFinite(budget) && budget > 0 ? budget : 0]);
+  const ys = items.map((d) => d.protein).concat([Number.isFinite(target) && target > 0 ? target : 0]);
+  [rec, saver].forEach((p) => { if (p) { xs.push(p.price); ys.push(p.protein); } });
+  const xMax = axisMax(Math.max(...xs));
+  const yMax = axisMax(Math.max(...ys));
+
+  const x = (v) => PAD.l + (Math.min(v, xMax) / xMax) * (CHART_W - PAD.l - PAD.r);
+  const y = (v) => H - PAD.b - (Math.min(v, yMax) / yMax) * (H - PAD.t - PAD.b);
 
   let g = "";
-  for (let i = 0; i <= 4; i += 1) {
-    const px = pad.l + (i / 4) * (W - pad.l - pad.r);
-    const py = H - pad.b - (i / 4) * (H - pad.t - pad.b);
-    g += `<line class="grid" x1="${px}" y1="${pad.t}" x2="${px}" y2="${H - pad.b}"/>`;
-    g += `<line class="grid" x1="${pad.l}" y1="${py}" x2="${W - pad.r}" y2="${py}"/>`;
-    g += `<text class="tick" x="${px}" y="${H - pad.b + 15}" text-anchor="middle">${fmtTick((maxPrice * i) / 4)}</text>`;
-    g += `<text class="tick" x="${pad.l - 8}" y="${py + 3}" text-anchor="end">${fmtTick((maxProtein * i) / 4)}</text>`;
+  for (let i = 0; i <= 5; i += 1) {
+    const px = PAD.l + (i / 5) * (CHART_W - PAD.l - PAD.r);
+    const py = H - PAD.b - (i / 5) * (H - PAD.t - PAD.b);
+    g += `<line class="grid" x1="${px}" y1="${PAD.t}" x2="${px}" y2="${H - PAD.b}"/>`;
+    g += `<line class="grid" x1="${PAD.l}" y1="${py}" x2="${CHART_W - PAD.r}" y2="${py}"/>`;
+    g += `<text class="tick" x="${px}" y="${H - PAD.b + 15}" text-anchor="middle">${fmtTick((xMax * i) / 5)}</text>`;
+    g += `<text class="tick" x="${PAD.l - 8}" y="${py + 3}" text-anchor="end">${fmtTick((yMax * i) / 5)}</text>`;
   }
-  g += `<line class="axis" x1="${pad.l}" y1="${H - pad.b}" x2="${W - pad.r}" y2="${H - pad.b}"/>`;
-  g += `<line class="axis" x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${H - pad.b}"/>`;
-  g += `<text class="axis-label" x="${(pad.l + W - pad.r) / 2}" y="${H - 10}" text-anchor="middle">价格（元）</text>`;
-  g += `<text class="axis-label" x="14" y="${(pad.t + H - pad.b) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(pad.t + H - pad.b) / 2})">蛋白质（g）</text>`;
+  g += `<line class="axis" x1="${PAD.l}" y1="${H - PAD.b}" x2="${CHART_W - PAD.r}" y2="${H - PAD.b}"/>`;
+  g += `<line class="axis" x1="${PAD.l}" y1="${PAD.t}" x2="${PAD.l}" y2="${H - PAD.b}"/>`;
+  g += `<text class="axis-label" x="${(PAD.l + CHART_W - PAD.r) / 2}" y="${H - 8}" text-anchor="middle">价格（元）</text>`;
+  g += `<text class="axis-label" x="14" y="${(PAD.t + H - PAD.b) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(PAD.t + H - PAD.b) / 2})">蛋白质（g）</text>`;
 
-  if (hasTarget) {
-    const x1 = x(Math.min(budget, maxPrice));
-    const y1 = y(Math.min(protein, maxProtein));
-    g += `<rect class="region" x="${pad.l}" y="${pad.t}" width="${Math.max(0, x1 - pad.l)}" height="${Math.max(0, y1 - pad.t)}"/>`;
-    g += `<text class="region-label" x="${pad.l + 6}" y="${pad.t + 14}">达标区域</text>`;
+  if (Number.isFinite(budget) && budget > 0 && Number.isFinite(target) && target > 0) {
+    const x2 = Math.max(PAD.l + 1, x(budget));
+    const y1 = Math.min(H - PAD.b - 1, y(target));
+    g += `<rect class="region" data-w="${(x2 - PAD.l).toFixed(1)}" data-h="${(y1 - PAD.t).toFixed(1)}" x="${PAD.l}" y="${PAD.t}" width="${(x2 - PAD.l).toFixed(1)}" height="${(y1 - PAD.t).toFixed(1)}"/>`;
+    g += `<text class="region-label" x="${PAD.l + 6}" y="${PAD.t + 14}">达标区域</text>`;
   }
 
-  const hotRows = LAND.items.slice(0, 3);
-  const hot = hotRows.map((d) => d.code);
-  const placed = [];
-  const labels = [];
-  const leaders = [];
-  hotRows.forEach((d) => {
-    const width = d.name.length * 11 + 8;
-    const anchor = x(d.price) > W - 170 ? "end" : "start";
-    const dx = anchor === "end" ? -9 : 9;
-    const lx = x(d.price) + dx;
-    let ly = y(d.protein) - 9;
-    const box = () => ({
-      l: anchor === "end" ? lx - width : lx, r: anchor === "end" ? lx : lx + width,
-      t: ly - 11, b: ly + 3,
-    });
-    let tries = 0;
-    while (placed.some((p) => !(box().r < p.l || box().l > p.r || box().b < p.t || box().t > p.b))
-           && tries < 8) {
-      ly -= 15;
-      tries += 1;
-    }
-    if (ly < pad.t + 12) ly = y(d.protein) + 20;
-    placed.push(box());
-    if (Math.abs(ly - (y(d.protein) - 9)) > 2) {
-      leaders.push(`<line class="leader" x1="${x(d.price)}" y1="${y(d.protein) - 5}"
-        x2="${lx}" y2="${ly - 3}"/>`);
-    }
-    labels.push(`<text class="dot-label" x="${lx}" y="${ly}" text-anchor="${anchor}">${d.name}</text>`);
+  items.forEach((d, idx) => {
+    const hot = idx < 3;
+    g += `<circle class="dot ${hot ? "hot" : ""}" data-point="${idx}" cx="${x(d.price).toFixed(1)}" cy="${y(d.protein).toFixed(1)}" r="${hot ? 5.5 : 4.5}"/>`;
   });
-  LAND.items.forEach((d) => {
-    const isHot = hot.includes(d.code);
-    g += `<circle class="dot ${isHot ? "hot" : ""}" cx="${x(d.price)}" cy="${y(d.protein)}" r="${isHot ? 6 : 4.5}" data-code="${d.code}"/>`;
+
+  const points = items.slice();
+  if (saver) {
+    points.push(saver);
+    const si = points.length - 1;
+    g += `<circle class="saver-marker" data-point="${si}" data-x="${x(saver.price).toFixed(1)}" data-y="${y(saver.protein).toFixed(1)}" cx="${x(saver.price).toFixed(1)}" cy="${y(saver.protein).toFixed(1)}" r="8"/>`;
+  }
+  if (rec) {
+    points.push(rec);
+    const ri = points.length - 1;
+    g += `<path class="rec-marker" data-point="${ri}" data-x="${x(rec.price).toFixed(1)}" data-y="${y(rec.protein).toFixed(1)}" d="${starPath(x(rec.price), y(rec.protein), 11, 4.6)}"/>`;
+  }
+
+  const labels = items.slice(0, 3).map((d, idx) => ({ idx, cx: x(d.price), cy: y(d.protein), name: d.name }));
+  labels.forEach((l) => {
+    g += `<text class="dot-label" data-label="${l.idx}" x="${(l.cx + 9).toFixed(1)}" y="${(l.cy - 9).toFixed(1)}" text-anchor="start">${l.name}</text>`;
   });
-  g += leaders.join("") + labels.join("");
+
   svg.innerHTML = g;
+  if (!isNarrow()) layoutLabels(svg, labels);
+  bindTips(svg, points);
+}
 
-  const tip = $("chart-tip");
-  svg.querySelectorAll("circle.dot").forEach((el) => {
-    const row = LAND.items.find((d) => String(d.code) === el.dataset.code);
-    if (!row) return;
-    el.addEventListener("mouseenter", () => {
-      tip.hidden = false;
-      tip.innerHTML = `<b>${row.name}</b><br>价格 ${num(row.price, 2)} 元 · 蛋白质 ${num(row.protein)} g<br>
-        脂肪 ${num(row.fat)} g · 热量 ${num(row.kcal, 0)} kcal<br>每元蛋白质 ${num(row.protein_per_yuan)} g`;
-    });
-    el.addEventListener("mousemove", (ev) => {
-      const rect = svg.getBoundingClientRect();
-      tip.style.left = `${ev.clientX - rect.left + 12}px`;
-      tip.style.top = `${ev.clientY - rect.top + 12}px`;
-    });
-    el.addEventListener("mouseleave", () => { tip.hidden = true; });
+function boxesOverlap(a, b, margin = 3) {
+  return !(a.r + margin < b.l || a.l - margin > b.r || a.b + margin < b.t || a.t - margin > b.b);
+}
+
+function layoutLabels(svg, labels) {
+  const H = chartHeight();
+  const placed = [];
+  svg.querySelectorAll("circle.dot, .rec-marker, .saver-marker").forEach((el) => {
+    const b = el.getBBox();
+    placed.push({ l: b.x, r: b.x + b.width, t: b.y, b: b.y + b.height });
+  });
+  const candidates = [
+    { dx: 9, dy: -9, anchor: "start" },
+    { dx: -9, dy: -9, anchor: "end" },
+    { dx: 9, dy: 16, anchor: "start" },
+    { dx: -9, dy: 16, anchor: "end" },
+    { dx: 0, dy: -18, anchor: "middle" },
+    { dx: 0, dy: 26, anchor: "middle" },
+    { dx: 14, dy: -32, anchor: "start" },
+    { dx: -14, dy: -32, anchor: "end" },
+    { dx: 14, dy: 38, anchor: "start" },
+    { dx: -14, dy: 38, anchor: "end" },
+    { dx: 0, dy: -40, anchor: "middle" },
+    { dx: 0, dy: 46, anchor: "middle" },
+  ];
+  labels.forEach((entry) => {
+    const text = svg.querySelector(`text.dot-label[data-label="${entry.idx}"]`);
+    if (!text) return;
+    for (const c of candidates) {
+      text.setAttribute("x", (entry.cx + c.dx).toFixed(1));
+      text.setAttribute("y", (entry.cy + c.dy).toFixed(1));
+      text.setAttribute("text-anchor", c.anchor);
+      const b = text.getBBox();
+      const box = { l: b.x, r: b.x + b.width, t: b.y, b: b.y + b.height };
+      const outside = box.l < PAD.l - 2 || box.r > CHART_W - PAD.r + 2
+        || box.t < 2 || box.b > H - PAD.b - 2;
+      if (outside || placed.some((p) => boxesOverlap(p, box))) continue;
+      placed.push(box);
+      const moved = Math.abs(c.dx) > 10 || c.dy > 10 || c.dy < -12;
+      if (moved) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("class", "leader");
+        line.setAttribute("x1", entry.cx.toFixed(1));
+        line.setAttribute("y1", entry.cy.toFixed(1));
+        line.setAttribute("x2", (entry.cx + c.dx * 0.75).toFixed(1));
+        line.setAttribute("y2", (entry.cy + c.dy * 0.75).toFixed(1));
+        svg.insertBefore(line, text);
+      }
+      return;
+    }
+    text.setAttribute("opacity", "0");
   });
 }
 
-function updateCapHint() {
-  const budget = Number($("s_budget").value);
-  if (!LAND || !Number.isFinite(budget) || budget <= 0) {
-    $("s-cap-hint").textContent = "";
-    return;
-  }
-  let best = null;
-  (LAND.frontier || []).forEach((p) => { if (p.price <= budget + 1e-9) best = p; });
-  $("s-cap-hint").textContent = best
-    ? `这家店这一餐，在价格 ≤ ${num(budget, 2)} 元时最多能买到 ${num(best.protein)} g 蛋白质（${best.items.join(" + ")}）。`
-    : `这家店这一餐，在价格 ≤ ${num(budget, 2)} 元时买不到任何有官方营养的主食。`;
-}
-
-function invalidateResult(message) {
-  S = null; SLAST = null; SSIG = ""; SREMOVED = {};
-  $("s-result-panel").hidden = true;
-  setSStatus(message || "参数已变化，请重新算这一餐。");
+function bindTips(svg, points) {
+  const tip = $("chart-tip");
+  const show = (ev, idx) => {
+    const row = points[idx];
+    if (!row) return;
+    tip.hidden = false;
+    tip.innerHTML = `<b>${row.name}</b><br>价格 ${num(row.price, 2)} 元 · 蛋白质 ${num(row.protein)} g<br>
+      脂肪 ${num(row.fat)} g · 热量 ${num(row.kcal, 0)} kcal<br>每元蛋白质 ${num(row.ppy)} g`;
+    const rect = svg.getBoundingClientRect();
+    const px = ev.clientX !== undefined ? ev.clientX - rect.left : 0;
+    const py = ev.clientY !== undefined ? ev.clientY - rect.top : 0;
+    tip.style.left = `${Math.max(6, px + 12)}px`;
+    tip.style.top = `${Math.max(6, py + 12)}px`;
+  };
+  svg.querySelectorAll("[data-point]").forEach((el) => {
+    const idx = Number(el.dataset.point);
+    el.addEventListener("mouseenter", (ev) => show(ev, idx));
+    el.addEventListener("mousemove", (ev) => show(ev, idx));
+    el.addEventListener("mouseleave", () => { tip.hidden = true; });
+    el.addEventListener("click", (ev) => { ev.stopPropagation(); show(ev, idx); });
+  });
 }
 
 // --------------------------------------------------------------- body estimate
@@ -258,6 +347,14 @@ function singleCalc() {
     + `蛋白质 ${protein.toFixed(1)} g（${goal === "muscle" ? "2.0" : "1.6"} g/kg ÷ ${meals} 餐），已填入蛋白质下限。`
     + "热量仅为参考，未作为约束。";
   updateCapHint();
+  drawChart();
+}
+
+function invalidateResult(message) {
+  S = null; SLAST = null; SSIG = ""; SREMOVED = {};
+  $("s-result-panel").hidden = true;
+  setSStatus(message || "参数已变化，请重新算这一餐。");
+  renderRank();
   drawChart();
 }
 
@@ -311,12 +408,6 @@ function singleQuoteLine(q) {
   return `试算失败：${q.message || q.status}`;
 }
 
-function comboName(o) {
-  if (!o) return "";
-  if (Array.isArray(o.items) && o.items.length) return o.items.join(" + ");
-  return o.name || "";
-}
-
 function relaxLines(s) {
   const f = s.frontier || {};
   const tg = s.targets || {};
@@ -343,34 +434,61 @@ function relaxLines(s) {
   return out;
 }
 
+function hintLines(s) {
+  const status = s.protein_status || (s.feasible ? "met" : "under");
+  if (status === "near") {
+    return [`接近达标：比目标少 ${num(s.protein_gap)} g，在你允许的 ${num(s.protein_tolerance, 0)} g 内。`];
+  }
+  if (status !== "under") return [];
+  const lines = ["当前条件下没有满足全部要求的方案"];
+  const cap = (s.frontier || {}).max_protein;
+  if (!(s.items || []).length) {
+    lines.push("没有任何组合同时满足价格、脂肪与热量上限，因此不显示商品卡片。");
+  } else if (cap) {
+    lines.push(`预算内最多：${num(cap.protein)} g 蛋白质，还差 ${num(cap.protein_gap)} g（${comboName(cap)}，${num(cap.cost, 2)} 元）。`);
+  }
+  const relax = relaxLines(s);
+  if (relax.length) lines.push(relax.join("；"));
+  return lines.slice(0, 3);
+}
+
+function statusBadge(s) {
+  const status = s.protein_status || (s.feasible ? "met" : "under");
+  if (status === "met") return '<span class="badge official">达标</span>';
+  if (status === "near") return `<span class="badge near">接近达标（少 ${num(s.protein_gap)} g）</span>`;
+  return '<span class="badge cap">预算内最多</span>';
+}
+
 function renderSingle(s) {
   if (!s) { $("s-result-panel").hidden = true; return; }
   const items = s.items || [];
   const t = s.totals || {};
   const q = s.quotes && s.quotes[s.meal];
   const main = items.find((i) => i.kind === "main");
-  const money = !items.length
-    ? "—（未选到商品）"
-    : (q && q.status === "ok" ? `试算价 ${q.amount} 元` : `参考价 ${num(s.cost, 2)} 元`);
+  const quoted = q && q.status === "ok";
+  const hasItems = items.length > 0;
+  const price = quoted ? Number(q.amount) : Number(s.cost || 0);
+  const priceText = hasItems ? num(price, 2) : "—";
+  const priceLabel = hasItems ? (quoted ? "已试算" : "参考价") : "未选到商品";
   const status = s.protein_status || (s.feasible ? "met" : "under");
-  const near = status === "near";
-  const fallback = status === "under" && items.length > 0;
-  const noCard = status === "under" && items.length === 0;
-  const gap = Number(s.protein_gap || 0);
-  const tolerance = Number(s.protein_tolerance || 0);
-  const statusBadge = status === "met" ? '<span class="badge official">达标</span>'
-    : near ? `<span class="badge near">接近达标（少 ${num(gap)} g）</span>`
-    : '<span class="badge cap">预算内最多</span>';
+  const lines = hintLines(s);
 
   const itemRows = items.map((i) => `
     <div class="item">
-      <div class="name">${i.name} × ${i.quantity} ${i.kind === "main" ? '<span class="badge official">主食</span>' : ""}</div>
-      <div class="sub">${num(i.nutrition?.energyKcal, 0)} kcal · P ${num(i.nutrition?.protein)} g ·
-        F ${num(i.nutrition?.fat)} g · C ${num(i.nutrition?.carbohydrate)} g
-        · ${num(i.price_ref, 2)} 元/份 · 行计 ${num(i.line_total_ref, 2)} 元</div>
-      ${(i.removal_notes || []).map((n) => `<div class="strict-note">${n}</div>`).join("")}
-      ${i.modification && i.modification.length
-        ? `<div class="sub">点单参数：${i.modification.map((m) => `${m.code}:${m.key}`).join("，")}</div>` : ""}
+      <div class="item-line">
+        <span class="name">${i.name}</span>
+        <span class="qty">× ${i.quantity}</span>
+        <span class="unit">${num(i.price_ref, 2)} 元/份</span>
+      </div>
+      <details class="item-detail">
+        <summary>明细</summary>
+        <div class="sub">${num(i.nutrition?.energyKcal, 0)} kcal · 蛋白质 ${num(i.nutrition?.protein)} g ·
+          脂肪 ${num(i.nutrition?.fat)} g · 碳水 ${num(i.nutrition?.carbohydrate)} g ·
+          钠 ${num(i.nutrition?.sodium, 0)} mg</div>
+        ${(i.removal_notes || []).map((n) => `<div class="strict-note">${n}</div>`).join("")}
+        ${i.modification && i.modification.length
+          ? `<div class="sub">点单参数：${i.modification.map((m) => `${m.code}:${m.key}`).join("，")}</div>` : ""}
+      </details>
     </div>`).join("");
 
   const mainCount = items.filter((i) => i.kind === "main").length;
@@ -386,26 +504,16 @@ function renderSingle(s) {
   }).join("");
 
   const upgradeList = (s.upgrades && s.upgrades.length) ? s.upgrades : (s.upgrade ? [s.upgrade] : []);
-  const upgrade = upgradeList.map((u) => `<div class="upgrade">
-      <b>升级一档：${u.label}</b>
+  const upgrade = upgradeList.map((u) => {
+    const over = u.fits === false;
+    return `<div class="upgrade ${over ? "over" : ""}">
+      <div class="up-head"><b>升级一档：${u.label}</b>
+        ${u.fit_note ? `<span class="fit ${over ? "over" : "ok"}">${u.fit_note}</span>` : ""}</div>
       <div>+${num(u.delta_protein)} g 蛋白质 · +${num(u.delta_price, 2)} 元 · +${num(u.delta_fat)} g 脂肪</div>
       ${u.show_conversion ? `<div class="sub">每多 1 元，多 ${num(u.protein_per_extra_yuan)} g 蛋白质。</div>` : ""}
       <div class="sub">依据：${u.evidence || "两款均为官方整款数据"}</div>
-    </div>`).join("");
-
-  let noSolution = "";
-  if (status === "under") {
-    const cap = (s.frontier || {}).max_protein;
-    const gap = cap && cap.protein_gap !== null && cap.protein_gap !== undefined
-      ? `，还差 ${num(cap.protein_gap)} g` : "";
-    const lines = relaxLines(s).map((line) => `<div class="relax">${line}</div>`).join("");
-    noSolution = `<div class="violations">
-      <div class="v title">当前条件下没有满足全部要求的方案</div>
-      ${noCard ? `<div class="v">没有任何组合同时满足价格、脂肪与热量上限，因此不显示商品卡片。</div>`
-        : `<div class="v">预算内最多：${cap ? `${num(cap.protein)} g 蛋白质${gap}（${comboName(cap)}，${num(cap.cost, 2)} 元）` : "—"}</div>`}
-      ${lines}
     </div>`;
-  }
+  }).join("");
 
   const saver = s.saver;
   const saverRow = (saver && status === "met") ? `<div class="saver-row">
@@ -413,31 +521,35 @@ function renderSingle(s) {
       <button class="ghost tiny" id="s-saver">换成这个</button>
     </div>` : "";
 
-  const totalsLine = `热量 ${num(t.energyKcal, 0)} kcal · 蛋白质 ${num(t.protein)} g ·
-    脂肪 ${num(t.fat)} g · 碳水 ${num(t.carbohydrate)} g · 钠 ${num(t.sodium, 0)} mg（官方）`;
-  const ppy = s.protein_per_yuan;
+  const hint = lines.length ? `<div class="violations ${status === "near" ? "near" : ""}">
+      ${lines.map((line, idx) => `<div class="v ${idx === 0 ? "title" : ""} ${idx === 2 ? "relax" : ""}">${line}</div>`).join("")}
+    </div>` : "";
+
+  const totalsLine = `每元蛋白质 ${num(s.protein_per_yuan)} g · 热量 ${num(t.energyKcal, 0)} kcal ·
+    脂肪 ${num(t.fat)} g · 碳水 ${num(t.carbohydrate)} g`;
 
   $("s-result").innerHTML = `
     <div class="single-card">
       <div class="single-head">
-        <div>
-          <b>${s.meal_label || s.meal}</b>
-          <span class="badge official">官方标准版</span>
-          ${statusBadge}
+        <div class="metrics">
+          <div class="metric"><span class="metric-num">${num(t.protein)}</span><span class="metric-unit">g 蛋白质</span></div>
+          <div class="metric price"><span class="metric-num">${priceText}</span><span class="metric-unit">元</span>
+            <span class="price-tag">${priceLabel}</span></div>
         </div>
-        <div><b>${money}</b></div>
+        <div class="statuses"><span class="badge official">官方标准版</span>${statusBadge(s)}</div>
       </div>
-      <div class="sub">${singleQuoteLine(q)}</div>
-      ${near ? `<div class="near-note">比目标少 ${num(gap)} g，在你允许的 ${num(tolerance, 0)} g 内。</div>` : ""}
+      <div class="result-sub">${totalsLine}</div>
+      ${hint}
       ${itemRows}
-      <div class="nutr"><span>${totalsLine}</span>
-        <span><b>每元蛋白质 ${num(ppy)} g</b></span></div>
-      ${noSolution}
       ${saverRow}
-      ${suggestions ? `<details class="sugg-box"><summary>点单建议（点击展开；默认不改动）</summary>${suggestions}
+      <div class="quote-row">
+        <button id="s-quote" class="ghost" title="只按当前这一餐的商品/定制试算，不会重新选餐">为当前方案报价</button>
+        <span class="sub">${singleQuoteLine(q)}</span>
+      </div>
+      ${suggestions ? `<details class="sugg-box"><summary>点单建议（点击展开，默认不改动）</summary>${suggestions}
         <div class="sub">去掉配料只写进点单参数；营养数值仍为标准版官方数据。</div></details>` : ""}
-      ${upgrade}
-      <div class="sub">严格模式：营养一律取官方整款标准版；去除配料只影响点单参数，不扣减任何数值。</div>
+      ${upgrade ? `<details class="upgrade-box"><summary>肉量升级（整款替换）</summary>${upgrade}</details>` : ""}
+      <div class="sub strict-foot">严格模式：营养一律取官方整款标准版；去除配料只影响点单参数，不扣减任何数值。</div>
     </div>`;
   $("s-result-panel").hidden = false;
 
@@ -454,6 +566,11 @@ function renderSingle(s) {
   });
   const saverBtn = $("s-saver");
   if (saverBtn) saverBtn.onclick = () => singlePlan({ select: "saver" });
+  const quoteBtn = $("s-quote");
+  if (quoteBtn) quoteBtn.onclick = singleQuote;
+
+  renderRank();
+  drawChart();
 }
 
 // ---------------------------------------------------------------------- flows
@@ -538,24 +655,35 @@ async function singleQuote() {
   }
 }
 
+function updateCapHint() {
+  const budget = Number($("s_budget").value);
+  if (!LAND || !Number.isFinite(budget) || budget <= 0) {
+    $("s-cap-hint").textContent = "";
+    return;
+  }
+  let best = null;
+  (LAND.frontier || []).forEach((p) => { if (p.price <= budget + 1e-9) best = p; });
+  $("s-cap-hint").textContent = best
+    ? `这家店这一餐，在价格 ≤ ${num(budget, 2)} 元时最多能买到 ${num(best.protein)} g 蛋白质（${best.items.join(" + ")}）。`
+    : `这家店这一餐，在价格 ≤ ${num(budget, 2)} 元时买不到任何有官方营养的主食。`;
+}
+
 // -------------------------------------------------------------------- bindings
 $("s_meal").addEventListener("change", () => { invalidateResult(); loadLandscape(); });
 $("s_max_mains").addEventListener("change", () => { invalidateResult(); loadLandscape(); });
-$("s_budget").addEventListener("input", () => { invalidateResult(); updateCapHint(); drawChart(); });
+$("s_budget").addEventListener("input", () => { invalidateResult(); updateCapHint(); });
 $("s_protein").addEventListener("input", () => {
-  // the body-data note describes a prefill that no longer applies
   $("s-calc-note").textContent = "";
   invalidateResult();
-  drawChart();
 });
-["s_fat", "s_kcal_min", "s_kcal_max"].forEach((id) => {
+["s_fat", "s_kcal_min", "s_kcal_max", "s_tolerance"].forEach((id) => {
   $(id).addEventListener("input", () => invalidateResult());
 });
 $("s_side").addEventListener("change", () => invalidateResult());
-$("s_tolerance").addEventListener("input", () => invalidateResult());
 $("s-calc").onclick = singleCalc;
 $("s-plan").onclick = () => singlePlan();
-$("s-quote").onclick = singleQuote;
+
+$("rank-toggle").onclick = () => { RANK_EXPANDED = !RANK_EXPANDED; renderRank(); };
 
 $("btn-save").onclick = async () => {
   try {
@@ -579,6 +707,16 @@ $("btn-refresh").onclick = async () => {
     setStatus(`刷新完成：${r.date} · 来源 ${r.source} · ${r.fetched_at}。`);
   } catch (e) { setStatus("刷新失败：" + e.message); }
 };
+
+let resizeTimer = null;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => drawChart(), 150);
+});
+
+document.addEventListener("click", (ev) => {
+  if (!ev.target.closest("#chart-panel")) $("chart-tip").hidden = true;
+});
 
 async function init() {
   try {

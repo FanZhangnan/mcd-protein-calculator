@@ -126,9 +126,8 @@ async function main() {
       region: (() => { const r = document.querySelector('#chart rect.region');
         return r ? {x: +r.getAttribute('width'), y: +r.getAttribute('height')} : null; })(),
       card: (() => {
-        const code = S.items.filter(i => i.kind === 'main')[0].code;
-        const dot = document.querySelector('#chart circle[data-code="' + code + '"]');
-        return dot ? {cx: +dot.getAttribute('cx'), cy: +dot.getAttribute('cy')} : null;
+        const el = document.querySelector('#chart .rec-marker');
+        return el ? {cx: +el.dataset.x, cy: +el.dataset.y} : null;
       })()
     })`).then(JSON.parse);
   check("故事1 无解且主卡在预算内",

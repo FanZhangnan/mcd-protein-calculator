@@ -116,7 +116,7 @@
   "quotes_valid": false,
   "cache": {
     "source": "live",
-    "fetched_at": "2026-10-20T14:40:19",
+    "fetched_at": "2026-10-20T15:30:59",
     "date": "2026-10-21",
     "store_code": "1440054",
     "meal_times": {
@@ -195,7 +195,7 @@
     ],
     "reason": "",
     "meal": "lunch",
-    "checked_at": "2026-10-20T14:40:45"
+    "checked_at": "2026-10-20T15:31:05"
   },
   "removables": {
     "1600": {
@@ -255,7 +255,7 @@
       ],
       "reason": "",
       "meal": "lunch",
-      "checked_at": "2026-10-20T14:40:45"
+      "checked_at": "2026-10-20T15:31:05"
     }
   },
   "suggestions": [
@@ -307,10 +307,16 @@
     "evidence": "麦香鱼为 1 块鳕鱼排，双层深海鳕鱼堡为 2 块；两款均在 1440054 午餐菜单在售，官方整款蛋白质 16 g → 28 g，价格 22 → 25 元",
     "delta_protein": 12.0,
     "delta_fat": 8.0,
+    "delta_kcal": 160.0,
     "delta_price": 3.0,
     "protein_per_extra_yuan": 4.0,
     "show_conversion": true,
-    "basis": "official_standard"
+    "basis": "official_standard",
+    "fits": false,
+    "fit_note": "升级后价格超出预算 5.00 元、脂肪超出上限 12.0 g",
+    "upgraded_cost": 50.0,
+    "upgraded_fat": 42.0,
+    "upgraded_kcal": 970.0
   },
   "upgrades": [
     {
@@ -332,10 +338,16 @@
       "evidence": "麦香鱼为 1 块鳕鱼排，双层深海鳕鱼堡为 2 块；两款均在 1440054 午餐菜单在售，官方整款蛋白质 16 g → 28 g，价格 22 → 25 元",
       "delta_protein": 12.0,
       "delta_fat": 8.0,
+      "delta_kcal": 160.0,
       "delta_price": 3.0,
       "protein_per_extra_yuan": 4.0,
       "show_conversion": true,
-      "basis": "official_standard"
+      "basis": "official_standard",
+      "fits": false,
+      "fit_note": "升级后价格超出预算 5.00 元、脂肪超出上限 12.0 g",
+      "upgraded_cost": 50.0,
+      "upgraded_fat": 42.0,
+      "upgraded_kcal": 970.0
     }
   ],
   "frontier": {

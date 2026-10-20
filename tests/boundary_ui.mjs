@@ -113,7 +113,7 @@ async function main() {
         !/0\.00\s*元/.test(fail.head) && fail.head.includes("参考价"),
         fail.head.replace(/\s+/g, " ").slice(0, 60));
   check("报价失败保留菜单参考价",
-        refCost > 0 && fail.head.includes(`参考价 ${refCost.toFixed(2)} 元`),
+        refCost > 0 && fail.head.includes(refCost.toFixed(2)) && fail.head.includes("参考价"),
         `参考价 ${refCost} / ${fail.head.replace(/\s+/g, " ").slice(0, 50)}`);
 
   await sleep(300);

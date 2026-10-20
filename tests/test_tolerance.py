@@ -31,9 +31,9 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "tests"))
 
 import planner as planner_mod  # noqa: E402
-from planner import Item, Targets  # noqa: E402
+from planner import Item, PlanResult, Targets  # noqa: E402
 from service import Service  # noqa: E402
-from helpers import nutr, new_svc  # noqa: E402
+from helpers import nutr, new_svc, one_meal  # noqa: E402
 
 # prices/protein deliberately mirror the live 双层吉士 / 麦香鸡 pair
 BEEF = Item("X", "合成双层吉士", "main", nutr(798, 27, 39), "synthetic", "合成", 22.5, 1, meal="lunch")
@@ -158,6 +158,48 @@ class ToleranceTest(unittest.TestCase):
         payload = self.plan(44, 41)
         item_protein = sum(i["nutrition"]["protein"] * i["quantity"] for i in payload["items"])
         self.assertEqual(payload["totals"]["protein"], item_protein)
+
+
+class UpgradeFitTest(unittest.TestCase):
+    """The ladder step must be checked against the caps the user actually set."""
+
+    STEP = {"from": {"code": "X"}, "delta_price": 3.0, "delta_fat": 8.0, "delta_kcal": 120.0}
+
+    def _annotate(self, cost, fat, budget, fat_max=None):
+        plan = one_meal([BEEF])
+        result = PlanResult(feasible=False, meals=plan,
+                            totals={"protein": 32.0, "fat": fat, "energyKcal": 650.0},
+                            unknowns=[], is_estimate=False, cost=cost,
+                            violations=[], score=0.0)
+        step = dict(self.STEP)
+        Service._annotate_upgrade(step, plan[0], result,
+                                  Targets(protein_min=40, budget=budget, fat_max=fat_max))
+        return step
+
+    def test_over_budget_and_fat_is_flagged(self):
+        step = self._annotate(cost=44.0, fat=26.0, budget=45, fat_max=30)
+        self.assertFalse(step["fits"])
+        self.assertIn("价格超出预算", step["fit_note"])
+        self.assertIn("脂肪超出上限", step["fit_note"])
+        self.assertEqual(step["upgraded_cost"], 47.0)
+
+    def test_within_caps_says_so(self):
+        step = self._annotate(cost=44.0, fat=26.0, budget=55, fat_max=50)
+        self.assertTrue(step["fits"])
+        self.assertEqual(step["fit_note"], "升级后仍在限制内")
+
+    def test_quantity_two_doubles_the_deltas(self):
+        plan = one_meal([Item("X", "合成双层吉士", "main", nutr(798, 27, 39),
+                              "synthetic", "合成", 22.5, 2, meal="lunch")])
+        result = PlanResult(feasible=False, meals=plan,
+                            totals={"protein": 54.0, "fat": 78.0, "energyKcal": 1596.0},
+                            unknowns=[], is_estimate=False, cost=45.0,
+                            violations=[], score=0.0)
+        step = dict(self.STEP)
+        Service._annotate_upgrade(step, plan[0], result,
+                                  Targets(protein_min=40, budget=55, fat_max=100))
+        self.assertEqual(step["upgraded_cost"], 51.0)
+        self.assertTrue(step["fits"])
 
 
 class SelectValidationTest(unittest.TestCase):

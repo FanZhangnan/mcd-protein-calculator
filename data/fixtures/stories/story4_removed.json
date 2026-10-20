@@ -156,7 +156,7 @@
   "quotes_valid": false,
   "cache": {
     "source": "live",
-    "fetched_at": "2026-10-20T14:40:19",
+    "fetched_at": "2026-10-20T15:30:59",
     "date": "2026-10-21",
     "store_code": "1440054",
     "meal_times": {
@@ -169,7 +169,7 @@
   },
   "note": "当前方案不满足全部硬约束，不视为达标。",
   "mode": "single",
-  "baseline_created_at": "2026-10-20T14:40:45",
+  "baseline_created_at": "2026-10-20T15:31:05",
   "plan_version": "c261c9cf285a1c66",
   "issues": [],
   "meal": "lunch",

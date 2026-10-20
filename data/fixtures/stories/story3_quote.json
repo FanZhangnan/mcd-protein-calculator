@@ -49,7 +49,7 @@
         "original_fen": 1850,
         "discount_fen": 0,
         "unit": "CNY",
-        "queried_at": "2026-10-20 12:40:39",
+        "queried_at": "2026-10-20 13:31:04",
         "reservation_date": "2026-10-21 08:15",
         "quote_kind": "slot_quote",
         "take_way": [
@@ -134,7 +134,7 @@
       "original_fen": 1850,
       "discount_fen": 0,
       "unit": "CNY",
-      "queried_at": "2026-10-20 12:40:39",
+      "queried_at": "2026-10-20 13:31:04",
       "reservation_date": "2026-10-21 08:15",
       "quote_kind": "slot_quote",
       "take_way": [
@@ -155,7 +155,7 @@
   "quotes_valid": true,
   "cache": {
     "source": "live",
-    "fetched_at": "2026-10-20T14:40:19",
+    "fetched_at": "2026-10-20T15:30:59",
     "date": "2026-10-21",
     "store_code": "1440054",
     "meal_times": {

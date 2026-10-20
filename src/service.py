@@ -637,6 +637,7 @@ class Service:
                 return None
             dp = float(target.nutrition.get("protein") or 0) - float(current.nutrition.get("protein") or 0)
             df = float(target.nutrition.get("fat") or 0) - float(current.nutrition.get("fat") or 0)
+            dk = float(target.nutrition.get("energyKcal") or 0) - float(current.nutrition.get("energyKcal") or 0)
             dc = round(float(target.price_ref) - float(current.price_ref), 2)
             # "每多 1 元多多少 g 蛋白质" only makes sense when the step adds a
             # meaningful amount of protein and actually costs more.
@@ -652,12 +653,43 @@ class Service:
                 "evidence": pair.get("evidence", ""),
                 "delta_protein": round(dp, 1),
                 "delta_fat": round(df, 1),
+                "delta_kcal": round(dk, 1),
                 "delta_price": dc,
                 "protein_per_extra_yuan": round(dp / dc, 1) if show_conversion else None,
                 "show_conversion": show_conversion,
                 "basis": "official_standard",
             }
         return None
+
+    @staticmethod
+    def _annotate_upgrade(step: dict[str, Any], meal_plan: planner_mod.MealPlan | None,
+                         result: planner_mod.PlanResult,
+                         targets: planner_mod.Targets) -> None:
+        """Would swapping this main for the next size still fit every cap?"""
+        qty = 1.0
+        if meal_plan is not None:
+            for item in meal_plan.items:
+                if str(item.code) == str(step["from"]["code"]):
+                    qty = float(item.quantity or 1)
+                    break
+        cost = float(result.cost) + float(step["delta_price"]) * qty
+        fat = float(result.totals.get("fat") or 0) + float(step["delta_fat"]) * qty
+        kcal = float(result.totals.get("energyKcal") or 0) + float(step["delta_kcal"]) * qty
+        reasons: list[str] = []
+        if targets.budget is not None and cost > targets.budget + 1e-9:
+            reasons.append(f"价格超出预算 {cost - targets.budget:.2f} 元")
+        if targets.fat_max is not None and fat > targets.fat_max + 1e-9:
+            reasons.append(f"脂肪超出上限 {fat - targets.fat_max:.1f} g")
+        if targets.kcal_max is not None and kcal > targets.kcal_max + 1e-9:
+            reasons.append(f"热量超出上限 {kcal - targets.kcal_max:.0f} kcal")
+        if targets.kcal_min is not None and kcal < targets.kcal_min - 1e-9:
+            reasons.append(f"热量低于下限 {targets.kcal_min - kcal:.0f} kcal")
+        step["fits"] = not reasons
+        step["fit_note"] = ("升级后仍在限制内" if not reasons
+                            else "升级后" + "、".join(reasons))
+        step["upgraded_cost"] = round(cost, 2)
+        step["upgraded_fat"] = round(fat, 1)
+        step["upgraded_kcal"] = round(kcal, 1)
 
     def plan_meal(self, meal: str, targets: planner_mod.Targets,
                   allow_side: bool = False, *, quote: bool = False,
@@ -725,6 +757,8 @@ class Service:
             step = self.upgrade_for(main.code, meal, pools[meal])
             if step:
                 upgrades.append(step)
+        for step in upgrades:
+            self._annotate_upgrade(step, meal_plan, result, targets)
         removable = (next(iter(removables_map.values()))
                      if removables_map else {"ok": False, "options": [], "groups": [],
                                         "reason": "没有主食"})

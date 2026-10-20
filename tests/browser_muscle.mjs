@@ -70,7 +70,7 @@ async function main() {
 
   check("标题与副标题",
         (await evalJs(`document.title === '麦当劳增肌计算器'
-          && document.body.textContent.includes('每一块钱，买到最多的蛋白质')`)) === true);
+          && document.body.textContent.includes('输入这一顿想吃多少蛋白质')`)) === true);
 
   // --------------------------------------------------------------- chart
   const chart = await evalJs(`JSON.stringify({
@@ -83,7 +83,11 @@ async function main() {
   check("散点图为主食数量", chart.dots === chart.items, JSON.stringify(chart));
   check("前 3 高亮并标名", chart.hot === Math.min(3, chart.items) && chart.labels === chart.hot,
         JSON.stringify(chart));
-  check("排行表最多 10 行", chart.rows === Math.min(10, chart.items), String(chart.rows));
+  check("排行表默认最多 5 行", chart.rows === Math.min(5, chart.items), String(chart.rows));
+  await evalJs(`document.querySelector('#rank-toggle').click()`);
+  const expanded = await evalJs(`document.querySelectorAll('#rank-table tr').length - 1`);
+  check("展开后最多 10 行", expanded === Math.min(10, chart.items), String(expanded));
+  await evalJs(`document.querySelector('#rank-toggle').click()`);
 
   await evalJs(`document.querySelector('#s_budget').value = 45;
                 document.querySelector('#s_budget').dispatchEvent(new Event('input'))`);

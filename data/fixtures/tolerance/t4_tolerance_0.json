@@ -157,7 +157,7 @@
   "quotes_valid": false,
   "cache": {
     "source": "live",
-    "fetched_at": "2026-10-20T14:33:14",
+    "fetched_at": "2026-10-20T15:29:47",
     "date": "2026-10-21",
     "store_code": "1440054",
     "meal_times": {
@@ -293,7 +293,7 @@
     ],
     "reason": "",
     "meal": "lunch",
-    "checked_at": "2026-10-20T14:33:16"
+    "checked_at": "2026-10-20T15:29:55"
   },
   "removables": {
     "1120": {
@@ -410,7 +410,7 @@
       ],
       "reason": "",
       "meal": "lunch",
-      "checked_at": "2026-10-20T14:33:16"
+      "checked_at": "2026-10-20T15:29:55"
     },
     "1450": {
       "ok": true,
@@ -469,7 +469,7 @@
       ],
       "reason": "",
       "meal": "lunch",
-      "checked_at": "2026-10-20T14:33:16"
+      "checked_at": "2026-10-20T15:29:55"
     }
   },
   "suggestions": [
