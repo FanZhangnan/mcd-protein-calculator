@@ -19,9 +19,9 @@
 
 价格为该时段试算价，不是结算价。第二行的「44 g 目标」之所以接受 42 g，是因为默认允许少 3 g，页面会明写「比目标少 2 g」。
 
-| 桌面：44 g / 45 元 | 手机：35 g / 25 元 |
+| 桌面：44 g / 45 元 | 手机：44 g / 45 元 |
 | --- | --- |
-| ![桌面 44g/45元](docs/screenshots/desktop-lunch-44g-45yuan.png) | ![手机 35g/25元](docs/screenshots/mobile-lunch-35g-25yuan.png) |
+| ![桌面 44g/45元](docs/screenshots/desktop-lunch-44g-45yuan.png) | ![手机 44g/45元](docs/screenshots/mobile-lunch-44g-45yuan.png) |
 
 另外四个场景，桌面 1280px 与手机 390px 各一套：
 
