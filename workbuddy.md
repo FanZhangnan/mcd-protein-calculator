@@ -5,8 +5,7 @@
 ## 0. 工具与模型
 
 - 开发环境：WorkBuddy（桌面端），代码仓库由 WorkBuddy 直接读写本机文件、运行命令、启动本地服务。
-- 关键实现与 SKILL 新会话测试使用 **DeepSeek-V4.1-Flash**。测试记录里明确写过：「WorkBuddy 模型始终为 Deepseek-V4.1-Flash，没有切换模型来取得通过结果」。
-- WorkBuddy 支持多个模型（如 DeepSeek-V4.1-Flash、MiniMax-M3.1-Flash、MiniMax-M3 等），具体某一轮对话使用的模型以当轮会话记录为准；本项目没有为了「让测试通过」而更换模型。
+- 开发过程中按额度和任务切换过多个模型：DeepSeek-V4.1-Flash（主要开发与测试）、MiniMax-M3.1-Flash（视觉重做）、MiMo-V2.6-Pro（数据显示修复，中途暂停后由其他模型接手）。
 - 阶段性的完整开发记录在 [`docs/dev-log/`](docs/dev-log/)，共 13 份（02–14），包含每轮的接口原始返回、测试数量与未修复项。
 
 ## 1. 阶段时间线
