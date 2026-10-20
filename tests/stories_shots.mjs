@@ -42,7 +42,7 @@ async function main() {
   const refreshed = await post("/api/refresh", {});
   check("刷新菜单来源实时", refreshed.source === "live", String(refreshed.source));
   const proc = spawn(CHROME, [
-    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--no-proxy-server",
     `--remote-debugging-port=${PORT}`, "--user-data-dir=/tmp/chrome-cdp-stories",
     "about:blank",
   ], { stdio: "ignore" });
@@ -137,9 +137,8 @@ async function main() {
     })`).then(JSON.parse);
   check("故事1 无解且主卡在预算内",
         s1.feasible === false && s1.cost <= 25, `¥${s1.cost} P${s1.protein}`);
-  check("故事1 显示无解第一行/预算内最多/放宽价格",
-        s1.text.includes("当前条件下没有满足全部要求的方案")
-        && s1.text.includes("预算内最多") && s1.text.includes("只放宽价格"),
+  check("故事1 显示预算内最多的说明与加预算卡片",
+        s1.text.includes("最多只能做到") && s1.text.includes("加预算到"),
         s1.text.slice(0, 90));
   check("故事1 卡片点位落在达标区右边界外",
         s1.region && s1.card && Math.abs(s1.card.cx - (56 + s1.region.x)) < 1.5,
@@ -147,9 +146,9 @@ async function main() {
   check("故事1 卡片点位低于蛋白质达标线",
         s1.region && s1.card && s1.card.cy > (18 + s1.region.y) - 1,
         JSON.stringify({card: s1.card, region: s1.region}));
-  const s1relax = await evalJs(`JSON.stringify([...document.querySelectorAll('#s-result .relax')]
+  const s1relax = await evalJs(`JSON.stringify([...document.querySelectorAll('#s-result .under-card')]
       .map(e => e.textContent))`).then(JSON.parse);
-  check("故事1 放宽价格写出完整组合",
+  check("故事1 加预算卡片写出完整组合",
         s1relax.some((t) => t.includes("39.00") && t.includes("双层吉士汉堡 + 麦香鸡")),
         JSON.stringify(s1relax));
   await shot("story1_lunch_35_25");
@@ -234,10 +233,10 @@ async function main() {
                                          target: o.target_name}))
     })`).then(JSON.parse);
   check("故事4 主卡脂肪 ≤30", s4.fat <= 30, `F${s4.fat}`);
-  const relax = await evalJs(`JSON.stringify([...document.querySelectorAll('#s-result .relax')]
+  const relax = await evalJs(`JSON.stringify([...document.querySelectorAll('#s-result .relax-card')]
       .map(e => e.textContent))`).then(JSON.parse);
   check("故事4 显示放宽脂肪数值",
-        relax.some((t) => t.includes("只放宽脂肪") && t.includes("35")),
+        relax.some((t) => t.includes("放宽脂肪") && t.includes("35")),
         JSON.stringify(relax));
   check("故事4 放宽脂肪写出完整组合",
         relax.some((t) => t.includes("35") && t.includes("双层吉士汉堡 + 麦香鱼")),

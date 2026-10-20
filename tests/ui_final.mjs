@@ -43,7 +43,7 @@ async function main() {
   check("菜单来源实时", refreshed.source === "live", String(refreshed.source));
 
   const proc = spawn(CHROME, [
-    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--no-proxy-server",
     `--remote-debugging-port=${PORT}`, "--user-data-dir=/tmp/chrome-cdp-ui",
     "about:blank",
   ], { stdio: "ignore" });
@@ -136,28 +136,39 @@ async function main() {
           return el ? {x: +el.dataset.x, y: +el.dataset.y} : null; })(),
         region: (() => { const r = document.querySelector('#chart rect.region');
           return r ? {w: +r.dataset.w, h: +r.dataset.h} : null; })(),
-        labels: [...document.querySelectorAll('#chart text.dot-label')]
+        nums: [...document.querySelectorAll('#chart text.dot-num')]
           .filter(e => getComputedStyle(e).display !== 'none' && e.getAttribute('opacity') !== '0')
-          .map(e => { const b = e.getBBox(); return {l:b.x, r:b.x+b.width, t:b.y, b:b.y+b.height}; }),
+          .map(e => ({n: e.textContent,
+                      cx: +(e.dataset.cx || e.getAttribute('x')),
+                      cy: +(e.dataset.cy || e.getAttribute('y')),
+                      l: e.getBBox().x, r: e.getBBox().x + e.getBBox().width,
+                      t: e.getBBox().y, b: e.getBBox().y + e.getBBox().height})),
+        hots: [...document.querySelectorAll('#chart circle.hot')].map(e => ({
+          cx: +e.getAttribute('cx'), cy: +e.getAttribute('cy'), r: +e.getAttribute('r') })),
         dots: [...document.querySelectorAll('#chart circle.dot')].map(e => {
           const b = e.getBBox(); return {l:b.x, r:b.x+b.width, t:b.y, b:b.y+b.height}; })
       })`).then(JSON.parse);
     check(`场景${sc.id} 状态为 ${sc.expect}`, info.status === sc.expect, info.status);
     check(`场景${sc.id} 推荐标记存在且坐标正确`, !!info.rec, JSON.stringify(info.rec));
+    // 轴上限与推荐星标位置都按页面实际使用的 niceTicks 口径计算
+    const expected = await evalJs(`(() => {
+        const items = LAND.items;
+        const target = Number(document.querySelector('#s_protein').value);
+        const budget = Number(document.querySelector('#s_budget').value);
+        const rec = (S && S.items && S.items.length && Number(S.cost) > 0)
+          ? {price: Number(S.cost), protein: Number(S.totals.protein)} : null;
+        const saver = (S && S.saver) ? {price: Number(S.saver.cost), protein: Number(S.saver.protein)} : null;
+        const xs = items.map(d => d.price).concat([Number.isFinite(budget) && budget > 0 ? budget : 0]);
+        const ys = items.map(d => d.protein).concat([Number.isFinite(target) && target > 0 ? target : 0]);
+        [rec, saver].forEach(p => { if (p) { xs.push(p.price); ys.push(p.protein); } });
+        const xMax = niceTicks(Math.max(...xs), [5, 10]).max;
+        const yMax = niceTicks(Math.max(...ys), [5, 10, 15]).max;
+        const H = document.querySelector('#chart').viewBox.baseVal.height;
+        const X = PAD.l + (Math.min(S.cost, xMax) / xMax) * (CHART_W - PAD.l - PAD.r);
+        const Y = H - PAD.b - (Math.min(S.totals.protein, yMax) / yMax) * (H - PAD.t - PAD.b);
+        return JSON.stringify({x: +X.toFixed(1), y: +Y.toFixed(1), xMax, yMax});
+      })()`).then(JSON.parse);
     if (info.rec) {
-      const expected = await evalJs(`(() => {
-          const target = Number(document.querySelector('#s_protein').value);
-          const budget = Number(document.querySelector('#s_budget').value);
-          const xs = LAND.items.map(d => d.price).concat([budget]);
-          const ys = LAND.items.map(d => d.protein).concat([target, S.totals.protein]);
-          if (S.saver) { xs.push(S.saver.cost); ys.push(S.saver.protein); }
-          const xMax = Math.max(5, Math.ceil(Math.max(...xs) * 1.15 / 5) * 5);
-          const yMax = Math.max(5, Math.ceil(Math.max(...ys) * 1.15 / 5) * 5);
-          const X = 56 + (S.cost / xMax) * (680 - 56 - 18);
-          const H = document.querySelector('#chart').viewBox.baseVal.height;
-          const Y = H - 46 - (S.totals.protein / yMax) * (H - 24 - 46);
-          return JSON.stringify({x: +X.toFixed(1), y: +Y.toFixed(1)});
-        })()`).then(JSON.parse);
       check(`场景${sc.id} 标记位置=组合总价/总蛋白`,
         Math.abs(info.rec.x - expected.x) < 1.5 && Math.abs(info.rec.y - expected.y) < 1.5,
         `${JSON.stringify(info.rec)} vs ${JSON.stringify(expected)}`);
@@ -165,37 +176,36 @@ async function main() {
     check(`场景${sc.id} 达标区高度>0`, !!info.region && info.region.h > 0,
       JSON.stringify(info.region));
     const axis = await evalJs(`(() => {
-        const target = Number(document.querySelector('#s_protein').value);
-        const budget = Number(document.querySelector('#s_budget').value);
-        const xs = LAND.items.map(d => d.price).concat([budget]);
-        const ys = LAND.items.map(d => d.protein).concat([target, S.totals.protein]);
-        if (S.saver) { xs.push(S.saver.cost); ys.push(S.saver.protein); }
-        const step = v => Math.max(5, Math.ceil(v * 1.15 / 5) * 5);
         const ticks = [...document.querySelectorAll('#chart text.tick')];
         const yTicks = ticks.filter(t => t.getAttribute('text-anchor') === 'end').map(t => t.textContent);
         const xTicks = ticks.filter(t => t.getAttribute('text-anchor') === 'middle').map(t => t.textContent);
-        return JSON.stringify({ y: step(Math.max(...ys)), x: step(Math.max(...xs)),
-                                lastY: yTicks[yTicks.length - 1], lastX: xTicks[xTicks.length - 1] });
+        const mono = a => a.every((t, i) => i === 0 || Number(t) > Number(a[i - 1]));
+        return JSON.stringify({ lastY: yTicks[yTicks.length - 1], lastX: xTicks[xTicks.length - 1],
+                                allInt: ticks.every(t => /^\\d+$/.test(t.textContent)),
+                                monoY: mono(yTicks), monoX: mono(xTicks) });
       })()`).then(JSON.parse);
-    check(`场景${sc.id} 纵横轴上限=最大值×1.15 取 5 的倍数`,
-      Number(axis.lastY) === axis.y && Number(axis.lastX) === axis.x,
-      JSON.stringify(axis));
-    check(`场景${sc.id} 前 3 标签全部可见`,
-          info.labels.length === Math.min(3, info.dots.length),
-          `${info.labels.length}/${Math.min(3, info.dots.length)}`);
+    check(`场景${sc.id} 纵横轴上限=整数刻度上限`,
+      Number(axis.lastY) === expected.yMax && Number(axis.lastX) === expected.xMax,
+      `${JSON.stringify(axis)} vs ${JSON.stringify(expected)}`);
+    check(`场景${sc.id} 轴刻度为整数且单调`,
+      axis.allInt && axis.monoY && axis.monoX, JSON.stringify(axis));
+    check(`场景${sc.id} 前 3 编号点全部可见`,
+          info.nums.length === Math.min(3, info.dots.length),
+          `${info.nums.length}/${Math.min(3, info.dots.length)}`);
+    check(`场景${sc.id} 编号点与黑点一一对应`,
+          info.nums.length === info.hots.length
+          && info.nums.every((n, i) => n.n === String(i + 1)
+            && Math.abs(n.cx - info.hots[i].cx) < 0.6 && Math.abs(n.cy - info.hots[i].cy) < 0.6),
+          JSON.stringify({nums: info.nums.length, hots: info.hots.length}));
     const overlaps = [];
-    for (let i = 0; i < info.labels.length; i += 1) {
-      for (let j = i + 1; j < info.labels.length; j += 1) {
-        const a = info.labels[i]; const b = info.labels[j];
+    for (let i = 0; i < info.nums.length; i += 1) {
+      for (let j = i + 1; j < info.nums.length; j += 1) {
+        const a = info.nums[i]; const b = info.nums[j];
         if (!(a.r < b.l || a.l > b.r || a.b < b.t || a.t > b.b)) overlaps.push([i, j]);
       }
-      for (const d of info.dots) {
-        const a = info.labels[i];
-        if (!(a.r < d.l || a.l > d.r || a.b < d.t || a.t > d.b)) overlaps.push(["dot", i]);
-      }
     }
-    check(`场景${sc.id} 标签互不重叠`, overlaps.length === 0,
-      `${info.labels.length} labels, overlaps ${JSON.stringify(overlaps)}`);
+    check(`场景${sc.id} 编号点互不重叠`, overlaps.length === 0,
+      `${info.nums.length} nums, overlaps ${JSON.stringify(overlaps)}`);
     if (sc.saver) {
       check(`场景${sc.id} 有省钱选项`, !!info.saver, JSON.stringify(info.saver));
       const oldSig = await evalJs(`SSIG`);
@@ -254,15 +264,22 @@ async function main() {
         chartH: document.querySelector('#chart').getBoundingClientRect().height,
         tableShown: getComputedStyle(document.querySelector('#rank-table')).display !== 'none',
         cards: document.querySelectorAll('.rank-card').length,
-        labelShown: [...document.querySelectorAll('#chart text.dot-label')]
+        labelShown: [...document.querySelectorAll('#chart text.star-label')]
           .some(e => getComputedStyle(e).display !== 'none'),
+        numsShown: [...document.querySelectorAll('#chart text.dot-num')]
+          .filter(e => getComputedStyle(e).display !== 'none').length,
+        starShown: [...document.querySelectorAll('#chart path.rec-marker, #chart path.saver-marker')]
+          .filter(e => getComputedStyle(e).display !== 'none').length,
+        legendShown: getComputedStyle(document.querySelector('#star-legend')).display !== 'none',
         h1H: document.querySelector('h1').getBoundingClientRect().height,
         h1Line: parseFloat(getComputedStyle(document.querySelector('h1')).lineHeight) || 26
       })`).then(JSON.parse);
     check(`手机场景${sc.id} 无横向滚动`, info.scrollW <= info.clientW + 1,
       `${info.scrollW}/${info.clientW}`);
     check(`手机场景${sc.id} 图表高度≥240`, info.chartH >= 240, String(info.chartH.toFixed(1)));
-    check(`手机场景${sc.id} 隐藏前 3 标签`, info.labelShown === false, "labels hidden");
+    check(`手机场景${sc.id} 隐藏点旁文字但保留编号点与星标`,
+      info.labelShown === false && info.numsShown > 0 && info.starShown > 0 && info.legendShown,
+      JSON.stringify({label: info.labelShown, nums: info.numsShown, star: info.starShown, legend: info.legendShown}));
     check(`手机场景${sc.id} 排行改卡片`,
       info.tableShown === false && info.cards > 0 && info.cards <= 5,
       `cards ${info.cards}`);

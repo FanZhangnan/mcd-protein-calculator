@@ -8,13 +8,7 @@ let SLAST = null;          // last valid payload
 let WARN = {};             // { meal: "该时段返回的是另一餐次的菜单" }
 let RANK_EXPANDED = false;
 
-const STATUS_LABEL = {
-  official: ["官方", "official"],
-  official_alias: ["官方·别名", "alias"],
-  ambiguous_spec: ["规格不唯一", "unknown"],
-  not_found: ["无营养数据", "unknown"],
-  duplicate_conflict: ["同名冲突", "unknown"],
-};
+const MEAL_LABEL = { breakfast: "早餐", lunch: "午餐", dinner: "晚餐" };
 
 async function api(path, body, method = "POST") {
   const opts = { method, headers: { "Content-Type": "application/json" } };
@@ -34,6 +28,12 @@ const setStatus = (t) => { $("status").textContent = t || ""; };
 const setSStatus = (t) => { $("s-status").textContent = t || ""; };
 const num = (v, d = 1) => (v === null || v === undefined || Number.isNaN(Number(v))
   ? "—" : Number(v).toFixed(d));
+// 营养数值：整数不带小数点，非整数保留一位（25.4 g）；价格仍用 num(v, 2)
+const nutri = (v) => {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return "—";
+  const n = Number(v);
+  return Number.isInteger(n) ? String(n) : n.toFixed(1);
+};
 const isNarrow = () => window.matchMedia("(max-width: 600px)").matches;
 const isOffline = () => (BOOT && BOOT.source) === "offline";
 
@@ -53,7 +53,7 @@ function renderDataSource() {
   const storeName = s.store && s.store.name ? s.store.name : "";
   const date = s.date || c.date || "—";
   const meal = $("s_meal") ? $("s_meal").value : "lunch";
-  const mealLabel = { breakfast: "早餐", lunch: "午餐", dinner: "晚餐" }[meal] || meal;
+  const mealLabel = MEAL_LABEL[meal] || meal;
   const mealTime = (s.meal_times && s.meal_times[meal]) || (c.meal_times && c.meal_times[meal]) || "—";
 
   let kind = "cache";
@@ -88,6 +88,15 @@ async function boot() {
   renderDataSource();
   renderMeta();
   renderUnknown();
+  renderFoot();
+}
+
+function renderFoot() {
+  const c = (BOOT && BOOT.cache) || {};
+  const stamp = (BOOT && BOOT.fetched_at) || c.fetched_at || "";
+  const el = $("foot-update");
+  if (!el) return;
+  el.textContent = `数据更新于 ${stamp || "—"} · 非麦当劳官方产品`;
 }
 
 function renderMeta() {
@@ -168,26 +177,28 @@ function renderRank() {
 
   const rows = shown.map((it, idx) => `
     <tr class="${idx < 3 ? "hot" : ""} ${planCodes.has(String(it.code)) ? "in-plan" : ""}">
-      <td>${idx + 1}</td>
+      <td class="idx">${idx + 1}</td>
       <td class="name">${it.name}</td>
-      <td>${num(it.price, 2)} 元</td>
-      <td>${num(it.protein)} g</td>
-      <td>${num(it.fat)} g</td>
-      <td>${num(it.kcal, 0)} kcal</td>
-      <td>${num(it.protein_per_yuan)} g/元</td>
+      <td class="num">${num(it.price, 2)}</td>
+      <td class="num">${nutri(it.protein)}</td>
+      <td class="num ppy">${num(it.protein_per_yuan, 1)}</td>
     </tr>`).join("");
   $("rank-table").innerHTML =
-    `<tr><th>#</th><th class="name">主食</th><th>价格</th><th>蛋白质</th><th>脂肪</th><th>热量</th><th>每元蛋白质</th></tr>${rows}`;
+    `<tr><th class="idx">#</th><th class="name">主食</th><th>价格（元）</th><th>蛋白质（g）</th><th>每元蛋白质</th></tr>${rows}`;
 
-  $("rank-cards").innerHTML = shown.map((it) => `
+  $("rank-cards").innerHTML = shown.map((it, idx) => `
     <div class="rank-card ${planCodes.has(String(it.code)) ? "in-plan" : ""}">
-      <div class="rc-name">${it.name}</div>
-      <div class="rc-meta">${num(it.protein)} g · ${num(it.price, 2)} 元 · ${num(it.protein_per_yuan)} g/元</div>
+      <div class="rc-idx">${idx + 1}</div>
+      <div class="rc-main">
+        <div class="rc-name">${it.name}</div>
+        <div class="rc-meta">${nutri(it.protein)} g · ${num(it.price, 2)} 元</div>
+      </div>
+      <div class="rc-ppy">${num(it.protein_per_yuan, 1)} g/元</div>
     </div>`).join("");
 
   const toggle = $("rank-toggle");
   toggle.hidden = items.length <= 5;
-  toggle.textContent = RANK_EXPANDED ? "收起" : "展开全部（前 10）";
+  toggle.textContent = RANK_EXPANDED ? "收起" : "查看全部 10 款";
 }
 
 // Build axis ticks that land on round numbers.
@@ -227,9 +238,10 @@ function niceTicks(maxValue, candidateSteps) {
 }
 
 const CHART_W = 680;
-const PAD = { l: 56, r: 18, t: 24, b: 46 };
+// 右侧留 26px：x 轴最右的刻度文字（居中）也不会贴到视口边缘（要求 ≥16px）
+const PAD = { l: 56, r: 26, t: 24, b: 46 };
 // a taller canvas on phones keeps the plot >= 240 px at 390 px wide
-const chartHeight = () => (isNarrow() ? 500 : 420);
+const chartHeight = () => (isNarrow() ? 520 : 420);
 
 function planPoint(s) {
   if (!s || !s.items || !s.items.length || !(Number(s.cost) > 0)) return null;
@@ -278,6 +290,7 @@ function drawChart() {
   const budget = Number($("s_budget").value);
   const rec = planPoint(S);
   const saver = saverPoint(S);
+  const tolerance = Number($("s_tolerance").value) || 0;
 
   const xs = items.map((d) => d.price).concat([Number.isFinite(budget) && budget > 0 ? budget : 0]);
   const ys = items.map((d) => d.protein).concat([Number.isFinite(target) && target > 0 ? target : 0]);
@@ -305,94 +318,125 @@ function drawChart() {
   g += `<line class="axis" x1="${PAD.l}" y1="${H - PAD.b}" x2="${CHART_W - PAD.r}" y2="${H - PAD.b}"/>`;
   g += `<line class="axis" x1="${PAD.l}" y1="${PAD.t}" x2="${PAD.l}" y2="${H - PAD.b}"/>`;
   g += `<text class="axis-label" x="${(PAD.l + CHART_W - PAD.r) / 2}" y="${H - 8}" text-anchor="middle">价格（元）</text>`;
-  g += `<text class="axis-label" x="14" y="${(PAD.t + H - PAD.b) / 2}" text-anchor="middle" transform="rotate(-90 14 ${(PAD.t + H - PAD.b) / 2})">蛋白质（g）</text>`;
+  g += `<text class="axis-label" x="20" y="${(PAD.t + H - PAD.b) / 2}" text-anchor="middle" transform="rotate(-90 20 ${(PAD.t + H - PAD.b) / 2})">蛋白质（g）</text>`;
 
   if (Number.isFinite(budget) && budget > 0 && Number.isFinite(target) && target > 0) {
     const x2 = Math.max(PAD.l + 1, x(budget));
     const y1 = Math.min(H - PAD.b - 1, y(target));
     g += `<rect class="region" data-w="${(x2 - PAD.l).toFixed(1)}" data-h="${(y1 - PAD.t).toFixed(1)}" x="${PAD.l}" y="${PAD.t}" width="${(x2 - PAD.l).toFixed(1)}" height="${(y1 - PAD.t).toFixed(1)}"/>`;
-    g += `<text class="region-label" x="${PAD.l + 6}" y="${PAD.t + 14}">达标区域</text>`;
+    // 容差带：目标线下方 tolerance 克的高度；说明文字放在带子最左端
+    if (tolerance > 0) {
+      const yLow = Math.min(H - PAD.b, y(target - tolerance));
+      const h = Math.max(1, yLow - y1);
+      g += `<rect class="band" x="${PAD.l}" y="${y1.toFixed(1)}" width="${(CHART_W - PAD.l - PAD.r).toFixed(1)}" height="${h.toFixed(1)}"/>`;
+      g += `<text class="band-label" x="${PAD.l + 8}" y="${(y1 + h / 2 + 4).toFixed(1)}" text-anchor="start">差 ${tolerance} g 以内</text>`;
+    }
   }
 
+  // 灰点先画；每元蛋白质前三只画一次黑点（半径 9）+ 白色描边 + 点内编号
   items.forEach((d, idx) => {
-    const hot = idx < 3;
-    g += `<circle class="dot ${hot ? "hot" : ""}" data-point="${idx}" cx="${x(d.price).toFixed(1)}" cy="${y(d.protein).toFixed(1)}" r="${hot ? 5.5 : 4.5}"/>`;
+    if (idx < 3) return;
+    g += `<circle class="dot" data-point="${idx}" cx="${x(d.price).toFixed(1)}" cy="${y(d.protein).toFixed(1)}" r="7"/>`;
+  });
+  items.slice(0, 3).forEach((d, idx) => {
+    const cx = x(d.price).toFixed(1);
+    const cy = y(d.protein).toFixed(1);
+    g += `<circle class="dot hot" data-point="${idx}" cx="${cx}" cy="${cy}" r="9"/>`;
+    g += `<text class="dot-num" data-num="${idx}" data-cx="${cx}" data-cy="${cy}" x="${cx}" y="${(Number(cy) + 4).toFixed(1)}">${idx + 1}</text>`;
   });
 
-  const points = items.slice();
+  // 悬停用：landscape 的字段是 protein_per_yuan，这里统一成 ppy
+  const points = items.map((it) => ({
+    ...it,
+    ppy: it.protein_per_yuan !== undefined && it.protein_per_yuan !== null
+      ? it.protein_per_yuan
+      : (it.price > 0 ? it.protein / it.price : null),
+  }));
   if (saver) {
     points.push(saver);
     const si = points.length - 1;
-    g += `<circle class="saver-marker" data-point="${si}" data-x="${x(saver.price).toFixed(1)}" data-y="${y(saver.protein).toFixed(1)}" cx="${x(saver.price).toFixed(1)}" cy="${y(saver.protein).toFixed(1)}" r="8"/>`;
+    const psx = x(saver.price);
+    const psy = y(saver.protein);
+    g += `<path class="saver-marker" data-point="${si}" data-x="${psx.toFixed(1)}" data-y="${psy.toFixed(1)}" d="${starPath(psx, psy, 11, 4.6)}"/>`;
+    g += `<text class="star-label saver" data-cx="${psx.toFixed(1)}" data-cy="${psy.toFixed(1)}" data-r="11" x="${(psx - 17).toFixed(1)}" y="${(psy + 5).toFixed(1)}" text-anchor="end">省钱 ${Math.round(saver.protein)} g · ${Math.round(saver.price)} 元</text>`;
   }
   if (rec) {
     points.push(rec);
     const ri = points.length - 1;
-    g += `<path class="rec-marker" data-point="${ri}" data-x="${x(rec.price).toFixed(1)}" data-y="${y(rec.protein).toFixed(1)}" d="${starPath(x(rec.price), y(rec.protein), 11, 4.6)}"/>`;
+    const prx = x(rec.price);
+    const pry = y(rec.protein);
+    g += `<path class="rec-marker" data-point="${ri}" data-x="${prx.toFixed(1)}" data-y="${pry.toFixed(1)}" data-cx="${prx.toFixed(1)}" data-cy="${pry.toFixed(1)}" d="${starPath(prx, pry, 12, 5)}"/>`;
+    g += `<text class="star-label" data-cx="${prx.toFixed(1)}" data-cy="${pry.toFixed(1)}" data-r="12" x="${(prx - 18).toFixed(1)}" y="${(pry + 5).toFixed(1)}" text-anchor="end">推荐 ${Math.round(rec.protein)} g · ${Math.round(rec.price)} 元</text>`;
   }
 
-  const labels = items.slice(0, 3).map((d, idx) => ({ idx, cx: x(d.price), cy: y(d.protein), name: d.name }));
-  labels.forEach((l) => {
-    g += `<text class="dot-label" data-label="${l.idx}" x="${(l.cx + 9).toFixed(1)}" y="${(l.cy - 9).toFixed(1)}" text-anchor="start">${l.name}</text>`;
-  });
-
   svg.innerHTML = g;
-  if (!isNarrow()) layoutLabels(svg, labels);
+  placeStarLabels(svg);
   bindTips(svg, points);
+  renderStarLegend();
 }
 
-function boxesOverlap(a, b, margin = 3) {
-  return !(a.r + margin < b.l || a.l - margin > b.r || a.b + margin < b.t || a.t - margin > b.b);
-}
-
-function layoutLabels(svg, labels) {
-  const H = chartHeight();
+// 星标文字优先放在星标左侧；放不下就换右侧、下方、上方。
+// 任何文字都要留在绘图区内（右侧至少 16px），且不能压住「差 N g 以内」。
+function placeStarLabels(svg) {
+  const labels = [...svg.querySelectorAll("text.star-label")];
+  if (!labels.length) return 0;
+  const H = Number(svg.viewBox && svg.viewBox.baseVal ? svg.viewBox.baseVal.height : 0) || chartHeight();
+  const rightLimit = CHART_W - 16;
+  const bandLabel = svg.querySelector("text.band-label");
+  const bandBox = bandLabel ? bboxOf(bandLabel) : null;
+  const dotBoxes = [...svg.querySelectorAll("circle.dot")].map(bboxOf).filter(Boolean);
   const placed = [];
-  svg.querySelectorAll("circle.dot, .rec-marker, .saver-marker").forEach((el) => {
-    const b = el.getBBox();
-    placed.push({ l: b.x, r: b.x + b.width, t: b.y, b: b.y + b.height });
-  });
-  const candidates = [
-    { dx: 9, dy: -9, anchor: "start" },
-    { dx: -9, dy: -9, anchor: "end" },
-    { dx: 9, dy: 16, anchor: "start" },
-    { dx: -9, dy: 16, anchor: "end" },
-    { dx: 0, dy: -18, anchor: "middle" },
-    { dx: 0, dy: 26, anchor: "middle" },
-    { dx: 14, dy: -32, anchor: "start" },
-    { dx: -14, dy: -32, anchor: "end" },
-    { dx: 14, dy: 38, anchor: "start" },
-    { dx: -14, dy: 38, anchor: "end" },
-    { dx: 0, dy: -40, anchor: "middle" },
-    { dx: 0, dy: 46, anchor: "middle" },
-  ];
-  labels.forEach((entry) => {
-    const text = svg.querySelector(`text.dot-label[data-label="${entry.idx}"]`);
-    if (!text) return;
+  labels.forEach((el) => {
+    const cx = Number(el.dataset.cx);
+    const cy = Number(el.dataset.cy);
+    const r = Number(el.dataset.r) || 11;
+    const candidates = [
+      { anchor: "end", x: cx - r - 6, y: cy + 5 },
+      { anchor: "start", x: cx + r + 6, y: cy + 5 },
+      { anchor: "middle", x: cx, y: Math.min(cy + r + 17, H - PAD.b - 4) },
+      { anchor: "middle", x: cx, y: Math.max(cy - r - 9, PAD.t + 12) },
+    ];
     for (const c of candidates) {
-      text.setAttribute("x", (entry.cx + c.dx).toFixed(1));
-      text.setAttribute("y", (entry.cy + c.dy).toFixed(1));
-      text.setAttribute("text-anchor", c.anchor);
-      const b = text.getBBox();
-      const box = { l: b.x, r: b.x + b.width, t: b.y, b: b.y + b.height };
-      const outside = box.l < PAD.l - 2 || box.r > CHART_W - PAD.r + 2
-        || box.t < 2 || box.b > H - PAD.b - 2;
-      if (outside || placed.some((p) => boxesOverlap(p, box))) continue;
+      el.setAttribute("text-anchor", c.anchor);
+      el.setAttribute("x", c.x.toFixed(1));
+      el.setAttribute("y", c.y.toFixed(1));
+      const box = bboxOf(el);
+      if (!box) continue;                                  // 手机上文字被隐藏
+      if (box.l < PAD.l + 1 || box.r > rightLimit) continue;
+      if (box.t < 2 || box.b > H - 6) continue;
+      if (bandBox && boxesHit(box, bandBox)) continue;
+      if (dotBoxes.some((d) => boxesHit(box, d, 1))) continue;
+      if (placed.some((p) => boxesHit(box, p))) continue;
       placed.push(box);
-      const moved = Math.abs(c.dx) > 10 || c.dy > 10 || c.dy < -12;
-      if (moved) {
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("class", "leader");
-        line.setAttribute("x1", entry.cx.toFixed(1));
-        line.setAttribute("y1", entry.cy.toFixed(1));
-        line.setAttribute("x2", (entry.cx + c.dx * 0.75).toFixed(1));
-        line.setAttribute("y2", (entry.cy + c.dy * 0.75).toFixed(1));
-        svg.insertBefore(line, text);
-      }
-      return;
+      break;
     }
-    text.setAttribute("opacity", "0");
   });
+  return placed.length;
+}
+
+function bboxOf(el) {
+  try {
+    const b = el.getBBox();
+    return b.width > 0 && b.height > 0
+      ? { l: b.x, t: b.y, r: b.x + b.width, b: b.y + b.height } : null;
+  } catch (e) { return null; }
+}
+
+function boxesHit(a, b, pad = 2) {
+  return !(a.r + pad < b.l || a.l - pad > b.r || a.b + pad < b.t || a.t - pad > b.b);
+}
+
+function renderStarLegend() {
+  const rec = planPoint(S);
+  const saver = saverPoint(S);
+  const r = $("sl-rec");
+  const v = $("sl-save");
+  if (r) r.textContent = rec
+    ? `${Math.round(rec.protein)} g · ${Math.round(rec.price)} 元`
+    : "—";
+  if (v) v.textContent = saver
+    ? `${Math.round(saver.protein)} g · ${Math.round(saver.price)} 元`
+    : "—";
 }
 
 function bindTips(svg, points) {
@@ -401,8 +445,8 @@ function bindTips(svg, points) {
     const row = points[idx];
     if (!row) return;
     tip.hidden = false;
-    tip.innerHTML = `<b>${row.name}</b><br>价格 ${num(row.price, 2)} 元 · 蛋白质 ${num(row.protein)} g<br>
-      脂肪 ${num(row.fat)} g · 热量 ${num(row.kcal, 0)} kcal<br>每元蛋白质 ${num(row.ppy)} g`;
+    tip.innerHTML = `<b>${row.name}</b><br>价格 ${num(row.price, 2)} 元 · 蛋白质 ${nutri(row.protein)} g<br>
+      脂肪 ${nutri(row.fat)} g · 热量 ${num(row.kcal, 0)} kcal<br>每元蛋白质 ${num(row.ppy, 1)} g`;
     const rect = svg.getBoundingClientRect();
     const px = ev.clientX !== undefined ? ev.clientX - rect.left : 0;
     const py = ev.clientY !== undefined ? ev.clientY - rect.top : 0;
@@ -505,55 +549,92 @@ function singleQuoteLine(q) {
   return `试算失败：${q.message || q.status}`;
 }
 
-function relaxLines(s) {
-  const f = s.frontier || {};
-  const tg = s.targets || {};
-  const out = [];
-  if (f.reach_price) {
-    out.push(`只放宽价格：达到 ${num(tg.protein_min, 0)} g 蛋白质最低需 <b>${num(f.reach_price.cost, 2)} 元</b>（${comboName(f.reach_price)}）。`);
-  } else {
-    out.push(`只放宽价格，仍达不到 ${num(tg.protein_min, 0)} g 蛋白质。`);
-  }
-  if (tg.fat_max !== null && tg.fat_max !== undefined) {
-    out.push(f.relax_fat
-      ? `只放宽脂肪：需要放宽到 <b>${num(f.relax_fat.fat)} g</b>（${comboName(f.relax_fat)}，${num(f.relax_fat.cost, 2)} 元）。`
-      : "只放宽脂肪，仍达不到蛋白质目标。");
-  }
-  if (tg.kcal_max !== null && tg.kcal_max !== undefined) {
-    out.push(f.relax_kcal
-      ? `只放宽热量上限：需要放宽到 <b>${num(f.relax_kcal.kcal, 0)} kcal</b>（${comboName(f.relax_kcal)}）。`
-      : "只放宽热量上限，仍达不到蛋白质目标。");
-  } else if (tg.kcal_min !== null && tg.kcal_min !== undefined) {
-    out.push(f.relax_kcal
-      ? `只放宽热量下限：需要放宽到 <b>${num(f.relax_kcal.kcal, 0)} kcal</b>（${comboName(f.relax_kcal)}）。`
-      : "只放宽热量下限，仍达不到蛋白质目标。");
-  }
-  return out;
-}
-
-function hintLines(s) {
-  const status = s.protein_status || (s.feasible ? "met" : "under");
-  if (status === "near") {
-    return [`接近达标：比目标少 ${num(s.protein_gap)} g，在你允许的 ${num(s.protein_tolerance, 0)} g 内。`];
-  }
-  if (status !== "under") return [];
-  const lines = ["当前条件下没有满足全部要求的方案"];
-  const cap = (s.frontier || {}).max_protein;
-  if (!(s.items || []).length) {
-    lines.push("没有任何组合同时满足价格、脂肪与热量上限，因此不显示商品卡片。");
-  } else if (cap) {
-    lines.push(`预算内最多：${num(cap.protein)} g 蛋白质，还差 ${num(cap.protein_gap)} g（${comboName(cap)}，${num(cap.cost, 2)} 元）。`);
-  }
-  const relax = relaxLines(s);
-  if (relax.length) lines.push(relax.join("；"));
-  return lines.slice(0, 3);
-}
-
-function statusBadge(s) {
+function statusPill(s) {
   const status = s.protein_status || (s.feasible ? "met" : "under");
   if (status === "met") return '<span class="badge official">达标</span>';
-  if (status === "near") return `<span class="badge near">接近达标（少 ${num(s.protein_gap)} g）</span>`;
+  if (status === "near") return `<span class="badge near">接近达标 · 少 ${nutri(s.protein_gap)} g</span>`;
   return '<span class="badge cap">预算内最多</span>';
+}
+
+// 顶部数字区：蛋白质 / 价格 / 每元蛋白质
+function metricsBlock(s, priceText) {
+  const t = s.totals || {};
+  const status = s.protein_status || (s.feasible ? "met" : "under");
+  const ppy = s.protein_per_yuan;
+  const ppyText = ppy === null || ppy === undefined ? "—" : num(ppy, 1);
+  const capCls = status === "under" ? " cap" : "";
+  return `<div class="metrics${capCls}">
+      <div class="metric protein"><span class="metric-num">${nutri(t.protein)}</span><span class="metric-unit">g 蛋白质</span></div>
+      <div class="metric price"><span class="metric-num">${priceText}</span><span class="metric-unit">元</span></div>
+      <div class="metric ppy"><span class="metric-num">${ppyText}</span><span class="metric-unit">g/元 · 每元蛋白质</span></div>
+    </div>
+    <div class="blocks">
+      <div class="block"><div class="b-label">热量</div><div class="b-value">${num(t.energyKcal, 0)}</div><div class="b-label">kcal</div></div>
+      <div class="block"><div class="b-label">脂肪</div><div class="b-value">${nutri(t.fat)}</div><div class="b-label">g</div></div>
+      <div class="block"><div class="b-label">碳水</div><div class="b-value">${nutri(t.carbohydrate)}</div><div class="b-label">g</div></div>
+      <div class="block ppy-block"><div class="b-label">每元蛋白质</div><div class="b-value">${ppyText}</div><div class="b-label">g/元</div></div>
+    </div>`;
+}
+
+// 进度条：填充 = min(实际/目标,1)，目标位置用 2px 黑竖线标出
+// 左：目标与差额；右：预算与余额
+function progressBlock(s, price) {
+  const t = s.totals || {};
+  const target = Number($("s_protein").value);
+  const actual = Number(t.protein);
+  const status = s.protein_status || (s.feasible ? "met" : "under");
+  const gap = Number(s.protein_gap);
+  const tol = Number(s.protein_tolerance || 0);
+  const budget = Number($("s_budget").value);
+  const scale = Math.max(target || 0, actual || 0, 1);
+  const fill = Math.max(0, Math.min(actual / scale, 1)) * 100;
+  const mark = Math.max(0, Math.min((target || 0) / scale, 1)) * 100;
+
+  let leftText;
+  if (status === "met") {
+    const extra = Math.max(0, Math.round((actual - target) * 10) / 10);
+    leftText = `目标 ${nutri(target)} g，多出 ${nutri(extra)} g`;
+  } else if (status === "near") {
+    leftText = `目标 ${nutri(target)} g，还差 ${nutri(gap)} g（在允许的 ${nutri(tol)} g 内）`;
+  } else {
+    leftText = `目标 ${nutri(target)} g，还差 ${nutri(gap)} g（超出允许的 ${nutri(tol)} g）`;
+  }
+
+  let rightText = "";
+  if (Number.isFinite(budget) && budget > 0 && Number.isFinite(price) && price > 0) {
+    const left = Math.round((budget - price) * 100) / 100;
+    if (left > 0.005) rightText = `预算 ${nutri(budget)} 元，还剩 ${num(left, 2)} 元`;
+    else if (left < -0.005) rightText = `预算 ${nutri(budget)} 元，超出 ${num(-left, 2)} 元`;
+    else rightText = `预算 ${nutri(budget)} 元，刚好用完`;
+  }
+  return `<div class="progress-wrap">
+      <div class="progress ${status === "under" ? "cap" : ""}">
+        <div class="fill" style="width:${fill.toFixed(1)}%"></div>
+        <span class="mark" style="left:${mark.toFixed(1)}%"></span>
+      </div>
+      <div class="progress-foot"><span class="left">${leftText}</span><span>${rightText}</span></div>
+    </div>`;
+}
+
+function itemRowsHtml(items) {
+  return items.map((i) => `
+    <div class="item">
+      <div class="qty">×${i.quantity}</div>
+      <div class="item-main">
+        <div class="item-name">${i.name}</div>
+        <div class="item-sub">${num(i.price_ref, 2)} 元/份 · 蛋白质 ${nutri(i.nutrition?.protein)} g</div>
+        <details class="item-detail">
+          <summary>明细</summary>
+          <div class="sub">${num(i.nutrition?.energyKcal, 0)} kcal · 蛋白质 ${nutri(i.nutrition?.protein)} g ·
+            脂肪 ${nutri(i.nutrition?.fat)} g · 碳水 ${nutri(i.nutrition?.carbohydrate)} g ·
+            钠 ${num(i.nutrition?.sodium, 0)} mg</div>
+          ${(i.removal_notes || []).map((n) => `<div class="strict-note">${n}</div>`).join("")}
+          ${i.modification && i.modification.length
+            ? `<div class="sub">点单参数：${i.modification.map((m) => `${m.code}:${m.key}`).join("，")}</div>` : ""}
+        </details>
+      </div>
+      <div class="item-total">${num(i.line_total_ref, 2)}</div>
+    </div>`).join("");
 }
 
 function renderSingle(s) {
@@ -566,27 +647,16 @@ function renderSingle(s) {
   const hasItems = items.length > 0;
   const price = quoted ? Number(q.amount) : Number(s.cost || 0);
   const priceText = hasItems ? num(price, 2) : "—";
-  const priceLabel = hasItems ? (quoted ? "已试算" : "参考价") : "未选到商品";
   const status = s.protein_status || (s.feasible ? "met" : "under");
-  const lines = hintLines(s);
+  const mealLabel = s.meal_label || MEAL_LABEL[s.meal] || "这一餐";
 
-  const itemRows = items.map((i) => `
-    <div class="item">
-      <div class="item-line">
-        <span class="name">${i.name}</span>
-        <span class="qty">× ${i.quantity}</span>
-        <span class="unit">${num(i.price_ref, 2)} 元/份</span>
-      </div>
-      <details class="item-detail">
-        <summary>明细</summary>
-        <div class="sub">${num(i.nutrition?.energyKcal, 0)} kcal · 蛋白质 ${num(i.nutrition?.protein)} g ·
-          脂肪 ${num(i.nutrition?.fat)} g · 碳水 ${num(i.nutrition?.carbohydrate)} g ·
-          钠 ${num(i.nutrition?.sodium, 0)} mg</div>
-        ${(i.removal_notes || []).map((n) => `<div class="strict-note">${n}</div>`).join("")}
-        ${i.modification && i.modification.length
-          ? `<div class="sub">点单参数：${i.modification.map((m) => `${m.code}:${m.key}`).join("，")}</div>` : ""}
-      </details>
-    </div>`).join("");
+  const priceSide = !hasItems
+    ? `<span class="price-tag">未选到商品</span>`
+    : quoted
+      ? `<span class="price-tag quoted">已试算</span><span class="price-time">· 查询于 ${q.queried_at || "—"}</span>`
+      : `<span class="price-tag">参考价，未试算</span>`;
+
+  const itemRows = itemRowsHtml(items);
 
   const mainCount = items.filter((i) => i.kind === "main").length;
   const suggestions = (s.suggestions || []).map((o) => {
@@ -599,6 +669,10 @@ function renderSingle(s) {
       </span>
     </label>`;
   }).join("");
+  const suggNames = (s.suggestions || []).map((o) => o.name).filter(Boolean);
+  const suggSummary = suggNames.length
+    ? `点单建议：可去 ${suggNames.slice(0, 3).join("、")}${suggNames.length > 3 ? " 等" : ""}`
+    : "点单建议：暂无可去配料";
 
   const upgradeList = (s.upgrades && s.upgrades.length) ? s.upgrades : (s.upgrade ? [s.upgrade] : []);
   const upgrade = upgradeList.map((u) => {
@@ -606,45 +680,70 @@ function renderSingle(s) {
     return `<div class="upgrade ${over ? "over" : ""}">
       <div class="up-head"><b>升级一档：${u.label}</b>
         ${u.fit_note ? `<span class="fit ${over ? "over" : "ok"}">${u.fit_note}</span>` : ""}</div>
-      <div>+${num(u.delta_protein)} g 蛋白质 · +${num(u.delta_price, 2)} 元 · +${num(u.delta_fat)} g 脂肪</div>
-      ${u.show_conversion ? `<div class="sub">每多 1 元，多 ${num(u.protein_per_extra_yuan)} g 蛋白质。</div>` : ""}
+      <div>+${nutri(u.delta_protein)} g 蛋白质 · +${num(u.delta_price, 2)} 元 · +${nutri(u.delta_fat)} g 脂肪</div>
+      ${u.show_conversion ? `<div class="sub">每多 1 元，多 ${num(u.protein_per_extra_yuan, 1)} g 蛋白质。</div>` : ""}
       <div class="sub">依据：${u.evidence || "两款均为官方整款数据"}</div>
     </div>`;
   }).join("");
 
   const saver = s.saver;
+  // 省钱选项：标题与目标比，正文写清方案本身 + 与推荐方案相比省多少
+  const saverGap = saver ? Number(saver.protein_gap || 0) : 0;
+  const saverTol = Number(s.protein_tolerance || 0);
   const saverRow = (saver && status === "met") ? `<div class="saver-row">
-      <span>省钱选项：<b>${comboName(saver)}</b>，少 ${num(saver.protein_less)} g 蛋白质，省 ${num(saver.money_saved, 2)} 元</span>
-      <button class="ghost tiny" id="s-saver">换成这个</button>
+      <div class="saver-body">
+        <div class="saver-title">${saverGap > 0
+          ? `省钱选项 · 比目标少 ${nutri(saverGap)} g，在你允许的 ${nutri(saverTol)} g 以内`
+          : "省钱选项 · 同样达标"}</div>
+        <div><b>${comboName(saver)}</b> · ${nutri(saver.protein)} g · ${num(saver.cost, 2)} 元，比推荐方案省 ${num(saver.money_saved, 2)} 元</div>
+      </div>
+      <button class="outline tiny" id="s-saver">换成这个</button>
     </div>` : "";
 
-  const hint = lines.length ? `<div class="violations ${status === "near" ? "near" : ""}">
-      ${lines.map((line, idx) => `<div class="v ${idx === 0 ? "title" : ""} ${idx === 2 ? "relax" : ""}">${line}</div>`).join("")}
-    </div>` : "";
+  // 预算内最多：加预算卡片 + 放宽脂肪卡片 + 浅灰说明（不再用红色提示框）
+  const f = s.frontier || {};
+  let underCard = "";
+  if (status === "under") {
+    const rp = f.reach_price;
+    const cap = f.max_protein;
+    const rf = f.relax_fat;
+    const fatMax = s.targets ? s.targets.fat_max : null;
+    const budget = Number($("s_budget").value);
 
-  const totalsLine = `每元蛋白质 ${num(s.protein_per_yuan)} g · 热量 ${num(t.energyKcal, 0)} kcal ·
-    脂肪 ${num(t.fat)} g · 碳水 ${num(t.carbohydrate)} g`;
+    const card = (rp && hasItems) ? `<div class="under-card">
+        <div class="under-text">加预算到 <b>${num(rp.cost, 2)} 元</b> · ${comboName(rp)} · <b>${nutri(rp.protein)} g</b></div>
+        <button class="black" id="s-budget-up" data-cost="${rp.cost}">按 ${num(rp.cost, 0)} 元重新算</button>
+      </div>` : "";
+    const relaxFat = (rf && fatMax !== null && fatMax !== undefined) ? `<div class="under-card relax-card">
+        <div class="under-text">放宽脂肪到 <b>${nutri(rf.fat)} g</b> · ${comboName(rf)} · <b>${nutri(rf.protein)} g</b> · ${num(rf.cost, 2)} 元</div>
+        <button class="black" id="s-fat-up" data-fat="${rf.fat}">按 ${nutri(rf.fat)} g 脂肪重新算</button>
+      </div>` : "";
+    const note = cap ? `<div class="under-note">
+        ${nutri(budget)} 元以内，这家店${mealLabel}最多只能做到 <b>${nutri(cap.protein)} g</b>。
+        降低目标到 ${nutri(cap.protein)} g 也可以直接达标。</div>` : "";
+    underCard = card + relaxFat + note;
+  }
 
   $("s-result").innerHTML = `
     <div class="single-card">
       <div class="single-head">
-        <div class="metrics">
-          <div class="metric"><span class="metric-num">${num(t.protein)}</span><span class="metric-unit">g 蛋白质</span></div>
-          <div class="metric price"><span class="metric-num">${priceText}</span><span class="metric-unit">元</span>
-            <span class="price-tag">${priceLabel}</span></div>
+        <div class="head-left">
+          ${statusPill(s)}
+          <span class="card-sub">${mealLabel}推荐 · 官方标准版营养</span>
         </div>
-        <div class="statuses"><span class="badge official">官方标准版</span>${statusBadge(s)}</div>
+        <div class="price-side">${priceSide}</div>
       </div>
-      <div class="result-sub">${totalsLine}</div>
-      ${hint}
+      ${metricsBlock(s, priceText)}
+      ${progressBlock(s, hasItems ? price : NaN)}
       ${itemRows}
       ${saverRow}
+      ${underCard}
       <div class="quote-row">
-        <button id="s-quote" class="ghost" title="只按当前这一餐的商品/定制试算，不会重新选餐">为当前方案报价${isOffline() ? "（离线桩报价）" : ""}</button>
-        <span class="sub">${singleQuoteLine(q)}</span>
+        <button id="s-quote" class="black" title="只按当前这一餐的商品/定制试算，不会重新选餐">为这一餐报价${isOffline() ? "（离线桩报价）" : ""}</button>
+        ${suggestions ? `<details class="sugg-box"><summary>${suggSummary}</summary>
+          <div class="sugg-list">${suggestions}</div>
+          <div class="sub">去掉配料只写进点单参数；营养数值仍为标准版官方数据。</div></details>` : ""}
       </div>
-      ${suggestions ? `<details class="sugg-box"><summary>点单建议（点击展开，默认不改动）</summary>${suggestions}
-        <div class="sub">去掉配料只写进点单参数；营养数值仍为标准版官方数据。</div></details>` : ""}
       ${upgrade ? `<details class="upgrade-box"><summary>肉量升级（整款替换）</summary>${upgrade}</details>` : ""}
       <div class="sub strict-foot">严格模式：营养一律取官方整款标准版；去除配料只影响点单参数，不扣减任何数值。</div>
     </div>`;
@@ -665,6 +764,22 @@ function renderSingle(s) {
   if (saverBtn) saverBtn.onclick = () => singlePlan({ select: "saver" });
   const quoteBtn = $("s-quote");
   if (quoteBtn) quoteBtn.onclick = singleQuote;
+  const upBtn = $("s-budget-up");
+  if (upBtn) upBtn.onclick = () => {
+    const cost = Number(upBtn.dataset.cost);
+    if (!Number.isFinite(cost) || cost <= 0) return;
+    $("s_budget").value = cost;
+    updateCapHint();
+    singlePlan();
+  };
+  const fatBtn = $("s-fat-up");
+  if (fatBtn) fatBtn.onclick = () => {
+    const fat = Number(fatBtn.dataset.fat);
+    if (!Number.isFinite(fat) || fat <= 0) return;
+    $("s_fat").value = fat;
+    updateOptionsSummary();
+    singlePlan();
+  };
 
   renderRank();
   drawChart();
@@ -686,9 +801,9 @@ async function singlePlan(extra) {
     const head = out.context_warning ? `${out.context_warning} ` : "";
     let msg;
     if (out.protein_status === "near") {
-      msg = `接近达标：比目标少 ${num(gap)} g，在你允许的 ${num(tol, 0)} g 内（参考价 ${num(out.cost, 2)} 元）。`;
+      msg = `接近达标：比目标少 ${nutri(gap)} g，在你允许的 ${nutri(tol)} g 内（参考价 ${num(out.cost, 2)} 元）。`;
     } else if (out.protein_status === "under") {
-      msg = "当前条件下无解；主卡片只显示预算内蛋白质最高的组合，放宽方案见下方。";
+      msg = "";   // 结果卡里已经说清楚了，不再重复提示
     } else if (out.selected === "saver") {
       msg = `已切换为省钱方案（参考价 ${num(out.cost, 2)} 元）；旧报价已失效，请重新报价。`;
     } else {
@@ -761,12 +876,45 @@ function updateCapHint() {
   let best = null;
   (LAND.frontier || []).forEach((p) => { if (p.price <= budget + 1e-9) best = p; });
   $("s-cap-hint").textContent = best
-    ? `这家店这一餐，在价格 ≤ ${num(budget, 2)} 元时最多能买到 ${num(best.protein)} g 蛋白质（${best.items.join(" + ")}）。`
+    ? `这家店这一餐，在价格 ≤ ${num(budget, 2)} 元时最多能买到 ${nutri(best.protein)} g 蛋白质（${best.items.join(" + ")}）。`
     : `这家店这一餐，在价格 ≤ ${num(budget, 2)} 元时买不到任何有官方营养的主食。`;
 }
 
+// 更多选项摘要：把当前设置压缩成一行
+function updateOptionsSummary() {
+  const el = $("options-summary");
+  if (!el) return;
+  const tol = Number($("s_tolerance").value || 0);
+  const mains = $("s_max_mains").value;
+  const fat = $("s_fat").value.trim();
+  const kmax = $("s_kcal_max").value.trim();
+  const kmin = $("s_kcal_min").value.trim();
+  const side = $("s_side").checked;
+  const parts = [
+    `允许少 ${tol} g`,
+    `主食最多 ${mains} 个`,
+    fat ? `脂肪 ≤ ${fat} g` : "不限脂肪",
+  ];
+  if (kmax) parts.push(`热量 ≤ ${kmax} kcal`);
+  if (kmin) parts.push(`热量 ≥ ${kmin} kcal`);
+  if (side) parts.push("可加 1 份配菜");
+  el.textContent = `更多选项：${parts.join(" · ")}`;
+}
+
+// 餐次分段按钮与隐藏 select 双向同步
+function syncMealSeg() {
+  const meal = $("s_meal").value;
+  document.querySelectorAll("#meal-seg button").forEach((b) => {
+    b.setAttribute("aria-pressed", b.dataset.meal === meal ? "true" : "false");
+  });
+}
+
 // -------------------------------------------------------------------- bindings
-$("s_meal").addEventListener("change", () => { invalidateResult(); loadLandscape(); });
+$("s_meal").addEventListener("change", () => {
+  syncMealSeg();
+  invalidateResult();
+  loadLandscape();
+});
 $("s_max_mains").addEventListener("change", () => { invalidateResult(); loadLandscape(); });
 $("s_budget").addEventListener("input", () => { invalidateResult(); updateCapHint(); });
 $("s_protein").addEventListener("input", () => {
@@ -774,11 +922,19 @@ $("s_protein").addEventListener("input", () => {
   invalidateResult();
 });
 ["s_fat", "s_kcal_min", "s_kcal_max", "s_tolerance"].forEach((id) => {
-  $(id).addEventListener("input", () => invalidateResult());
+  $(id).addEventListener("input", () => { invalidateResult(); updateOptionsSummary(); });
 });
-$("s_side").addEventListener("change", () => invalidateResult());
+$("s_side").addEventListener("change", () => { invalidateResult(); updateOptionsSummary(); });
 $("s-calc").onclick = singleCalc;
 $("s-plan").onclick = () => singlePlan();
+
+document.querySelectorAll("#meal-seg button").forEach((b) => {
+  b.addEventListener("click", () => {
+    if ($("s_meal").value === b.dataset.meal) return;
+    $("s_meal").value = b.dataset.meal;
+    $("s_meal").dispatchEvent(new Event("change"));
+  });
+});
 
 $("rank-toggle").onclick = () => { RANK_EXPANDED = !RANK_EXPANDED; renderRank(); };
 
@@ -819,6 +975,8 @@ async function init() {
   try {
     await boot();
     await loadLandscape();
+    syncMealSeg();
+    updateOptionsSummary();
   } catch (e) { setStatus("初始化失败：" + e.message); }
 }
 

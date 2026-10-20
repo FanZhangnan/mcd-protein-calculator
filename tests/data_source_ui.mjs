@@ -20,7 +20,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
   const proc = spawn(CHROME, [
-    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--no-proxy-server",
     `--remote-debugging-port=${PORT}`, "--user-data-dir=/tmp/chrome-cdp-dsrc",
     "about:blank",
   ], { stdio: "ignore" });

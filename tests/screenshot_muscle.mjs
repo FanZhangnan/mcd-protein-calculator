@@ -18,7 +18,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function main() {
   mkdirSync(OUT, { recursive: true });
   const proc = spawn(CHROME, [
-    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--no-proxy-server",
     `--remote-debugging-port=${PORT}`, "--user-data-dir=/tmp/chrome-cdp-shots",
     "about:blank",
   ], { stdio: "ignore" });
@@ -110,9 +110,9 @@ async function main() {
   const c2j = JSON.parse(c2);
   check("用例2 无解且主卡片在预算内",
         c2j.feasible === false && c2j.cost <= 25, `¥${c2j.cost} / P${c2j.protein}`);
-  check("用例2 显示无解第一行与预算内最多",
-        c2j.text.includes("当前条件下没有满足全部要求的方案")
-        && c2j.text.includes("预算内最多"), c2j.text.slice(0, 80));
+  check("用例2 显示预算内最多的说明",
+        c2j.text.includes("最多只能做到")
+        && c2j.text.includes("降低目标到"), c2j.text.slice(0, 80));
   await shot("case2_lunch_40_25");
 
   // case 3

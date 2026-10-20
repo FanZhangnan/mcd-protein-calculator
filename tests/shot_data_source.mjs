@@ -24,7 +24,7 @@ const DATE = CN.toISOString().slice(0, 10);
 async function main() {
   mkdirSync(OUT, { recursive: true });
   const proc = spawn(CHROME, [
-    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--no-proxy-server",
     `--remote-debugging-port=${PORT}`, "--user-data-dir=/tmp/chrome-cdp-shot",
     "about:blank",
   ], { stdio: "ignore" });

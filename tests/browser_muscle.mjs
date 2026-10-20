@@ -26,7 +26,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
   const proc = spawn(CHROME, [
-    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--no-proxy-server",
     `--remote-debugging-port=${PORT}`, "--user-data-dir=/tmp/chrome-cdp-muscle",
     "about:blank",
   ], { stdio: "ignore" });
@@ -76,18 +76,19 @@ async function main() {
 
   check("标题与副标题",
         (await evalJs(`document.title === '麦当劳增肌计算器'
-          && document.body.textContent.includes('输入这一顿想吃多少蛋白质')`)) === true);
+          && document.body.textContent.includes('这一顿，想吃多少蛋白质？')
+          && document.querySelector('.hero-sub').textContent.length > 10`)) === true);
 
   // --------------------------------------------------------------- chart
   const chart = await evalJs(`JSON.stringify({
       dots: document.querySelectorAll('#chart circle.dot').length,
       hot: document.querySelectorAll('#chart circle.hot').length,
-      labels: document.querySelectorAll('#chart text.dot-label').length,
+      nums: document.querySelectorAll('#chart text.dot-num').length,
       rows: document.querySelectorAll('#rank-table tr').length - 1,
       items: LAND.items.length
     })`).then(JSON.parse);
   check("散点图为主食数量", chart.dots === chart.items, JSON.stringify(chart));
-  check("前 3 高亮并标名", chart.hot === Math.min(3, chart.items) && chart.labels === chart.hot,
+  check("前 3 高亮并编号", chart.hot === Math.min(3, chart.items) && chart.nums === chart.hot,
         JSON.stringify(chart));
   check("排行表默认最多 5 行", chart.rows === Math.min(5, chart.items), String(chart.rows));
   await evalJs(`document.querySelector('#rank-toggle').click()`);
@@ -217,12 +218,16 @@ async function main() {
       cost: S.cost, fat: S.totals.fat,
       items: S.items.length
     })`).then(JSON.parse);
-  check("无解第一行文案",
-        neg.text.includes("当前条件下没有满足全部要求的方案"), neg.text.slice(0, 80));
+  check("无解时只留一条预算内最多的说明",
+        neg.text.includes("最多只能做到") && !neg.text.includes("当前条件下没有满足全部要求的方案"),
+        neg.text.slice(0, 80));
   check("无解主卡片=预算内最多且不超价格/脂肪",
         neg.capBadge && neg.items > 0 && neg.cost <= 35 && neg.fat <= 20,
         JSON.stringify({cost: neg.cost, fat: neg.fat}));
-  check("放宽方案为文字说明", neg.text.includes("只放宽价格"), neg.text.slice(-160));
+  check("放宽说明改成浅灰一段而不是红色提示",
+        (await evalJs(`document.querySelectorAll('#s-result .violations').length`)) === 0
+        && (await evalJs(`!!document.querySelector('#s-result .under-note')`)) === true,
+        neg.text.slice(-120));
 
   // ---------------------------------------------------- no card under caps
   await evalJs(`(() => {
@@ -235,7 +240,7 @@ async function main() {
       cards: document.querySelectorAll('#s-result .item').length
     })`).then(JSON.parse);
   check("硬约束下无组合时不显示商品卡片",
-        noCard.cards === 0 && noCard.text.includes("不显示商品卡片"),
+        noCard.cards === 0 && noCard.text.includes("未选到商品"),
         JSON.stringify(noCard.cards));
 
   const money = await evalJs(`document.querySelector('#s-result .single-head').textContent`);

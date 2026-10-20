@@ -4,137 +4,205 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>麦当劳增肌计算器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Barlow+Condensed:wght@600;700&display=swap" />
 <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-<header>
-  <div class="headline">
-    <h1>麦当劳增肌计算器</h1>
-    <p class="tagline">输入这一顿想吃多少蛋白质、最多花多少钱，算出麦当劳里最划算的点法。</p>
-  </div>
-  <div class="head-right">
-    <div id="data-source" class="data-source" data-source="none"></div>
-    <div class="unofficial">非麦当劳官方产品</div>
+
+<!-- ============================== 页头 ============================== -->
+<header class="site-head">
+  <div class="head-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round">
+          <path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12" />
+        </svg>
+      </span>
+      <span class="brand-name">麦当劳增肌计算器</span>
+      <span class="brand-pill">非麦当劳官方产品</span>
+    </div>
+    <div class="head-right">
+      <div id="data-source" class="data-source" data-source="none"></div>
+      <a class="switch-store" href="#data-panel">切换门店</a>
+    </div>
   </div>
 </header>
 
-<!-- ================================ 输入 ================================ -->
-<section class="panel" id="input-panel">
+<main class="wrap">
+
+<!-- ============================== 标题区 ============================== -->
+<section class="hero">
+  <h1>这一顿，想吃多少蛋白质？</h1>
+  <p class="hero-sub">用麦当劳官方营养数据和门店实时价格，算出花钱最少、蛋白质够数的点法。</p>
+</section>
+
+<!-- ============================== 输入卡 ============================== -->
+<section class="panel input-card" id="input-panel">
   <div class="input-row">
-    <label>餐次
-      <select id="s_meal">
+    <div class="field meal">
+      <span>餐次</span>
+      <div class="seg" id="meal-seg" role="group" aria-label="餐次">
+        <button type="button" data-meal="breakfast" aria-pressed="false">早餐</button>
+        <button type="button" data-meal="lunch" aria-pressed="true">午餐</button>
+        <button type="button" data-meal="dinner" aria-pressed="false">晚餐</button>
+      </div>
+      <select id="s_meal" class="sr-only" aria-label="餐次">
         <option value="breakfast">早餐</option>
         <option value="lunch" selected>午餐</option>
         <option value="dinner">晚餐</option>
       </select>
+    </div>
+
+    <label class="field" for="s_protein">
+      蛋白质至少
+      <span class="input-wrap">
+        <input id="s_protein" type="number" step="1" min="1" value="40" />
+        <span class="unit">g</span>
+      </span>
     </label>
-    <label>蛋白质下限（g）<input id="s_protein" type="number" step="1" min="1" value="40"></label>
-    <label>价格上限（元）<input id="s_budget" type="number" step="1" min="1" value="45"></label>
+
+    <label class="field" for="s_budget">
+      最多花
+      <span class="input-wrap">
+        <input id="s_budget" type="number" step="1" min="1" value="45" />
+        <span class="unit">元</span>
+      </span>
+    </label>
+
     <button id="s-plan" class="primary">算这一餐</button>
   </div>
+
+  <div class="input-links">
+    <details id="more-options">
+      <summary id="options-summary">更多选项：允许少 3 g · 主食最多 2 个 · 不限脂肪</summary>
+      <div class="grid">
+        <label>脂肪上限 g<input id="s_fat" type="number" step="1" placeholder="不设"></label>
+        <label>热量上限 kcal<input id="s_kcal_max" type="number" step="10" placeholder="不设"></label>
+        <label>热量下限 kcal<input id="s_kcal_min" type="number" step="10" placeholder="不设"></label>
+        <label>主食数量上限
+          <select id="s_max_mains">
+            <option value="1">1 个</option>
+            <option value="2" selected>2 个</option>
+            <option value="3">3 个</option>
+          </select>
+        </label>
+        <label>可接受少几克蛋白质
+          <input id="s_tolerance" type="number" step="1" min="0" max="10" value="3">
+        </label>
+        <label class="check"><input id="s_side" type="checkbox"> 允许配菜（最多 1 份）</label>
+      </div>
+    </details>
+
+    <details id="body-options">
+      <summary>不知道填多少？用身高体重估算</summary>
+      <div class="grid">
+        <label>性别
+          <select id="s_sex"><option value="male">男</option><option value="female">女</option></select>
+        </label>
+        <label>年龄<input id="s_age" type="number" step="1" value="22"></label>
+        <label>身高 cm<input id="s_height" type="number" step="1" value="175"></label>
+        <label>体重 kg<input id="s_weight" type="number" step="0.5" value="70"></label>
+        <label>每天餐数<input id="s_meals" type="number" step="1" value="3"></label>
+        <label>目标
+          <select id="s_goal">
+            <option value="muscle" selected>增肌</option>
+            <option value="maintain">维持</option>
+          </select>
+        </label>
+        <label>每周训练次数
+          <select id="s_activity">
+            <option value="1.2">0 次（久坐）</option>
+            <option value="1.375" selected>1–2 次（轻度）</option>
+            <option value="1.55">3–4 次（中度）</option>
+            <option value="1.725">5 次以上（高强度）</option>
+          </select>
+        </label>
+      </div>
+      <div class="row"><button id="s-calc" class="ghost">填入建议值</button></div>
+      <div id="s-calc-note" class="status"></div>
+      <div id="s-cap-hint" class="cap-hint"></div>
+      <div class="sub">蛋白质按 2.0 g/kg（增肌）或 1.6 g/kg（维持）除以每天餐数；热量用 Mifflin-St Jeor 算 BMR，乘活动系数得 TDEE，增肌加 300 kcal，只作参考显示，不预填为约束。</div>
+    </details>
+  </div>
+
   <div id="s-status" class="status"></div>
-
-  <details id="more-options">
-    <summary>更多选项</summary>
-    <div class="grid">
-      <label>脂肪上限 g<input id="s_fat" type="number" step="1" placeholder="不设"></label>
-      <label>热量上限 kcal<input id="s_kcal_max" type="number" step="10" placeholder="不设"></label>
-      <label>热量下限 kcal<input id="s_kcal_min" type="number" step="10" placeholder="不设"></label>
-      <label>主食数量上限
-        <select id="s_max_mains">
-          <option value="1">1 个</option>
-          <option value="2" selected>2 个</option>
-          <option value="3">3 个</option>
-        </select>
-      </label>
-      <label>可接受少几克蛋白质
-        <input id="s_tolerance" type="number" step="1" min="0" max="10" value="3">
-      </label>
-      <label class="check"><input id="s_side" type="checkbox"> 允许配菜（最多 1 份）</label>
-    </div>
-  </details>
-
-  <details id="body-options">
-    <summary>按身体数据估算（可选，可改）</summary>
-    <div class="grid">
-      <label>性别
-        <select id="s_sex"><option value="male">男</option><option value="female">女</option></select>
-      </label>
-      <label>年龄<input id="s_age" type="number" step="1" value="22"></label>
-      <label>身高 cm<input id="s_height" type="number" step="1" value="175"></label>
-      <label>体重 kg<input id="s_weight" type="number" step="0.5" value="70"></label>
-      <label>每天餐数<input id="s_meals" type="number" step="1" value="3"></label>
-      <label>目标
-        <select id="s_goal">
-          <option value="muscle" selected>增肌</option>
-          <option value="maintain">维持</option>
-        </select>
-      </label>
-      <label>每周训练次数
-        <select id="s_activity">
-          <option value="1.2">0 次（久坐）</option>
-          <option value="1.375" selected>1–2 次（轻度）</option>
-          <option value="1.55">3–4 次（中度）</option>
-          <option value="1.725">5 次以上（高强度）</option>
-        </select>
-      </label>
-    </div>
-    <div class="row"><button id="s-calc" class="ghost">填入建议值</button></div>
-    <div id="s-calc-note" class="status"></div>
-    <div id="s-cap-hint" class="cap-hint"></div>
-    <div class="sub">蛋白质按 2.0 g/kg（增肌）或 1.6 g/kg（维持）除以每天餐数；热量用 Mifflin-St Jeor 算 BMR，乘活动系数得 TDEE，增肌加 300 kcal，只作参考显示，不预填为约束。</div>
-  </details>
 </section>
 
-<!-- ================================ 结果 ================================ -->
-<section class="panel" id="s-result-panel" hidden>
-  <div id="s-result"></div>
-</section>
-
-<!-- ============================ 蛋白质性价比图 ============================ -->
-<section class="panel" id="chart-panel">
-  <h2>这一餐的蛋白质性价比</h2>
-  <div class="chart-wrap">
-    <svg id="chart" viewBox="0 0 680 420" role="img" aria-label="价格与蛋白质散点图"></svg>
-    <div id="chart-tip" class="chart-tip" hidden></div>
+<!-- ============================== 两栏 ============================== -->
+<div class="layout">
+  <!-- 左：结果卡 -->
+  <div class="col-left">
+    <section class="panel flush" id="s-result-panel" hidden>
+      <div id="s-result"></div>
+    </section>
   </div>
-  <div class="chart-legend">
-    <span><i class="star"></i>推荐方案</span>
-    <span><i class="dot brand"></i>每元蛋白质前 3</span>
-    <span><i class="dot muted"></i>其他主食</span>
-    <span><i class="box"></i>达标区域</span>
+
+  <!-- 右：性价比图 + 排行 -->
+  <div class="col-right">
+    <section class="panel chart-panel" id="chart-panel">
+      <div class="chart-head">
+        <h2>这家店的蛋白质性价比</h2>
+        <p class="chart-sub">每个点是一款主食；越靠左上越划算</p>
+      </div>
+      <div class="chart-wrap">
+        <svg id="chart" viewBox="0 0 680 420" role="img" aria-label="价格与蛋白质散点图"></svg>
+        <div id="chart-tip" class="chart-tip" hidden></div>
+      </div>
+      <div class="chart-legend">
+        <span><i class="star"></i>推荐方案</span>
+        <span><i class="dot num"></i>编号 = 每元蛋白质前三</span>
+        <span><i class="dot gray"></i>其他主食</span>
+      </div>
+      <div class="star-legend" id="star-legend">
+        <div class="sl-cell sl-rec">
+          <span class="sl-title">推荐方案</span>
+          <span class="sl-val" id="sl-rec">—</span>
+        </div>
+        <div class="sl-cell sl-save">
+          <span class="sl-title">省钱选项</span>
+          <span class="sl-val" id="sl-save">—</span>
+        </div>
+      </div>
+
+      <table id="rank-table" class="rank"></table>
+      <div id="rank-cards" class="rank-cards"></div>
+      <div class="row rank-more"><button id="rank-toggle" class="ghost" hidden>查看全部 10 款</button></div>
+    </section>
   </div>
-  <table id="rank-table" class="rank"></table>
-  <div id="rank-cards" class="rank-cards"></div>
-  <div class="row rank-more"><button id="rank-toggle" class="ghost" hidden>展开全部（前 10）</button></div>
-  <div class="sub">严格模式：官方标准版数据；图上的推荐方案按组合总价与总蛋白质绘制。</div>
-</section>
+</div>
 
 <!-- ============================== 门店与数据 ============================== -->
-<section class="panel" id="data-panel">
-  <details>
-    <summary>门店与数据说明</summary>
-    <div id="meta" class="meta">加载中…</div>
-    <div class="sub">严格模式：营养只取官方标准版整款数据；未匹配到官方营养的 SKU 不参与计算，去除配料只影响点单参数。</div>
-    <div class="grid">
-      <label>日期<input id="date" type="date"></label>
-      <label>门店代码<input id="store_code" type="text"></label>
-      <label>早餐时间<input id="t_breakfast" type="time"></label>
-      <label>午餐时间<input id="t_lunch" type="time"></label>
-      <label>晚餐时间<input id="t_dinner" type="time"></label>
-    </div>
-    <div class="row">
-      <button id="btn-save" class="ghost">保存门店与时段</button>
-      <button id="btn-refresh" class="ghost">刷新真实菜单（MCP）</button>
-    </div>
-    <div id="status" class="status"></div>
-    <div id="unknown" class="unknown"></div>
-  </details>
-</section>
+<div class="full">
+  <section class="panel" id="data-panel">
+    <details>
+      <summary>门店与数据说明</summary>
+      <div id="meta" class="meta">加载中…</div>
+      <div id="unknown" class="unknown"></div>
+      <div class="grid">
+        <label>日期<input id="date" type="date"></label>
+        <label>门店代码<input id="store_code" type="text"></label>
+        <label>早餐时间<input id="t_breakfast" type="time"></label>
+        <label>午餐时间<input id="t_lunch" type="time"></label>
+        <label>晚餐时间<input id="t_dinner" type="time"></label>
+      </div>
+      <div class="row">
+        <button id="btn-save" class="ghost">保存门店与时段</button>
+        <button id="btn-refresh" class="ghost">刷新真实菜单（MCP）</button>
+      </div>
+      <div id="status" class="status"></div>
+    </details>
+  </section>
+</div>
 
-<footer>
-  营养数据为麦当劳官方标准版，仅供参考，不构成营养建议。 · 非麦当劳官方产品
+<!-- ============================== 页脚 ============================== -->
+<footer class="site-foot">
+  <div class="left">营养数据：麦当劳官方标准版（单份）。价格：门店菜单参考价，报价以试算为准。仅供参考，不构成营养建议。</div>
+  <div class="right" id="foot-update">数据更新于 — · 非麦当劳官方产品</div>
 </footer>
+
+</main>
 
 <script src="/app.js"></script>
 </body>

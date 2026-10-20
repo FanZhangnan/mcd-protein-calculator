@@ -28,7 +28,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
   const proc = spawn(CHROME, [
-    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+    "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--no-proxy-server",
     `--remote-debugging-port=${PORT}`, "--user-data-dir=/tmp/chrome-cdp-boundary",
     "about:blank",
   ], { stdio: "ignore" });
@@ -114,16 +114,18 @@ async function main() {
       quote: S.quotes.lunch.status,
       amount: S.quotes.lunch.amount,
       head: document.querySelector('#s-result .single-head').textContent,
+      price: document.querySelector('#s-result .metric.price .metric-num').textContent,
+      card: document.querySelector('#s-result').textContent,
       line: document.querySelector('#s-result .sub').textContent
     })`).then(JSON.parse);
   check("报价失败状态为 failed", fail.quote === "failed", JSON.stringify(fail.quote));
   check("页面显示试算失败", fail.status.includes("试算失败"), fail.status.slice(0, 60));
   check("报价失败不显示 0 元",
-        !/0\.00\s*元/.test(fail.head) && fail.head.includes("参考价"),
+        !/0\.00\s*元/.test(fail.card) && fail.head.includes("参考价"),
         fail.head.replace(/\s+/g, " ").slice(0, 60));
   check("报价失败保留菜单参考价",
-        refCost > 0 && fail.head.includes(refCost.toFixed(2)) && fail.head.includes("参考价"),
-        `参考价 ${refCost} / ${fail.head.replace(/\s+/g, " ").slice(0, 50)}`);
+        refCost > 0 && fail.price === refCost.toFixed(2) && fail.head.includes("参考价"),
+        `参考价 ${refCost} / 显示 ${fail.price} / ${fail.head.replace(/\s+/g, " ").slice(0, 50)}`);
 
   await sleep(300);
   try { ws.close(); } catch {}
