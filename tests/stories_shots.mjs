@@ -1,6 +1,11 @@
 // 用户故事 UI 走查 + 截图（实时服务 8780）。
 // Usage: node tests/stories_shots.mjs [url]
 //
+// 需要**实时**服务（不加 --offline），截图与 fixture 取自真实门店菜单：
+//
+//   MAI_MAI_DATA=/tmp/mai-stories node src/server.py --port 8780
+//   node tests/stories_shots.mjs http://127.0.0.1:8780/
+//
 // S1 预算紧的大学生 / S2 身体数据估算 / S3 赶时间的早餐 /
 // S4 在意脂肪 / 移动端 390px。
 import { spawn } from "node:child_process";

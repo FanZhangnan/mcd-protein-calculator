@@ -1,6 +1,12 @@
 // 麦当劳增肌计算器 UI, real Chrome via CDP.
 // Usage: node tests/browser_muscle.mjs [url]
 //
+// 必须跑在 **离线桩服务**（--offline）上：下面的「省钱选项」断言依赖离线
+// fixture 里存在更便宜的容差组合，实时菜单的组合空间不同，可能没有 saver。
+//
+//   MAI_MAI_DATA=/tmp/mai-off node src/server.py --offline --port 8797
+//   node tests/browser_muscle.mjs http://127.0.0.1:8797/
+//
 // Covers: scatter plot + top-3 + hover, target region, body-data prefill,
 // positive flow (N=2), removal suggestion + quote, no-solution fallback card,
 // and the "no combo under caps -> no card" branch.

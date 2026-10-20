@@ -2,6 +2,15 @@
 //   1) 8782 —— 午餐时段设成 10:30，页面必须提示「两个供餐时段之间」
 //   2) 8783 —— 离线桩强制报价失败，页面必须显示失败与参考价，不能显示 0 元
 // Usage: node tests/boundary_ui.mjs [gapUrl] [failUrl]
+//
+// 两个服务都要用 --offline 启动；第二个必须带 MAI_MAI_QUOTE_FAIL=1，
+// 否则报价会成功，第二组断言全部失败：
+//
+//   MAI_MAI_DATA=/tmp/mai-gap  node src/server.py --offline --port 8800
+//   # 用 /api/settings 把 lunch 设成 10:30
+//   MAI_MAI_DATA=/tmp/mai-fail MAI_MAI_QUOTE_FAIL=1 \
+//     node src/server.py --offline --port 8801
+//   node tests/boundary_ui.mjs http://127.0.0.1:8800/ http://127.0.0.1:8801/
 import { spawn } from "node:child_process";
 import { waitForJson } from "./cdp_ready.mjs";
 
