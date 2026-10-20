@@ -23,6 +23,13 @@
 | --- | --- |
 | ![桌面 44g/45元](docs/screenshots/desktop-lunch-44g-45yuan.png) | ![手机 35g/25元](docs/screenshots/mobile-lunch-35g-25yuan.png) |
 
+另外四个场景，桌面 1280px 与手机 390px 各一套：
+
+| 场景 | 桌面 | 手机 |
+| --- | --- | --- |
+| 午餐 35 g / 25 元（预算内最多） | ![桌面 35g/25元](docs/screenshots/desktop-lunch-35g-25yuan.png) | ![手机 35g/25元](docs/screenshots/mobile-lunch-35g-25yuan.png) |
+| 早餐 25 g / 20 元（达标） | ![桌面早餐](docs/screenshots/desktop-breakfast-25g-20yuan.png) | ![手机早餐](docs/screenshots/mobile-breakfast-25g-20yuan.png) |
+
 ---
 
 ## 它解决什么问题
