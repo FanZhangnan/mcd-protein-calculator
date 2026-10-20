@@ -35,6 +35,7 @@ const setSStatus = (t) => { $("s-status").textContent = t || ""; };
 const num = (v, d = 1) => (v === null || v === undefined || Number.isNaN(Number(v))
   ? "—" : Number(v).toFixed(d));
 const isNarrow = () => window.matchMedia("(max-width: 600px)").matches;
+const isOffline = () => (BOOT && BOOT.source) === "offline";
 
 function comboName(o) {
   if (!o) return "";
@@ -43,6 +44,36 @@ function comboName(o) {
 }
 
 // ---------------------------------------------------------------- bootstrap
+function renderDataSource() {
+  const el = $("data-source");
+  if (!el) return;
+  const c = BOOT && BOOT.cache ? BOOT.cache : {};
+  const s = BOOT && BOOT.state ? BOOT.state : {};
+  const source = (BOOT && BOOT.source) || c.source || "none";
+  const storeName = s.store && s.store.name ? s.store.name : "";
+  const date = s.date || c.date || "—";
+  const meal = $("s_meal") ? $("s_meal").value : "lunch";
+  const mealLabel = { breakfast: "早餐", lunch: "午餐", dinner: "晚餐" }[meal] || meal;
+  const mealTime = (s.meal_times && s.meal_times[meal]) || (c.meal_times && c.meal_times[meal]) || "—";
+
+  let kind = "cache";
+  let text = "";
+  if (source === "offline") {
+    kind = "offline";
+    text = "离线样例数据，价格不是门店实时价";
+  } else if (source === "cache") {
+    kind = "cache";
+    text = `缓存数据 · 抓取于 ${c.fetched_at || "—"}`;
+    if (storeName) text += ` · ${storeName}`;
+    text += ` · ${date} ${mealLabel} ${mealTime}`;
+  } else {
+    kind = "live";
+    text = `实时数据 · ${storeName || "—"} · ${date} ${mealLabel} ${mealTime}`;
+  }
+  el.setAttribute("data-source", kind);
+  el.innerHTML = `<span class="src-dot src-${kind}"></span><span class="src-text">${text}</span>`;
+}
+
 async function boot() {
   BOOT = await api("/api/bootstrap", undefined, "GET");
   const s = BOOT.state;
@@ -54,23 +85,51 @@ async function boot() {
 
   const c = BOOT.cache || {};
   WARN = c.menu_warnings || {};
-  const srcLabel = { live: "实时", cache: "缓存", offline: "离线", none: "未加载", unavailable: "不可用" }[c.source] || c.source;
-  $("meta").innerHTML =
-    `<span class="pill">${srcLabel}</span> 数据时间 ${c.fetched_at || "—"} · 门店 ${c.store_code || "—"}` +
-    ` · 时段 早${c.meal_times?.breakfast || "—"} / 午${c.meal_times?.lunch || "—"} / 晚${c.meal_times?.dinner || "—"}` +
-    ` · 营养条目 ${BOOT.catalog?.rows || 0}/${BOOT.catalog?.unique_names || 0}` +
-    (c.error ? ` · <b class="err">${c.error}</b>` : "");
+  renderDataSource();
+  renderMeta();
   renderUnknown();
+}
+
+function renderMeta() {
+  const c = BOOT && BOOT.cache ? BOOT.cache : {};
+  const s = BOOT && BOOT.state ? BOOT.state : {};
+  const source = (BOOT && BOOT.source) || c.source || "none";
+  const srcLabel = {
+    live: "实时数据", cache: "缓存数据", offline: "离线样例数据",
+    none: "未加载", unavailable: "不可用",
+  }[source] || source;
+  const cat = BOOT && BOOT.catalog ? BOOT.catalog : {};
+  const rows = cat.rows || 0;
+  const names = cat.unique_names || 0;
+  const aliases = cat.aliases || 0;
+  const dupes = cat.duplicates || 0;
+
+  let html = "";
+  html += `<div class="meta-row"><b>门店</b>${s.store?.name || "—"} <span class="mono">(${s.store?.code || "—"})</span></div>`;
+  html += `<div class="meta-row"><b>日期</b>${s.date || "—"}</div>`;
+  html += `<div class="meta-row"><b>餐次时间</b>早餐 ${s.meal_times?.breakfast || "—"} · 午餐 ${s.meal_times?.lunch || "—"} · 晚餐 ${s.meal_times?.dinner || "—"}</div>`;
+  html += `<div class="meta-row"><b>数据来源</b>${srcLabel}${c.fetched_at ? ` · 抓取于 ${c.fetched_at}` : ""}</div>`;
+  html += `<div class="meta-row"><b>营养条目</b>${rows} 条，${names} 个唯一名称，别名 ${aliases} 个，同名冲突 ${dupes} 个</div>`;
+  html += `<div class="meta-row"><b>严格模式</b>营养只取官方整款标准版；去除配料只改点单，不改显示的数值。</div>`;
+  if (c.error) html += `<div class="meta-row err"><b>错误</b>${c.error}</div>`;
+  $("meta").innerHTML = html;
 }
 
 function renderUnknown() {
   const meal = $("s_meal").value;
   const unk = (BOOT && BOOT.unknown || {})[meal] || [];
   const rows = unk.map((u) => `<tr><td>${u.name}</td><td>${u.code}</td><td>${u.status}</td><td>${u.note || ""}</td></tr>`);
-  $("unknown").innerHTML = rows.length
-    ? `<div class="sub">本餐次以下 SKU 无法唯一匹配官方营养，<b>未纳入计算</b>（不会按 0 处理）：</div>
-       <table class="unknown-table"><tr><th>名称</th><th>code</th><th>状态</th><th>原因</th></tr>${rows.join("")}</table>`
-    : `<div class="sub">本餐次参与计算的所有 SKU 均有可核实的官方营养来源。</div>`;
+  if (rows.length) {
+    $("unknown").innerHTML =
+      `<details class="unknown-box">
+         <summary>未纳入计算的商品：${unk.length} 个（点击查看列表）</summary>
+         <div class="sub">本餐次以下 SKU 无法唯一匹配官方营养，<b>未纳入计算</b>（不会按 0 处理）：</div>
+         <table class="unknown-table"><tr><th>名称</th><th>code</th><th>状态</th><th>原因</th></tr>${rows.join("")}</table>
+       </details>`;
+  } else {
+    $("unknown").innerHTML =
+      `<div class="meta-row"><b>未纳入计算的商品</b>0 个 · 本餐次参与计算的所有 SKU 均有可核实的官方营养来源。</div>`;
+  }
 }
 
 // ------------------------------------------------------------------ landscape
@@ -131,8 +190,41 @@ function renderRank() {
   toggle.textContent = RANK_EXPANDED ? "收起" : "展开全部（前 10）";
 }
 
-const fmtTick = (v) => (Number.isInteger(v) ? String(v) : Number(v).toFixed(1));
-const axisMax = (value) => Math.max(5, Math.ceil((Math.max(0, value) * 1.15) / 5) * 5);
+// Build axis ticks that land on round numbers.
+// maxValue  -> highest value that has to be visible (target, largest data point,
+//              recommended plan; already max'ed by the caller)
+// steps     -> candidate step sizes, e.g. [5, 10] for money, [5, 10, 15] for grams
+// Returns { max, step, ticks } where ticks is a strictly increasing list of
+// integers starting at 0, 4-6 of them, and max >= maxValue.
+function niceTicks(maxValue, candidateSteps) {
+  const raw = Number(maxValue);
+  const safe = Number.isFinite(raw) && raw > 0 ? raw : 1;
+  const steps = (candidateSteps && candidateSteps.length ? candidateSteps : [5, 10])
+    .map(Number).filter((n) => Number.isFinite(n) && n > 0);
+  const pool = steps.length ? steps : [5, 10];
+
+  const target = safe * 1.1;
+  // Prefer a step whose tick count lands in 4..6 ("4-6 ticks" is a guideline).
+  // The hard requirement is max >= inputValue with a round step. When no step
+  // gives 4..6 ticks, take the one with the fewest ticks instead — a coarse but
+  // readable axis beats a 13-tick one.
+  let best = null;
+  for (const step of pool) {
+    const max = Math.ceil(target / step) * step;
+    const count = Math.round(max / step) + 1;
+    const inRange = count >= 4 && count <= 6;
+    const better = best === null
+      || (inRange && !best.inRange)
+      || (inRange === best.inRange && count < best.count);
+    if (better) best = { max, step, count, inRange };
+    if (inRange && count === 4) break;
+  }
+  const chosen = best === null ? { max: Math.ceil(target / pool[0]) * pool[0], step: pool[0] } : best;
+  const { max, step } = chosen;
+  const ticks = [];
+  for (let v = 0; v <= max + 1e-9; v += step) ticks.push(Math.round(v));
+  return { max, step, ticks };
+}
 
 const CHART_W = 680;
 const PAD = { l: 56, r: 18, t: 24, b: 46 };
@@ -190,21 +282,26 @@ function drawChart() {
   const xs = items.map((d) => d.price).concat([Number.isFinite(budget) && budget > 0 ? budget : 0]);
   const ys = items.map((d) => d.protein).concat([Number.isFinite(target) && target > 0 ? target : 0]);
   [rec, saver].forEach((p) => { if (p) { xs.push(p.price); ys.push(p.protein); } });
-  const xMax = axisMax(Math.max(...xs));
-  const yMax = axisMax(Math.max(...ys));
+  // price axis: steps of 5 / 10; protein axis: steps of 5 / 10 / 15
+  const xTicks = niceTicks(Math.max(...xs), [5, 10]);
+  const yTicks = niceTicks(Math.max(...ys), [5, 10, 15]);
+  const xMax = xTicks.max;
+  const yMax = yTicks.max;
 
   const x = (v) => PAD.l + (Math.min(v, xMax) / xMax) * (CHART_W - PAD.l - PAD.r);
   const y = (v) => H - PAD.b - (Math.min(v, yMax) / yMax) * (H - PAD.t - PAD.b);
 
   let g = "";
-  for (let i = 0; i <= 5; i += 1) {
-    const px = PAD.l + (i / 5) * (CHART_W - PAD.l - PAD.r);
-    const py = H - PAD.b - (i / 5) * (H - PAD.t - PAD.b);
+  xTicks.ticks.forEach((v) => {
+    const px = x(v);
     g += `<line class="grid" x1="${px}" y1="${PAD.t}" x2="${px}" y2="${H - PAD.b}"/>`;
+    g += `<text class="tick" x="${px}" y="${H - PAD.b + 15}" text-anchor="middle">${v}</text>`;
+  });
+  yTicks.ticks.forEach((v) => {
+    const py = y(v);
     g += `<line class="grid" x1="${PAD.l}" y1="${py}" x2="${CHART_W - PAD.r}" y2="${py}"/>`;
-    g += `<text class="tick" x="${px}" y="${H - PAD.b + 15}" text-anchor="middle">${fmtTick((xMax * i) / 5)}</text>`;
-    g += `<text class="tick" x="${PAD.l - 8}" y="${py + 3}" text-anchor="end">${fmtTick((yMax * i) / 5)}</text>`;
-  }
+    g += `<text class="tick" x="${PAD.l - 8}" y="${py + 3}" text-anchor="end">${v}</text>`;
+  });
   g += `<line class="axis" x1="${PAD.l}" y1="${H - PAD.b}" x2="${CHART_W - PAD.r}" y2="${H - PAD.b}"/>`;
   g += `<line class="axis" x1="${PAD.l}" y1="${PAD.t}" x2="${PAD.l}" y2="${H - PAD.b}"/>`;
   g += `<text class="axis-label" x="${(PAD.l + CHART_W - PAD.r) / 2}" y="${H - 8}" text-anchor="middle">价格（元）</text>`;
@@ -543,7 +640,7 @@ function renderSingle(s) {
       ${itemRows}
       ${saverRow}
       <div class="quote-row">
-        <button id="s-quote" class="ghost" title="只按当前这一餐的商品/定制试算，不会重新选餐">为当前方案报价</button>
+        <button id="s-quote" class="ghost" title="只按当前这一餐的商品/定制试算，不会重新选餐">为当前方案报价${isOffline() ? "（离线桩报价）" : ""}</button>
         <span class="sub">${singleQuoteLine(q)}</span>
       </div>
       ${suggestions ? `<details class="sugg-box"><summary>点单建议（点击展开，默认不改动）</summary>${suggestions}

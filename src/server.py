@@ -251,6 +251,7 @@ class Handler(BaseHTTPRequestHandler):
                 unknown[meal] = self.service.unknown_items(meal)
         except Exception as exc:
             info = {"source": "unavailable", "error": str(exc)}
+        source = self._source_kind(info)
         self._json({
             "state": state,
             "cache": info,
@@ -259,7 +260,31 @@ class Handler(BaseHTTPRequestHandler):
             "baseline": self.service.baseline_status(),
             "working_signature": self.service.working_signature(),
             "provider_source": getattr(self.service.provider, "source_name", "live"),
+            "source": source,
+            "fetched_at": info.get("fetched_at"),
         })
+
+    def _source_kind(self, info: dict[str, Any]) -> str:
+        """Normalize the data source to exactly ``live`` / ``cache`` / ``offline``.
+
+        Decided from what the provider actually delivered, never from the port
+        number: ``offline`` when the fixture provider answered, ``live`` for a
+        fresh fetch from the real POS, ``cache`` when we are serving a previously
+        fetched snapshot.
+        """
+        provider = getattr(self.service.provider, "source_name", "live")
+        if provider == "offline":
+            return "offline"
+        raw = info.get("source")
+        if raw == "offline":
+            return "offline"
+        if raw == "cache" or raw == "cached":
+            return "cache"
+        if raw in ("live", "real"):
+            return "live"
+        # ``none`` / ``unavailable`` / anything unknown: the provider is a live
+        # one but the snapshot did not say it was freshly fetched.
+        return "cache" if info.get("fetched_at") else "live"
 
     def _settings(self, body: dict[str, Any]) -> None:
         patch = validate_settings(body)
