@@ -236,6 +236,54 @@ def main() -> int:
     check("可去项带 protein_risk 标记",
           all("protein_risk" in o for o in options), str(len(options)))
 
+    # ------------------------------------------------------------ tolerance
+    status, tol_default = call("/api/meal", {"meal": "lunch", "protein_min": 40,
+                                             "budget": 45}, "POST")
+    status, tol_zero = call("/api/meal", {"meal": "lunch", "protein_min": 40,
+                                          "budget": 45, "protein_tolerance": 0}, "POST")
+    check("容差默认 3", tol_default.get("protein_tolerance") == 3
+          and tol_default.get("protein_accept_min") == 37, str(tol_default.get("protein_accept_min")))
+    check("tolerance=0 主方案与默认一致",
+          [i["code"] for i in tol_default.get("items", [])] ==
+          [i["code"] for i in tol_zero.get("items", [])]
+          and tol_default.get("cost") == tol_zero.get("cost"),
+          f"{tol_default.get('cost')} vs {tol_zero.get('cost')}")
+
+    status, tol_near = call("/api/meal", {"meal": "lunch", "protein_min": 44,
+                                          "budget": 45}, "POST")
+    check("原目标无解时进入接近达标", tol_near.get("protein_status") == "near",
+          str(tol_near.get("protein_status")))
+    check("接近达标显示真实蛋白质",
+          tol_near.get("totals", {}).get("protein") == 43.0
+          and tol_near.get("protein_gap") == 1.0,
+          f"P{tol_near.get('totals', {}).get('protein')} gap {tol_near.get('protein_gap')}")
+
+    status, tol_under = call("/api/meal", {"meal": "lunch", "protein_min": 40,
+                                           "budget": 35}, "POST")
+    check("37 g 也无解时仍为预算内最多", tol_under.get("protein_status") == "under",
+          str(tol_under.get("protein_status")))
+    check("放宽方案仍按原目标 40 g 计算",
+          (tol_under.get("frontier") or {}).get("max_protein", {}).get("protein_gap") == 6.0,
+          str((tol_under.get("frontier") or {}).get("max_protein")))
+    check("无解时不把容差说成达标", tol_under.get("feasible") is False, "feasible")
+
+    for label, value in [("负容差", -1), ("超范围", 11), ("非数字", "abc"), ("小数", 3.5)]:
+        status, bad = call("/api/meal", {"meal": "lunch", "protein_min": 40,
+                                         "budget": 45, "protein_tolerance": value}, "POST")
+        check(f"{label}容差 400", status == 400, f"{status} {bad.get('error')}")
+
+    status, bad_select = call("/api/meal", {"meal": "lunch", "protein_min": 40,
+                                            "budget": 45, "select": "cheapest"}, "POST")
+    check("未知 select 400", status == 400, str(bad_select.get("error")))
+
+    status, saver = call("/api/meal", {"meal": "lunch", "protein_min": 40,
+                                       "budget": 45, "select": "saver"}, "POST")
+    check("选择省钱选项后成为主方案",
+          status == 200 and saver.get("selected") == "saver"
+          and saver.get("protein_status") == "near"
+          and saver.get("cost") == 40.5,
+          f"{saver.get('cost')} {saver.get('protein_status')}")
+
     # ------------------------------------------------------- context change
     status, changed = call("/api/settings", {"date": "2026-10-21"}, "POST")
     check("改日期 200", status == 200, str(status))

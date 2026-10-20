@@ -14,12 +14,22 @@ from __future__ import annotations
 
 import itertools
 import json
+import os
 import sys
+from datetime import datetime, timedelta, timezone
 import urllib.error
 import urllib.request
 from pathlib import Path
 
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8780"
+
+
+def future_day() -> str:
+    now = datetime.now(timezone.utc) + timedelta(hours=8)
+    return (now + timedelta(days=1)).strftime("%Y-%m-%d")
+
+
+DAY = os.environ.get("MAI_TEST_DATE") or future_day()
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "fixtures" / "stories"
 RESULTS: list[tuple[str, bool, str]] = []
@@ -276,7 +286,7 @@ def boundaries() -> None:
 def main() -> int:
     status, state = call("/api/settings", {
         "store": {"code": "1440054"},
-        "date": "2026-10-20",
+        "date": DAY,
         "meal_times": {"breakfast": "08:15", "lunch": "12:15", "dinner": "18:30"},
     }, "POST")
     check("门店切换为珠海 1440054", status == 200, str(state.get("state", {}).get("store")))

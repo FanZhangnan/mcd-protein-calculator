@@ -1,0 +1,546 @@
+{
+  "feasible": true,
+  "meals": [
+    {
+      "meal": "lunch",
+      "meal_label": "午餐",
+      "items": [
+        {
+          "code": "1120",
+          "name": "双层吉士汉堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1796.0,
+            "energyKcal": 429.0,
+            "protein": 27.0,
+            "fat": 22.0,
+            "carbohydrate": 31.0,
+            "sodium": 1017.0,
+            "calcium": 232.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "is_estimate": false,
+          "price_ref": 22.5,
+          "quantity": 1.0,
+          "line_total_ref": 22.5,
+          "meal": "lunch",
+          "modification": [],
+          "removals": []
+        },
+        {
+          "code": "1450",
+          "name": "麦香鸡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 1546.0,
+            "energyKcal": 369.0,
+            "protein": 15.0,
+            "fat": 17.0,
+            "carbohydrate": 39.0,
+            "sodium": 731.0,
+            "calcium": 73.0
+          },
+          "nutrition_status": "official_alias",
+          "nutrition_note": "套餐 rounds 选配项中该 code 的名称标注",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "is_estimate": false,
+          "price_ref": 16.5,
+          "quantity": 1.0,
+          "line_total_ref": 16.5,
+          "meal": "lunch",
+          "modification": [],
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 3342.0,
+        "energyKcal": 798.0,
+        "protein": 42.0,
+        "fat": 39.0,
+        "carbohydrate": 70.0,
+        "sodium": 1748.0,
+        "calcium": 305.0
+      },
+      "unknown": [],
+      "price_ref": 39.0,
+      "quote": null,
+      "is_estimate": false
+    }
+  ],
+  "items": [
+    {
+      "code": "1120",
+      "name": "双层吉士汉堡",
+      "kind": "main",
+      "nutrition": {
+        "energyKj": 1796.0,
+        "energyKcal": 429.0,
+        "protein": 27.0,
+        "fat": 22.0,
+        "carbohydrate": 31.0,
+        "sodium": 1017.0,
+        "calcium": 232.0
+      },
+      "nutrition_status": "official",
+      "nutrition_note": "",
+      "nutrition_basis": "official",
+      "removal_notes": [],
+      "is_estimate": false,
+      "price_ref": 22.5,
+      "quantity": 1.0,
+      "line_total_ref": 22.5,
+      "meal": "lunch",
+      "modification": [],
+      "removals": []
+    },
+    {
+      "code": "1450",
+      "name": "麦香鸡",
+      "kind": "main",
+      "nutrition": {
+        "energyKj": 1546.0,
+        "energyKcal": 369.0,
+        "protein": 15.0,
+        "fat": 17.0,
+        "carbohydrate": 39.0,
+        "sodium": 731.0,
+        "calcium": 73.0
+      },
+      "nutrition_status": "official_alias",
+      "nutrition_note": "套餐 rounds 选配项中该 code 的名称标注",
+      "nutrition_basis": "official",
+      "removal_notes": [],
+      "is_estimate": false,
+      "price_ref": 16.5,
+      "quantity": 1.0,
+      "line_total_ref": 16.5,
+      "meal": "lunch",
+      "modification": [],
+      "removals": []
+    }
+  ],
+  "totals": {
+    "energyKj": 3342.0,
+    "energyKcal": 798.0,
+    "protein": 42.0,
+    "fat": 39.0,
+    "carbohydrate": 70.0,
+    "sodium": 1748.0,
+    "calcium": 305.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 39.0,
+  "effective_cost": 39.0,
+  "money_basis": "reference",
+  "budget_status": "reference",
+  "protein_per_yuan": 1.1,
+  "protein_status": "near",
+  "protein_gap": 2.0,
+  "protein_tolerance": 3.0,
+  "protein_accept_min": 41.0,
+  "violations": [
+    {
+      "constraint": "protein",
+      "label": "蛋白质",
+      "value": 42.0,
+      "target": "≥44",
+      "gap": -2.0,
+      "unit": "g"
+    }
+  ],
+  "targets": {
+    "protein_min": 44.0,
+    "budget": 45.0,
+    "fat_max": null,
+    "kcal_min": null,
+    "kcal_max": null,
+    "protein_tolerance": 3.0
+  },
+  "signature": "1f8b50ee4fbf3e2c",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "live",
+    "fetched_at": "2026-10-20T14:33:14",
+    "date": "2026-10-21",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "65cb77796898",
+    "menu_warnings": {}
+  },
+  "note": "",
+  "mode": "single",
+  "meal": "lunch",
+  "meal_label": "午餐",
+  "allow_side": false,
+  "max_mains": 2,
+  "strict_mode": true,
+  "nutrition_basis": "official_standard",
+  "context_warning": "",
+  "selected": "saver",
+  "saver": null,
+  "removable": {
+    "ok": true,
+    "sku": {
+      "code": "1120",
+      "name": "双层吉士汉堡"
+    },
+    "supportModify": true,
+    "groups": [
+      {
+        "index": 0,
+        "name": null,
+        "values": [
+          {
+            "code": "100141",
+            "name": "吉士",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "100202",
+            "name": "酸黄瓜",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "100212",
+            "name": "洋葱粒",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "100214",
+            "name": "番茄酱",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "102230",
+            "name": "芥末酱",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          }
+        ]
+      }
+    ],
+    "options": [
+      {
+        "code": "100141",
+        "name": "吉士",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": true,
+        "muscle_warning": true,
+        "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+        "default_suggestion": true
+      },
+      {
+        "code": "100202",
+        "name": "酸黄瓜",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": false
+      },
+      {
+        "code": "100212",
+        "name": "洋葱粒",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": false
+      },
+      {
+        "code": "100214",
+        "name": "番茄酱",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": true
+      },
+      {
+        "code": "102230",
+        "name": "芥末酱",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": true
+      }
+    ],
+    "reason": "",
+    "meal": "lunch",
+    "checked_at": "2026-10-20T14:33:16"
+  },
+  "removables": {
+    "1120": {
+      "ok": true,
+      "sku": {
+        "code": "1120",
+        "name": "双层吉士汉堡"
+      },
+      "supportModify": true,
+      "groups": [
+        {
+          "index": 0,
+          "name": null,
+          "values": [
+            {
+              "code": "100141",
+              "name": "吉士",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "100202",
+              "name": "酸黄瓜",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "100212",
+              "name": "洋葱粒",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "100214",
+              "name": "番茄酱",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "102230",
+              "name": "芥末酱",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "code": "100141",
+          "name": "吉士",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": true,
+          "muscle_warning": true,
+          "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+          "default_suggestion": true
+        },
+        {
+          "code": "100202",
+          "name": "酸黄瓜",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": false
+        },
+        {
+          "code": "100212",
+          "name": "洋葱粒",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": false
+        },
+        {
+          "code": "100214",
+          "name": "番茄酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": true
+        },
+        {
+          "code": "102230",
+          "name": "芥末酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": true
+        }
+      ],
+      "reason": "",
+      "meal": "lunch",
+      "checked_at": "2026-10-20T14:33:16"
+    },
+    "1450": {
+      "ok": true,
+      "sku": {
+        "code": "1450",
+        "name": "麦香鸡"
+      },
+      "supportModify": true,
+      "groups": [
+        {
+          "index": 0,
+          "name": null,
+          "values": [
+            {
+              "code": "100136",
+              "name": "麦香鸡酱",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "100168",
+              "name": "生菜",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "code": "100136",
+          "name": "麦香鸡酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": true
+        },
+        {
+          "code": "100168",
+          "name": "生菜",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": false
+        }
+      ],
+      "reason": "",
+      "meal": "lunch",
+      "checked_at": "2026-10-20T14:33:16"
+    }
+  },
+  "suggestions": [
+    {
+      "code": "100141",
+      "name": "吉士",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": true,
+      "muscle_warning": true,
+      "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+      "default_suggestion": true,
+      "target_code": "1120",
+      "target_name": "双层吉士汉堡"
+    },
+    {
+      "code": "100214",
+      "name": "番茄酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "muscle_warning": false,
+      "muscle_note": "",
+      "default_suggestion": true,
+      "target_code": "1120",
+      "target_name": "双层吉士汉堡"
+    },
+    {
+      "code": "102230",
+      "name": "芥末酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "muscle_warning": false,
+      "muscle_note": "",
+      "default_suggestion": true,
+      "target_code": "1120",
+      "target_name": "双层吉士汉堡"
+    },
+    {
+      "code": "100136",
+      "name": "麦香鸡酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "muscle_warning": false,
+      "muscle_note": "",
+      "default_suggestion": true,
+      "target_code": "1450",
+      "target_name": "麦香鸡"
+    }
+  ],
+  "upgrade": null,
+  "upgrades": [],
+  "frontier": null,
+  "basis": "single_meal"
+}

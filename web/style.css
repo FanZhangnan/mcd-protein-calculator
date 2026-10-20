@@ -99,3 +99,11 @@ table.rank th{color:var(--muted);font-weight:500;font-size:11px}
 table.rank tr.hot td{color:var(--brand);font-weight:600}
 table.rank td.name{text-align:left}
 .sub{font-size:11px;color:var(--muted)}
+.badge.near{background:var(--warn-soft);color:var(--warn);border-color:#f6ddb8}
+.near-note{margin:6px 0 2px;font-size:12px;color:var(--warn);background:var(--warn-soft);
+  border:1px solid #f6ddb8;border-radius:8px;padding:6px 10px}
+.saver-row{margin-top:10px;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;flex-wrap:wrap;background:#f4f7ff;border:1px solid #dbe4ff;border-radius:10px;
+  padding:8px 12px;font-size:12px;color:#1d4ed8}
+.saver-row b{color:#1e3a8a}
+button.tiny{padding:4px 10px;font-size:11px}

@@ -5,11 +5,16 @@
 // S4 在意脂肪 / 移动端 390px。
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
+import { waitForJson } from "./cdp_ready.mjs";
 
 const URL_ = process.argv[2] || "http://127.0.0.1:8780/";
 const OUT = new URL("../data/fixtures/stories/", import.meta.url).pathname;
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const PORT = 9337;
+
+const CN = new Date(Date.now() + 8 * 3600 * 1000);
+CN.setUTCDate(CN.getUTCDate() + 1);
+const DATE = CN.toISOString().slice(0, 10);
 
 const results = [];
 const check = (name, ok, detail = "") => {
@@ -26,7 +31,7 @@ async function main() {
     body: JSON.stringify(body),
   }).then((r) => r.json());
   await post("/api/settings", {
-    date: "2026-10-20", store: { code: "1440054" },
+    date: DATE, store: { code: "1440054" },
     meal_times: { breakfast: "08:15", lunch: "12:15", dinner: "18:30" },
   });
   const refreshed = await post("/api/refresh", {});
@@ -38,8 +43,8 @@ async function main() {
   ], { stdio: "ignore" });
   await sleep(2500);
 
-  const tab = await (await fetch(`http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(URL_)}`,
-    { method: "PUT" })).json();
+  const tab = await waitForJson(`http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(URL_)}`,
+    { method: "PUT" });
   const ws = new WebSocket(tab.webSocketDebuggerUrl);
   await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });
 
@@ -211,7 +216,7 @@ async function main() {
       amount: S.quotes.breakfast.amount
     })`).then(JSON.parse);
   check("故事3 报价带早餐时点",
-        s3q.reservation === "2026-10-20 08:15", String(s3q.reservation));
+        s3q.reservation === `${DATE} 08:15`, String(s3q.reservation));
   check("故事3 页面显示试算成功", s3q.status.includes("试算成功"), s3q.status.slice(0, 60));
   await shot("story3_breakfast_25_20");
 

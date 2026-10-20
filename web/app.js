@@ -269,6 +269,7 @@ function singleRequest() {
     budget: Number($("s_budget").value),
     max_mains: Number($("s_max_mains").value),
     allow_side: $("s_side").checked,
+    protein_tolerance: Number($("s_tolerance").value),
   };
   const optional = [["s_fat", "fat_max"], ["s_kcal_min", "kcal_min"], ["s_kcal_max", "kcal_max"]];
   optional.forEach(([id, key]) => {
@@ -294,6 +295,10 @@ function singleValidate(body) {
   if (body.kcal_min !== undefined && body.kcal_max !== undefined
       && body.kcal_max <= body.kcal_min) return "热量上限必须大于下限";
   if (![1, 2, 3].includes(body.max_mains)) return "主食数量上限只能是 1、2 或 3";
+  if (!Number.isInteger(body.protein_tolerance)
+      || body.protein_tolerance < 0 || body.protein_tolerance > 10) {
+    return "可接受少几克蛋白质只能是 0–10 的整数";
+  }
   return "";
 }
 
@@ -347,8 +352,15 @@ function renderSingle(s) {
   const money = !items.length
     ? "—（未选到商品）"
     : (q && q.status === "ok" ? `试算价 ${q.amount} 元` : `参考价 ${num(s.cost, 2)} 元`);
-  const fallback = !s.feasible && items.length > 0;
-  const noCard = !s.feasible && items.length === 0;
+  const status = s.protein_status || (s.feasible ? "met" : "under");
+  const near = status === "near";
+  const fallback = status === "under" && items.length > 0;
+  const noCard = status === "under" && items.length === 0;
+  const gap = Number(s.protein_gap || 0);
+  const tolerance = Number(s.protein_tolerance || 0);
+  const statusBadge = status === "met" ? '<span class="badge official">达标</span>'
+    : near ? `<span class="badge near">接近达标（少 ${num(gap)} g）</span>`
+    : '<span class="badge cap">预算内最多</span>';
 
   const itemRows = items.map((i) => `
     <div class="item">
@@ -382,7 +394,7 @@ function renderSingle(s) {
     </div>`).join("");
 
   let noSolution = "";
-  if (!s.feasible) {
+  if (status === "under") {
     const cap = (s.frontier || {}).max_protein;
     const gap = cap && cap.protein_gap !== null && cap.protein_gap !== undefined
       ? `，还差 ${num(cap.protein_gap)} g` : "";
@@ -395,6 +407,12 @@ function renderSingle(s) {
     </div>`;
   }
 
+  const saver = s.saver;
+  const saverRow = (saver && status === "met") ? `<div class="saver-row">
+      <span>省钱选项：<b>${comboName(saver)}</b>，少 ${num(saver.protein_less)} g 蛋白质，省 ${num(saver.money_saved, 2)} 元</span>
+      <button class="ghost tiny" id="s-saver">换成这个</button>
+    </div>` : "";
+
   const totalsLine = `热量 ${num(t.energyKcal, 0)} kcal · 蛋白质 ${num(t.protein)} g ·
     脂肪 ${num(t.fat)} g · 碳水 ${num(t.carbohydrate)} g · 钠 ${num(t.sodium, 0)} mg（官方）`;
   const ppy = s.protein_per_yuan;
@@ -405,16 +423,17 @@ function renderSingle(s) {
         <div>
           <b>${s.meal_label || s.meal}</b>
           <span class="badge official">官方标准版</span>
-          ${s.feasible ? '<span class="badge official">达标</span>' : ""}
-          ${fallback ? '<span class="badge cap">预算内最多</span>' : ""}
+          ${statusBadge}
         </div>
         <div><b>${money}</b></div>
       </div>
       <div class="sub">${singleQuoteLine(q)}</div>
+      ${near ? `<div class="near-note">比目标少 ${num(gap)} g，在你允许的 ${num(tolerance, 0)} g 内。</div>` : ""}
       ${itemRows}
       <div class="nutr"><span>${totalsLine}</span>
         <span><b>每元蛋白质 ${num(ppy)} g</b></span></div>
       ${noSolution}
+      ${saverRow}
       ${suggestions ? `<details class="sugg-box"><summary>点单建议（点击展开；默认不改动）</summary>${suggestions}
         <div class="sub">去掉配料只写进点单参数；营养数值仍为标准版官方数据。</div></details>` : ""}
       ${upgrade}
@@ -433,23 +452,36 @@ function renderSingle(s) {
       singleRecompute();
     });
   });
+  const saverBtn = $("s-saver");
+  if (saverBtn) saverBtn.onclick = () => singlePlan({ select: "saver" });
 }
 
 // ---------------------------------------------------------------------- flows
-async function singlePlan() {
+async function singlePlan(extra) {
   const body = singleRequest();
   const bad = singleValidate(body);
   if (bad) { setSStatus(bad); return; }
   setSStatus("正在枚举这一餐的全部候选…");
   try {
-    const out = await api("/api/meal", { ...body, quote: false });
+    const out = await api("/api/meal", { ...body, ...(extra || {}), quote: false });
     S = out; SLAST = out; SSIG = out.signature || "";
     SREMOVED = {};
     renderSingle(S);
-    setSStatus((out.context_warning ? `${out.context_warning} ` : "")
-      + (out.feasible
-        ? `已找到满足全部硬约束的方案（参考价 ${num(out.cost, 2)} 元）。`
-        : "当前条件下无解；主卡片只显示预算内蛋白质最高的组合，放宽方案见下方。"));
+    const gap = Number(out.protein_gap || 0);
+    const tol = Number(out.protein_tolerance || 0);
+    const head = out.context_warning ? `${out.context_warning} ` : "";
+    let msg;
+    if (out.protein_status === "near") {
+      msg = `接近达标：比目标少 ${num(gap)} g，在你允许的 ${num(tol, 0)} g 内（参考价 ${num(out.cost, 2)} 元）。`;
+    } else if (out.protein_status === "under") {
+      msg = "当前条件下无解；主卡片只显示预算内蛋白质最高的组合，放宽方案见下方。";
+    } else if (out.selected === "saver") {
+      msg = `已切换为省钱方案（参考价 ${num(out.cost, 2)} 元）；旧报价已失效，请重新报价。`;
+    } else {
+      msg = `已找到达标方案（参考价 ${num(out.cost, 2)} 元）。`
+        + (out.saver ? " 下方还有一个更便宜的省钱选项。" : "");
+    }
+    setSStatus(head + msg);
   } catch (e) {
     S = SLAST;
     setSStatus("计算失败：" + e.message);
@@ -520,8 +552,9 @@ $("s_protein").addEventListener("input", () => {
   $(id).addEventListener("input", () => invalidateResult());
 });
 $("s_side").addEventListener("change", () => invalidateResult());
+$("s_tolerance").addEventListener("input", () => invalidateResult());
 $("s-calc").onclick = singleCalc;
-$("s-plan").onclick = singlePlan;
+$("s-plan").onclick = () => singlePlan();
 $("s-quote").onclick = singleQuote;
 
 $("btn-save").onclick = async () => {

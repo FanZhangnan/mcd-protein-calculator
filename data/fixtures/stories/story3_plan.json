@@ -89,28 +89,33 @@
   "money_basis": "reference",
   "budget_status": "reference",
   "protein_per_yuan": 1.5,
+  "protein_status": "met",
+  "protein_gap": 0.0,
+  "protein_tolerance": 3.0,
+  "protein_accept_min": 22.0,
   "violations": [],
   "targets": {
     "protein_min": 25.0,
     "budget": 20.0,
     "fat_max": null,
     "kcal_min": null,
-    "kcal_max": null
+    "kcal_max": null,
+    "protein_tolerance": 3.0
   },
-  "signature": "0187203abe050761",
+  "signature": "0d5e486ba10fc471",
   "quotes": {},
   "quotes_valid": false,
   "cache": {
     "source": "live",
-    "fetched_at": "2026-10-20T03:43:20",
-    "date": "2026-10-20",
+    "fetched_at": "2026-10-20T14:40:19",
+    "date": "2026-10-21",
     "store_code": "1440054",
     "meal_times": {
       "breakfast": "08:15",
       "lunch": "12:15",
       "dinner": "18:30"
     },
-    "cache_key": "3b1b8366538d",
+    "cache_key": "65cb77796898",
     "menu_warnings": {}
   },
   "note": "",
@@ -122,6 +127,21 @@
   "strict_mode": true,
   "nutrition_basis": "official_standard",
   "context_warning": "",
+  "selected": "main",
+  "saver": {
+    "code": "5022",
+    "name": "猪柳蛋麦满分",
+    "protein": 23.0,
+    "fat": 21.0,
+    "kcal": 387.0,
+    "cost": 18.0,
+    "items": [
+      "猪柳蛋麦满分"
+    ],
+    "protein_gap": 2.0,
+    "protein_less": 4.0,
+    "money_saved": 0.5
+  },
   "removable": {
     "ok": true,
     "sku": {
@@ -160,7 +180,7 @@
     ],
     "reason": "",
     "meal": "breakfast",
-    "checked_at": "2026-10-20T03:43:21"
+    "checked_at": "2026-10-20T14:40:35"
   },
   "removables": {
     "514700": {
@@ -201,7 +221,7 @@
       ],
       "reason": "",
       "meal": "breakfast",
-      "checked_at": "2026-10-20T03:43:21"
+      "checked_at": "2026-10-20T14:40:35"
     }
   },
   "suggestions": [

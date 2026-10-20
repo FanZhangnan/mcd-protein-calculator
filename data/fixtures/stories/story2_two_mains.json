@@ -139,28 +139,33 @@
   "money_basis": "reference",
   "budget_status": "reference",
   "protein_per_yuan": 1.1,
+  "protein_status": "met",
+  "protein_gap": 0.0,
+  "protein_tolerance": 3.0,
+  "protein_accept_min": 37.0,
   "violations": [],
   "targets": {
     "protein_min": 40.0,
     "budget": 45.0,
     "fat_max": null,
     "kcal_min": null,
-    "kcal_max": null
+    "kcal_max": null,
+    "protein_tolerance": 3.0
   },
-  "signature": "a659b34865b9c12f",
+  "signature": "1f8b50ee4fbf3e2c",
   "quotes": {},
   "quotes_valid": false,
   "cache": {
     "source": "live",
-    "fetched_at": "2026-10-20T03:43:20",
-    "date": "2026-10-20",
+    "fetched_at": "2026-10-20T14:40:19",
+    "date": "2026-10-21",
     "store_code": "1440054",
     "meal_times": {
       "breakfast": "08:15",
       "lunch": "12:15",
       "dinner": "18:30"
     },
-    "cache_key": "3b1b8366538d",
+    "cache_key": "65cb77796898",
     "menu_warnings": {}
   },
   "note": "",
@@ -172,6 +177,8 @@
   "strict_mode": true,
   "nutrition_basis": "official_standard",
   "context_warning": "",
+  "selected": "main",
+  "saver": null,
   "removable": {
     "ok": true,
     "sku": {
@@ -286,7 +293,7 @@
     ],
     "reason": "",
     "meal": "lunch",
-    "checked_at": "2026-10-20T03:43:21"
+    "checked_at": "2026-10-20T14:40:30"
   },
   "removables": {
     "1120": {
@@ -403,7 +410,7 @@
       ],
       "reason": "",
       "meal": "lunch",
-      "checked_at": "2026-10-20T03:43:21"
+      "checked_at": "2026-10-20T14:40:30"
     },
     "1450": {
       "ok": true,
@@ -462,7 +469,7 @@
       ],
       "reason": "",
       "meal": "lunch",
-      "checked_at": "2026-10-20T03:43:21"
+      "checked_at": "2026-10-20T14:40:30"
     }
   },
   "suggestions": [

@@ -1,0 +1,469 @@
+{
+  "feasible": false,
+  "meals": [
+    {
+      "meal": "lunch",
+      "meal_label": "午餐",
+      "items": [
+        {
+          "code": "511781",
+          "name": "培根安格斯厚牛堡",
+          "kind": "main",
+          "nutrition": {
+            "energyKj": 2959.0,
+            "energyKcal": 707.0,
+            "protein": 34.0,
+            "fat": 44.0,
+            "carbohydrate": 43.0,
+            "sodium": 1037.0,
+            "calcium": 161.0
+          },
+          "nutrition_status": "official",
+          "nutrition_note": "",
+          "nutrition_basis": "official",
+          "removal_notes": [],
+          "is_estimate": false,
+          "price_ref": 34.5,
+          "quantity": 1.0,
+          "line_total_ref": 34.5,
+          "meal": "lunch",
+          "modification": [],
+          "removals": []
+        }
+      ],
+      "nutrition": {
+        "energyKj": 2959.0,
+        "energyKcal": 707.0,
+        "protein": 34.0,
+        "fat": 44.0,
+        "carbohydrate": 43.0,
+        "sodium": 1037.0,
+        "calcium": 161.0
+      },
+      "unknown": [],
+      "price_ref": 34.5,
+      "quote": null,
+      "is_estimate": false
+    }
+  ],
+  "items": [
+    {
+      "code": "511781",
+      "name": "培根安格斯厚牛堡",
+      "kind": "main",
+      "nutrition": {
+        "energyKj": 2959.0,
+        "energyKcal": 707.0,
+        "protein": 34.0,
+        "fat": 44.0,
+        "carbohydrate": 43.0,
+        "sodium": 1037.0,
+        "calcium": 161.0
+      },
+      "nutrition_status": "official",
+      "nutrition_note": "",
+      "nutrition_basis": "official",
+      "removal_notes": [],
+      "is_estimate": false,
+      "price_ref": 34.5,
+      "quantity": 1.0,
+      "line_total_ref": 34.5,
+      "meal": "lunch",
+      "modification": [],
+      "removals": []
+    }
+  ],
+  "totals": {
+    "energyKj": 2959.0,
+    "energyKcal": 707.0,
+    "protein": 34.0,
+    "fat": 44.0,
+    "carbohydrate": 43.0,
+    "sodium": 1037.0,
+    "calcium": 161.0
+  },
+  "unknowns": [],
+  "is_estimate": false,
+  "cost": 34.5,
+  "effective_cost": 34.5,
+  "money_basis": "reference",
+  "budget_status": "reference",
+  "protein_per_yuan": 1.0,
+  "protein_status": "under",
+  "protein_gap": 6.0,
+  "protein_tolerance": 3.0,
+  "protein_accept_min": 37.0,
+  "violations": [
+    {
+      "constraint": "protein",
+      "label": "蛋白质",
+      "value": 34.0,
+      "target": "≥40",
+      "gap": -6.0,
+      "unit": "g"
+    }
+  ],
+  "targets": {
+    "protein_min": 40.0,
+    "budget": 35.0,
+    "fat_max": null,
+    "kcal_min": null,
+    "kcal_max": null,
+    "protein_tolerance": 3.0
+  },
+  "signature": "2aa0fc1e91f4ed31",
+  "quotes": {},
+  "quotes_valid": false,
+  "cache": {
+    "source": "live",
+    "fetched_at": "2026-10-20T14:33:14",
+    "date": "2026-10-21",
+    "store_code": "1440054",
+    "meal_times": {
+      "breakfast": "08:15",
+      "lunch": "12:15",
+      "dinner": "18:30"
+    },
+    "cache_key": "65cb77796898",
+    "menu_warnings": {}
+  },
+  "note": "当前方案不满足全部硬约束，不视为达标。",
+  "mode": "single",
+  "meal": "lunch",
+  "meal_label": "午餐",
+  "allow_side": false,
+  "max_mains": 2,
+  "strict_mode": true,
+  "nutrition_basis": "official_standard",
+  "context_warning": "",
+  "selected": "main",
+  "saver": null,
+  "removable": {
+    "ok": true,
+    "sku": {
+      "code": "511781",
+      "name": "培根安格斯厚牛堡"
+    },
+    "supportModify": true,
+    "groups": [
+      {
+        "index": 0,
+        "name": null,
+        "values": [
+          {
+            "code": "100141",
+            "name": "吉士",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "100179",
+            "name": "烤牛肉风味酱",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "120512",
+            "name": "切块生菜",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "103386",
+            "name": "培根",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          },
+          {
+            "code": "120160",
+            "name": "黄油",
+            "selectedKey": "0-1",
+            "unselectedKey": "0-0",
+            "price": 0
+          }
+        ]
+      }
+    ],
+    "options": [
+      {
+        "code": "100141",
+        "name": "吉士",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": true,
+        "muscle_warning": true,
+        "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+        "default_suggestion": true
+      },
+      {
+        "code": "100179",
+        "name": "烤牛肉风味酱",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": true
+      },
+      {
+        "code": "120512",
+        "name": "切块生菜",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": false
+      },
+      {
+        "code": "103386",
+        "name": "培根",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": true,
+        "muscle_warning": true,
+        "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+        "default_suggestion": true
+      },
+      {
+        "code": "120160",
+        "name": "黄油",
+        "selectedKey": "0-1",
+        "unselectedKey": "0-0",
+        "price": 0,
+        "group": 0,
+        "protein_risk": false,
+        "muscle_warning": false,
+        "muscle_note": "",
+        "default_suggestion": true
+      }
+    ],
+    "reason": "",
+    "meal": "lunch",
+    "checked_at": "2026-10-20T14:33:15"
+  },
+  "removables": {
+    "511781": {
+      "ok": true,
+      "sku": {
+        "code": "511781",
+        "name": "培根安格斯厚牛堡"
+      },
+      "supportModify": true,
+      "groups": [
+        {
+          "index": 0,
+          "name": null,
+          "values": [
+            {
+              "code": "100141",
+              "name": "吉士",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "100179",
+              "name": "烤牛肉风味酱",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "120512",
+              "name": "切块生菜",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "103386",
+              "name": "培根",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            },
+            {
+              "code": "120160",
+              "name": "黄油",
+              "selectedKey": "0-1",
+              "unselectedKey": "0-0",
+              "price": 0
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "code": "100141",
+          "name": "吉士",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": true,
+          "muscle_warning": true,
+          "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+          "default_suggestion": true
+        },
+        {
+          "code": "100179",
+          "name": "烤牛肉风味酱",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": true
+        },
+        {
+          "code": "120512",
+          "name": "切块生菜",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": false
+        },
+        {
+          "code": "103386",
+          "name": "培根",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": true,
+          "muscle_warning": true,
+          "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+          "default_suggestion": true
+        },
+        {
+          "code": "120160",
+          "name": "黄油",
+          "selectedKey": "0-1",
+          "unselectedKey": "0-0",
+          "price": 0,
+          "group": 0,
+          "protein_risk": false,
+          "muscle_warning": false,
+          "muscle_note": "",
+          "default_suggestion": true
+        }
+      ],
+      "reason": "",
+      "meal": "lunch",
+      "checked_at": "2026-10-20T14:33:15"
+    }
+  },
+  "suggestions": [
+    {
+      "code": "100141",
+      "name": "吉士",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": true,
+      "muscle_warning": true,
+      "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+      "default_suggestion": true,
+      "target_code": "511781",
+      "target_name": "培根安格斯厚牛堡"
+    },
+    {
+      "code": "100179",
+      "name": "烤牛肉风味酱",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "muscle_warning": false,
+      "muscle_note": "",
+      "default_suggestion": true,
+      "target_code": "511781",
+      "target_name": "培根安格斯厚牛堡"
+    },
+    {
+      "code": "103386",
+      "name": "培根",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": true,
+      "muscle_warning": true,
+      "muscle_note": "增肌时不建议去掉，会减少蛋白质",
+      "default_suggestion": true,
+      "target_code": "511781",
+      "target_name": "培根安格斯厚牛堡"
+    },
+    {
+      "code": "120160",
+      "name": "黄油",
+      "selectedKey": "0-1",
+      "unselectedKey": "0-0",
+      "price": 0,
+      "group": 0,
+      "protein_risk": false,
+      "muscle_warning": false,
+      "muscle_note": "",
+      "default_suggestion": true,
+      "target_code": "511781",
+      "target_name": "培根安格斯厚牛堡"
+    }
+  ],
+  "upgrade": null,
+  "upgrades": [],
+  "frontier": {
+    "max_protein": {
+      "code": "511781",
+      "name": "培根安格斯厚牛堡",
+      "protein": 34.0,
+      "fat": 44.0,
+      "kcal": 707.0,
+      "cost": 34.5,
+      "items": [
+        "培根安格斯厚牛堡"
+      ],
+      "protein_gap": 6.0
+    },
+    "reach_price": {
+      "code": "1120",
+      "name": "双层吉士汉堡",
+      "protein": 42.0,
+      "fat": 39.0,
+      "kcal": 798.0,
+      "cost": 39.0,
+      "items": [
+        "双层吉士汉堡",
+        "麦香鸡"
+      ],
+      "protein_gap": 0.0
+    },
+    "relax_fat": null,
+    "relax_kcal": null,
+    "reachable": true,
+    "candidates": 130,
+    "message": "",
+    "basis": "official_standard"
+  },
+  "basis": "single_meal"
+}

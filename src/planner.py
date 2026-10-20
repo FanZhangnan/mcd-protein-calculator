@@ -32,13 +32,19 @@ NUTRI_KEYS = ["energyKj", "energyKcal", "protein", "fat", "carbohydrate", "sodiu
 
 @dataclass
 class Targets:
-    """One meal's targets. No day-level fields survive here."""
+    """One meal's targets. No day-level fields survive here.
+
+    ``protein_tolerance`` is how many grams below ``protein_min`` the user is
+    willing to accept (0–10). The solver first tries the real target, then the
+    tolerated threshold, so “达标” and “接近达标” are decided in one place.
+    """
 
     protein_min: float
     budget: float | None = None
     fat_max: float | None = None
     kcal_min: float | None = None
     kcal_max: float | None = None
+    protein_tolerance: float = 0.0
 
     @property
     def kcal_low(self) -> float:
@@ -48,6 +54,22 @@ class Targets:
     def kcal_high(self) -> float:
         return 10**9 if self.kcal_max is None else float(self.kcal_max)
 
+    @property
+    def accept_min(self) -> float:
+        """Lowest protein number that still counts as acceptable."""
+        tolerance = max(0.0, float(self.protein_tolerance or 0.0))
+        return max(0.1, float(self.protein_min) - tolerance)
+
+    def with_protein_min(self, value: float) -> "Targets":
+        return Targets(
+            protein_min=float(value),
+            budget=self.budget,
+            fat_max=self.fat_max,
+            kcal_min=self.kcal_min,
+            kcal_max=self.kcal_max,
+            protein_tolerance=self.protein_tolerance,
+        )
+
     def as_dict(self) -> dict[str, Any]:
         return {
             "protein_min": self.protein_min,
@@ -55,6 +77,7 @@ class Targets:
             "fat_max": self.fat_max,
             "kcal_min": self.kcal_min,
             "kcal_max": self.kcal_max,
+            "protein_tolerance": self.protein_tolerance,
         }
 
     @classmethod
@@ -69,6 +92,7 @@ class Targets:
             fat_max=num("fat_max"),
             kcal_min=num("kcal_min"),
             kcal_max=num("kcal_max"),
+            protein_tolerance=float(num("protein_tolerance") or 0.0),
         )
 
 
@@ -475,8 +499,9 @@ def plan_open(pools: dict[str, dict[str, list[Item]]], targets: Targets,
     )
 
 
-def _brief(combo: list[Item], totals: dict[str, float | None],
-           cost: float | None, targets: Targets) -> dict[str, Any]:
+def brief(combo: list[Item], totals: dict[str, float | None],
+          cost: float | None, targets: Targets) -> dict[str, Any]:
+    """Compact one-line description of a combo (used by payloads and charts)."""
     main = next((i for i in combo if i.kind == "main"), None)
     return {
         "code": main.code if main else "",
@@ -566,13 +591,13 @@ def single_meal_frontier(pools: dict[str, dict[str, list[Item]]], targets: Targe
         message = ""
 
     return {
-        "max_protein": None if best is None else _brief(best["combo"], best["totals"],
+        "max_protein": None if best is None else brief(best["combo"], best["totals"],
                                                         best["cost"], targets),
-        "reach_price": None if reach_price is None else _brief(
+        "reach_price": None if reach_price is None else brief(
             reach_price["combo"], reach_price["totals"], reach_price["cost"], targets),
-        "relax_fat": None if relax_fat is None else _brief(
+        "relax_fat": None if relax_fat is None else brief(
             relax_fat["combo"], relax_fat["totals"], relax_fat["cost"], targets),
-        "relax_kcal": None if relax_kcal is None else _brief(
+        "relax_kcal": None if relax_kcal is None else brief(
             relax_kcal["combo"], relax_kcal["totals"], relax_kcal["cost"], targets),
         "reachable": reachable,
         "candidates": len(rows),

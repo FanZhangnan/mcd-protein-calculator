@@ -5,6 +5,7 @@
 // positive flow (N=2), removal suggestion + quote, no-solution fallback card,
 // and the "no combo under caps -> no card" branch.
 import { spawn } from "node:child_process";
+import { waitForJson } from "./cdp_ready.mjs";
 
 const URL_ = process.argv[2] || "http://127.0.0.1:8773/";
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -25,7 +26,7 @@ async function main() {
   ], { stdio: "ignore" });
   await sleep(2500);
 
-  const version = await (await fetch(`http://127.0.0.1:${PORT}/json/version`)).json();
+  const version = await waitForJson(`http://127.0.0.1:${PORT}/json/version`);
   check("Chrome CDP 可用", !!version.webSocketDebuggerUrl, version.Browser);
 
   const tab = await (await fetch(`http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(URL_)}`,
@@ -240,6 +241,56 @@ async function main() {
   check("蛋白质填 0 时前端拦截",
         (await evalJs(`document.querySelector('#s-status').textContent`)).includes("必须大于 0"),
         await evalJs(`document.querySelector('#s-status').textContent`));
+
+  // ------------------------------------------- tolerance: page == API (T6)
+  await evalJs(`(() => {
+      document.querySelector('#s_protein').value = 40;
+      document.querySelector('#s_budget').value = 45;
+      document.querySelector('#s_fat').value = '';
+      document.querySelector('#s_tolerance').value = '3';
+      document.querySelector('#s_max_mains').value = '2';
+      document.querySelector('#s-plan').click();
+    })()`);
+  await waitFor(`S && S.meal === 'lunch' && S.cost > 0 && S.saver`, "容差方案");
+  const pageMain = await evalJs(`JSON.stringify({
+      items: S.items.map(i => i.code + ':' + i.quantity),
+      cost: S.cost, status: S.protein_status, saver: !!S.saver
+    })`).then(JSON.parse);
+  const apiResp = await fetch(new URL('/api/meal', URL_), {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ meal: 'lunch', protein_min: 40, budget: 45,
+                           max_mains: 2, allow_side: false, protein_tolerance: 3 }),
+  }).then((r) => r.json());
+  const apiMain = {
+    items: apiResp.items.map((i) => i.code + ':' + i.quantity),
+    cost: apiResp.cost, status: apiResp.protein_status, saver: !!apiResp.saver,
+  };
+  check("T6 网页与接口主方案一致",
+        JSON.stringify(pageMain) === JSON.stringify(apiMain),
+        `${JSON.stringify(pageMain)} vs ${JSON.stringify(apiMain)}`);
+
+  const saverBefore = await evalJs(`S.saver ? JSON.stringify(S.saver) : ""`).then((t) => t && JSON.parse(t));
+  if (saverBefore) {
+    const oldSig = await evalJs(`SSIG`);
+    await evalJs(`document.querySelector('#s-saver').click()`);
+    await waitFor(`S && S.selected === 'saver'`, "切换到省钱方案");
+    const after = await evalJs(`JSON.stringify({
+        selected: S.selected, cost: S.cost, status: S.protein_status,
+        quotes: S.quotes || {}, sig: SSIG
+      })`).then(JSON.parse);
+    check("省钱选项切换后成为主方案",
+          after.selected === 'saver' && after.status === 'near' && !after.quotes.lunch,
+          JSON.stringify(after));
+    check("切换后旧报价失效（签名已变）", after.sig !== oldSig,
+          `${oldSig} -> ${after.sig}`);
+    const stale = await fetch(new URL('/api/quote', URL_), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ signature: oldSig }),
+    });
+    check("旧签名报价返回 409", stale.status === 409, String(stale.status));
+  } else {
+    check("离线样例应带省钱选项", false, "saver missing");
+  }
 
   await sleep(400);
   try { ws.close(); } catch {}

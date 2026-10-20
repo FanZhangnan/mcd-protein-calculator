@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import mimetypes
 import re
 import sys
@@ -44,6 +45,24 @@ def _num(value: Any, label: str, *, allow_none: bool = True,
     return number
 
 
+def _int_in_range(value: Any, label: str, low: int, high: int, *, default: int) -> int:
+    """Integer-only input; floats like 3.5 are refused instead of rounded."""
+    if value in ("", None):
+        return default
+    if isinstance(value, bool):
+        raise InputError(f"{label}必须是 {low}–{high} 的整数")
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        raise InputError(f"{label}必须是 {low}–{high} 的整数")
+    if not math.isfinite(number) or not number.is_integer():
+        raise InputError(f"{label}必须是 {low}–{high} 的整数")
+    number = int(number)
+    if not low <= number <= high:
+        raise InputError(f"{label}只能是 {low}–{high} 的整数")
+    return number
+
+
 def validate_meal_request(body: dict[str, Any]) -> tuple[str, planner_mod.Targets, bool, int]:
     """Validate ``POST /api/meal``.
 
@@ -75,11 +94,21 @@ def validate_meal_request(body: dict[str, Any]) -> tuple[str, planner_mod.Target
         raise InputError("主食数量上限必须是 1–3 的整数")
     if not 1 <= max_mains <= 3:
         raise InputError("主食数量上限只能是 1、2 或 3")
+    protein_tolerance = _int_in_range(
+        body.get("protein_tolerance"), "可接受少几克蛋白质", 0, 10, default=3)
     targets = planner_mod.Targets(
         protein_min=protein_min, budget=budget, fat_max=fat_max,
         kcal_min=kcal_min, kcal_max=kcal_max,
+        protein_tolerance=float(protein_tolerance),
     )
     return meal, targets, bool(body.get("allow_side", False)), max_mains
+
+
+def validate_select(value: Any) -> str:
+    select = str(value or "main")
+    if select not in ("main", "saver"):
+        raise InputError("select 只能是 main 或 saver")
+    return select
 
 
 def validate_settings(body: dict[str, Any]) -> dict[str, Any]:
@@ -248,9 +277,11 @@ class Handler(BaseHTTPRequestHandler):
     def _meal(self, body: dict[str, Any]) -> None:
         """One meal. Does not read any history."""
         meal, targets, allow_side, max_mains = validate_meal_request(body)
+        select = validate_select(body.get("select"))
         payload = self.service.plan_meal(meal, targets, allow_side,
                                          quote=bool(body.get("quote")),
-                                         max_mains=max_mains)
+                                         max_mains=max_mains,
+                                         select=select)
         self._json(payload)
 
     def _landscape(self, meal: str, raw_max_mains: str) -> None:

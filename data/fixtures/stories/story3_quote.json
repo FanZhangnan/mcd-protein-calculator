@@ -49,15 +49,15 @@
         "original_fen": 1850,
         "discount_fen": 0,
         "unit": "CNY",
-        "queried_at": "2026-10-20 01:43:25",
-        "reservation_date": "2026-10-20 08:15",
+        "queried_at": "2026-10-20 12:40:39",
+        "reservation_date": "2026-10-21 08:15",
         "quote_kind": "slot_quote",
         "take_way": [
           "eat-in",
           "take-in-store"
         ],
         "message": "请求成功",
-        "signature": "0187203abe050761",
+        "signature": "0d5e486ba10fc471",
         "source": "live",
         "requested_items": [
           {
@@ -112,15 +112,20 @@
   "money_basis": "quoted",
   "budget_status": "quoted",
   "protein_per_yuan": 1.5,
+  "protein_status": "met",
+  "protein_gap": 0.0,
+  "protein_tolerance": 3.0,
+  "protein_accept_min": 22.0,
   "violations": [],
   "targets": {
     "protein_min": 25.0,
     "budget": 20.0,
     "fat_max": null,
     "kcal_min": null,
-    "kcal_max": null
+    "kcal_max": null,
+    "protein_tolerance": 3.0
   },
-  "signature": "0187203abe050761",
+  "signature": "0d5e486ba10fc471",
   "quotes": {
     "breakfast": {
       "status": "ok",
@@ -129,15 +134,15 @@
       "original_fen": 1850,
       "discount_fen": 0,
       "unit": "CNY",
-      "queried_at": "2026-10-20 01:43:25",
-      "reservation_date": "2026-10-20 08:15",
+      "queried_at": "2026-10-20 12:40:39",
+      "reservation_date": "2026-10-21 08:15",
       "quote_kind": "slot_quote",
       "take_way": [
         "eat-in",
         "take-in-store"
       ],
       "message": "请求成功",
-      "signature": "0187203abe050761",
+      "signature": "0d5e486ba10fc471",
       "source": "live",
       "requested_items": [
         {
@@ -150,15 +155,15 @@
   "quotes_valid": true,
   "cache": {
     "source": "live",
-    "fetched_at": "2026-10-20T03:43:20",
-    "date": "2026-10-20",
+    "fetched_at": "2026-10-20T14:40:19",
+    "date": "2026-10-21",
     "store_code": "1440054",
     "meal_times": {
       "breakfast": "08:15",
       "lunch": "12:15",
       "dinner": "18:30"
     },
-    "cache_key": "3b1b8366538d",
+    "cache_key": "65cb77796898",
     "menu_warnings": {}
   },
   "note": "",

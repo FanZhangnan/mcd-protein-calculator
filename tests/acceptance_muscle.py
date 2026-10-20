@@ -12,12 +12,23 @@ Every case writes its raw response to data/fixtures/muscle/.
 from __future__ import annotations
 
 import json
+import os
 import sys
 import urllib.error
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8775"
+
+
+def future_day() -> str:
+    """China's tomorrow: today's breakfast/lunch become un-orderable (600053)."""
+    now = datetime.now(timezone.utc) + timedelta(hours=8)
+    return (now + timedelta(days=1)).strftime("%Y-%m-%d")
+
+
+DAY = os.environ.get("MAI_TEST_DATE") or future_day()
 OUT = Path(__file__).resolve().parents[1] / "data" / "fixtures" / "muscle"
 RESULTS: list[tuple[str, bool, str]] = []
 
@@ -49,7 +60,7 @@ def show(payload: dict) -> str:
 
 def main() -> int:
     call("/api/settings", {
-        "date": "2026-10-20",
+        "date": DAY,
         "store": {"code": "1440054"},
         "meal_times": {"breakfast": "08:15", "lunch": "12:15", "dinner": "18:30"},
     }, "POST")

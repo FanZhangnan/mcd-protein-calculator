@@ -661,16 +661,54 @@ class Service:
 
     def plan_meal(self, meal: str, targets: planner_mod.Targets,
                   allow_side: bool = False, *, quote: bool = False,
-                  max_mains: int = DEFAULT_MAX_MAINS) -> dict[str, Any]:
-        """One meal, strict mode: 1..N mains, official standard values only."""
+                  max_mains: int = DEFAULT_MAX_MAINS,
+                  select: str = "main") -> dict[str, Any]:
+        """One meal, strict mode: 1..N mains, official standard values only.
+
+        The protein goal is tried at its real value first. Only when that is
+        infeasible does the tolerated threshold (``protein_min − tolerance``)
+        get a turn; a strict plan additionally reports the cheapest tolerated
+        combo as ``saver``. ``tolerance = 0`` is byte-for-byte the old behaviour.
+        """
         pools = self.single_pools(meal, allow_side)
-        result = planner_mod.plan_open(
+        tolerance = max(0.0, float(targets.protein_tolerance or 0.0))
+        accepted_targets = targets.with_protein_min(targets.accept_min)
+
+        strict = planner_mod.plan_open(
             pools, targets, [meal],
             ranker=planner_mod.single_meal_rank,
             full_enumeration=True,
             max_mains=max_mains,
         )
-        result.basis = "single_meal"
+        strict.basis = "single_meal"
+
+        result = strict
+        saver_result = None
+        if strict.feasible:
+            if tolerance > 0:
+                cheap = planner_mod.plan_open(
+                    pools, accepted_targets, [meal],
+                    ranker=planner_mod.single_meal_rank,
+                    full_enumeration=True,
+                    max_mains=max_mains,
+                )
+                cheap.basis = "single_meal"
+                if cheap.feasible and cheap.cost < strict.cost - 1e-9:
+                    saver_result = cheap
+        else:
+            result = planner_mod.plan_open(
+                pools, accepted_targets, [meal],
+                ranker=planner_mod.single_meal_rank,
+                full_enumeration=True,
+                max_mains=max_mains,
+            )
+            result.basis = "single_meal"
+
+        selected = "main"
+        if select == "saver" and saver_result is not None:
+            result = saver_result
+            saver_result = None
+            selected = "saver"
 
         meal_plan = result.meals[0] if result.meals else None
         mains = [i for i in (meal_plan.items if meal_plan else []) if i.kind == "main"]
@@ -693,8 +731,17 @@ class Service:
         upgrade = upgrades[0] if upgrades else None
         frontier = None
         if not result.feasible:
+            # relaxations are always measured against the user's real target
             frontier = planner_mod.single_meal_frontier(pools, targets, meal,
                                                         max_mains=max_mains)
+
+        saver = None
+        if saver_result is not None and saver_result.meals:
+            saver = planner_mod.brief(saver_result.meals[0].items, saver_result.totals,
+                                      saver_result.cost, targets)
+            main_protein = float(result.totals.get("protein") or 0.0)
+            saver["protein_less"] = round(max(0.0, main_protein - float(saver["protein"] or 0.0)), 1)
+            saver["money_saved"] = round(max(0.0, float(result.cost) - float(saver_result.cost)), 2)
 
         quotes: dict[str, dict[str, Any]] = {}
         if quote and meal_plan is not None:
@@ -710,6 +757,10 @@ class Service:
             "strict_mode": True,
             "nutrition_basis": "official_standard",
             "context_warning": (self.ensure_cache().get("menu_warnings") or {}).get(meal, ""),
+            "protein_tolerance": tolerance,
+            "protein_accept_min": round(accepted_targets.protein_min, 2),
+            "selected": selected,
+            "saver": saver,
             "removable": removable,
             "removables": removables_map,
             "suggestions": suggestions,
@@ -908,9 +959,16 @@ class Service:
             effective = round(reference, 2)
             money_basis = "reference"
 
-        feasible = bool(meals) and planner_mod.is_feasible(totals, effective, targets)
+        feasible = bool(meals) and planner_mod.is_feasible(
+            totals, effective, targets.with_protein_min(targets.accept_min))
         vio = planner_mod.violations(totals, effective, targets)
         protein = totals.get("protein")
+        tolerance = max(0.0, float(targets.protein_tolerance or 0.0))
+        met = (feasible and protein is not None
+               and float(protein) + 1e-9 >= float(targets.protein_min))
+        protein_status = "met" if met else ("near" if feasible else "under")
+        protein_gap = (None if protein is None
+                       else round(max(0.0, float(targets.protein_min) - float(protein)), 1))
         per_yuan = round(float(protein) / effective, 1) if (protein is not None and effective > 0) else None
         signature = signature or self.plan_signature(cache, meals)
 
@@ -933,6 +991,10 @@ class Service:
                               else ("not_evaluated" if quote_attempted and not quote_ok
                                     else money_basis)),
             "protein_per_yuan": per_yuan,
+            "protein_status": protein_status,
+            "protein_gap": protein_gap,
+            "protein_tolerance": tolerance,
+            "protein_accept_min": round(targets.accept_min, 2),
             "violations": vio,
             "targets": targets.as_dict(),
             "signature": signature,

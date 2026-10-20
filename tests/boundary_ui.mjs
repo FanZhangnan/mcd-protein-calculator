@@ -3,6 +3,7 @@
 //   2) 8783 —— 离线桩强制报价失败，页面必须显示失败与参考价，不能显示 0 元
 // Usage: node tests/boundary_ui.mjs [gapUrl] [failUrl]
 import { spawn } from "node:child_process";
+import { waitForJson } from "./cdp_ready.mjs";
 
 const GAP = process.argv[2] || "http://127.0.0.1:8782/";
 const FAIL = process.argv[3] || "http://127.0.0.1:8783/";
@@ -24,8 +25,8 @@ async function main() {
   ], { stdio: "ignore" });
   await sleep(2500);
 
-  const tab = await (await fetch(`http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(GAP)}`,
-    { method: "PUT" })).json();
+  const tab = await waitForJson(`http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(GAP)}`,
+    { method: "PUT" });
   const ws = new WebSocket(tab.webSocketDebuggerUrl);
   await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });
 
