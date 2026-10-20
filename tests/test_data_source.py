@@ -51,7 +51,7 @@ def run_niceticks(value, steps):
         "const inputValue = %s; const inputSteps = %s;\n" % (json.dumps(value), json.dumps(steps))
         + script
     )
-    node = shutil.which("node") or "/Users/zhangnanfan/.workbuddy/binaries/node/versions/22.22.2-6/bin/node"
+    node = shutil.which("node") or "node"
     proc = subprocess.run(
         [node, "-e", script], capture_output=True, text=True, cwd=str(ROOT), timeout=30
     )
