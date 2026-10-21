@@ -1,8 +1,12 @@
+<p align="center"><img src="docs/brand/banner.png" alt="麦当劳增肌计算器" width="100%"></p>
+
 # 麦当劳增肌计算器
 
 输入这一顿想吃多少蛋白质、最多花多少钱，算出麦当劳里最划算的点法。
 
 麦当劳程序员创意开发大赛参赛作品 · 非麦当劳官方产品
+
+<p align="center"><img src="docs/brand/social-preview.png" alt="输入蛋白质目标和预算，算出最划算的点法：午餐 44 g / 45 元 → 双层吉士汉堡 ×2，54 g 蛋白质，45.00 元" width="720"></p>
 
 ---
 
