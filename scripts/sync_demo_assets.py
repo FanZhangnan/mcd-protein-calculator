@@ -23,6 +23,10 @@ PAIRS = [
     ("web/solver.js", "docs/demo/solver.js"),
 ]
 
+FONT_DIRS = [("web/fonts", "docs/demo/fonts")]
+
+FONT_DIRS = [("web/fonts", "docs/demo/fonts")]
+
 
 def main() -> int:
     for src_rel, dst_rel in PAIRS:
@@ -31,6 +35,13 @@ def main() -> int:
         shutil.copy2(src, dst)
         digest = hashlib.sha256(src.read_bytes()).hexdigest()[:12]
         print(f"{src_rel} -> {dst_rel}  sha256:{digest}")
+    for src_rel, dst_rel in FONT_DIRS:
+        src_dir, dst_dir = ROOT / src_rel, ROOT / dst_rel
+        dst_dir.mkdir(parents=True, exist_ok=True)
+        for src in sorted(src_dir.iterdir()):
+            if src.is_file():
+                shutil.copy2(src, dst_dir / src.name)
+                print(f"{src_rel}/{src.name} -> {dst_rel}/{src.name}")
     return 0
 
 

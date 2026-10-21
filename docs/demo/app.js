@@ -100,7 +100,7 @@ function renderFoot() {
   const stamp = (BOOT && BOOT.fetched_at) || c.fetched_at || "";
   const el = $("foot-update");
   if (!el) return;
-  el.textContent = `数据更新于 ${stamp || "—"} · 非麦当劳官方产品`;
+  el.textContent = `数据更新于 ${stamp || "—"}`;
 }
 
 function renderMeta() {
@@ -290,6 +290,10 @@ function drawChart() {
     svg.innerHTML = `<text x="340" y="${H / 2}" text-anchor="middle" class="tick">本餐次暂无可绘制的主食</text>`;
     return;
   }
+  // 按实际显示宽度换算字号，保证 12.5px 左右，不随 viewBox 放大缩小
+  const chartShown = svg.getBoundingClientRect().width || CHART_W;
+  const fs = Math.max(10, Math.min(30, 12.5 * (CHART_W / chartShown)));
+  svg.style.setProperty("--chart-fs", `${fs.toFixed(2)}px`);
   const target = Number($("s_protein").value);
   const budget = Number($("s_budget").value);
   const rec = planPoint(S);
@@ -321,7 +325,6 @@ function drawChart() {
   });
   g += `<line class="axis" x1="${PAD.l}" y1="${H - PAD.b}" x2="${CHART_W - PAD.r}" y2="${H - PAD.b}"/>`;
   g += `<line class="axis" x1="${PAD.l}" y1="${PAD.t}" x2="${PAD.l}" y2="${H - PAD.b}"/>`;
-  g += `<text class="axis-label" x="${(PAD.l + CHART_W - PAD.r) / 2}" y="${H - 8}" text-anchor="middle">价格（元）</text>`;
   g += `<text class="axis-label" x="20" y="${(PAD.t + H - PAD.b) / 2}" text-anchor="middle" transform="rotate(-90 20 ${(PAD.t + H - PAD.b) / 2})">蛋白质（g）</text>`;
 
   if (Number.isFinite(budget) && budget > 0 && Number.isFinite(target) && target > 0) {
@@ -332,7 +335,7 @@ function drawChart() {
     if (tolerance > 0) {
       const yLow = Math.min(H - PAD.b, y(target - tolerance));
       const h = Math.max(1, yLow - y1);
-      g += `<rect class="band" x="${PAD.l}" y="${y1.toFixed(1)}" width="${(CHART_W - PAD.l - PAD.r).toFixed(1)}" height="${h.toFixed(1)}"/>`;
+      g += `<rect class="band" data-w="${(x2 - PAD.l).toFixed(1)}" x="${PAD.l}" y="${y1.toFixed(1)}" width="${(x2 - PAD.l).toFixed(1)}" height="${h.toFixed(1)}"/>`;
       g += `<text class="band-label" x="${PAD.l + 8}" y="${(y1 + h / 2 + 4).toFixed(1)}" text-anchor="start">差 ${tolerance} g 以内</text>`;
     }
   }
@@ -342,11 +345,29 @@ function drawChart() {
     if (idx < 3) return;
     g += `<circle class="dot" data-point="${idx}" cx="${x(d.price).toFixed(1)}" cy="${y(d.protein).toFixed(1)}" r="7"/>`;
   });
+  const placed = [];
   items.slice(0, 3).forEach((d, idx) => {
-    const cx = x(d.price).toFixed(1);
-    const cy = y(d.protein).toFixed(1);
-    g += `<circle class="dot hot" data-point="${idx}" cx="${cx}" cy="${cy}" r="9"/>`;
-    g += `<text class="dot-num" data-num="${idx}" data-cx="${cx}" data-cy="${cy}" x="${cx}" y="${(Number(cy) + 4).toFixed(1)}">${idx + 1}</text>`;
+    const tx = x(d.price);
+    const ty = y(d.protein);
+    let cx = tx;
+    let cy = ty;
+    const R = 9;
+    const clash = placed.find((p) => Math.hypot(p.cx - tx, p.cy - ty) < 2 * R);
+    if (clash) {
+      const d0 = Math.hypot(clash.cx - tx, clash.cy - ty) || 1;
+      const need = Math.sqrt(Math.max(0, Math.pow(2 * R + 2, 2) - d0 * d0));
+      const step = Math.min(10, need / Math.SQRT2 + 1);
+      cx = tx + step;
+      cy = ty + step;
+    }
+    placed.push({ cx, cy });
+    if (Math.abs(cx - tx) > 0.05 || Math.abs(cy - ty) > 0.05) {
+      g += `<line class="dot-link" x1="${tx.toFixed(1)}" y1="${ty.toFixed(1)}" x2="${cx.toFixed(1)}" y2="${cy.toFixed(1)}"/>`;
+    }
+    const cxs = cx.toFixed(1);
+    const cys = cy.toFixed(1);
+    g += `<circle class="dot hot" data-point="${idx}" cx="${cxs}" cy="${cys}" r="${R}"/>`;
+    g += `<text class="dot-num" data-num="${idx}" data-cx="${cxs}" data-cy="${cys}" data-real-x="${tx.toFixed(1)}" data-real-y="${ty.toFixed(1)}" x="${cxs}" y="${(Number(cys) + 4).toFixed(1)}">${idx + 1}</text>`;
   });
 
   // 悬停用：landscape 的字段是 protein_per_yuan，这里统一成 ppy
@@ -813,7 +834,7 @@ function renderSingle(s) {
 
   renderRank();
   drawChart();
-  if (!isSnapshot() && hasItems && !s.coupon_checked) loadCouponQuote(s);
+  if (!isSnapshot() && hasItems && !s.coupon_checked && s.coupon_allowed !== false) loadCouponQuote(s);
 }
 
 async function loadCouponQuote(s) {
@@ -835,13 +856,15 @@ async function loadCouponQuote(s) {
 }
 
 // ---------------------------------------------------------------------- flows
-async function singlePlan(extra) {
+async function singlePlan(extra, opts = {}) {
   const body = singleRequest();
   const bad = singleValidate(body);
   if (bad) { setSStatus(bad); return; }
   setSStatus("正在枚举这一餐的全部候选…");
   try {
     const out = await api("/api/meal", { ...body, ...(extra || {}), quote: false });
+    out.coupon_allowed = opts.coupon !== false;
+    out.auto = !!opts.auto;
     S = out; SLAST = out; SSIG = out.signature || "";
     SREMOVED = {};
     renderSingle(S);
@@ -1028,6 +1051,7 @@ async function init() {
     await loadLandscape();
     syncMealSeg();
     updateOptionsSummary();
+    await singlePlan(null, { coupon: false, auto: true });
   } catch (e) { setStatus("初始化失败：" + e.message); }
 }
 

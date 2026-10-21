@@ -1,3 +1,18 @@
+@font-face{
+  font-family:"Barlow Condensed";
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url("fonts/barlow-condensed-latin-600-normal.woff2") format("woff2");
+}
+@font-face{
+  font-family:"Barlow Condensed";
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url("fonts/barlow-condensed-latin-700-normal.woff2") format("woff2");
+}
+
 /* ============================================================ design tokens */
 :root{
   /* surfaces */
@@ -35,8 +50,8 @@
   --grid:#EEE8DF;
 
   /* fonts */
-  --font-cn:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
-  --font-num:"Barlow Condensed","Noto Sans SC",system-ui,-apple-system,sans-serif;
+  --font-cn:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-num:"Barlow Condensed","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
 
   --tap:44px;
 }
@@ -88,6 +103,14 @@ h2{font-size:18px;font-weight:900;margin:0 0 4px;letter-spacing:.2px}
   align-items:center;padding:0 2px;border-bottom:1px solid var(--divider);
 }
 .switch-store:hover{color:var(--brand)}
+.gh-btn{
+  display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;
+  border:1px solid var(--line);border-radius:999px;background:var(--card);
+  color:var(--ink);font-size:13px;font-weight:500;line-height:1;text-decoration:none;
+}
+.gh-btn:hover{border-color:var(--ink);color:var(--ink)}
+.gh-btn svg{width:16px;height:16px;display:block}
+.foot-pill{display:none}
 
 /* data source badge (逻辑在 app.js，这里只做样式) */
 .data-source{
@@ -165,7 +188,8 @@ button.outline{background:var(--card);border-color:var(--ink);color:var(--ink);f
 button.ghost{background:var(--card);color:var(--label)}
 button.tiny{min-height:var(--tap);padding:0 16px;font-size:13px;border-radius:10px}
 button:disabled{opacity:.5;cursor:not-allowed}
-.status{margin-top:10px;font-size:12px;color:var(--muted);min-height:18px;white-space:pre-wrap}
+.status{margin-top:6px;font-size:12px;color:var(--muted);white-space:pre-wrap}
+.status:empty{display:none}
 .cap-hint{
   margin-top:10px;font-size:12px;color:var(--ok);background:var(--ok-soft);
   border:1px solid var(--ok);border-radius:10px;padding:8px 11px;
@@ -341,20 +365,20 @@ label.sugg input{width:auto;min-height:auto;margin-top:4px}
 .chart-head{margin-bottom:10px}
 .chart-sub{font-size:13px;color:var(--muted);margin:0 0 8px}
 .chart-wrap{position:relative}
-#chart{width:100%;height:auto;display:block}
+#chart{width:100%;height:auto;display:block;max-width:680px;margin:0 auto}
 #chart .grid{stroke:var(--grid);stroke-width:1}
 #chart .axis{stroke:var(--line);stroke-width:1}
-#chart .tick{fill:var(--muted);font-family:var(--font-num);font-weight:600;font-size:15px}
-#chart .axis-label{fill:var(--label);font-family:var(--font-num);font-weight:600;font-size:15px}
+#chart .tick{fill:var(--muted);font-family:var(--font-num);font-weight:600;font-size:var(--chart-fs,14px)}
+#chart .axis-label{fill:var(--label);font-family:var(--font-num);font-weight:600;font-size:11px}
 #chart .region{fill:var(--ok-soft);stroke:var(--ok);stroke-width:1.5;stroke-dasharray:6 4}
 #chart .band{fill:var(--save-bg);stroke:var(--save-line);stroke-width:1}
-#chart .band-label{fill:var(--save-ink);font-family:var(--font-num);font-weight:600;font-size:13px}
+#chart .band-label{fill:var(--save-ink);font-family:var(--font-num);font-weight:600;font-size:var(--chart-fs,13px)}
 #chart .dot{fill:var(--dot-gray)}
 #chart .dot.hot{fill:var(--ink);stroke:var(--card);stroke-width:1.5}
 #chart .dot-num{fill:var(--card);font-family:var(--font-num);font-weight:700;font-size:11px;text-anchor:middle}
 #chart .rec-marker{fill:var(--brand);stroke:var(--card);stroke-width:1.5}
 #chart .saver-marker{fill:var(--star);stroke:var(--card);stroke-width:1.5}
-#chart .star-label{fill:var(--ink);font-family:var(--font-num);font-weight:700;font-size:15px}
+#chart .star-label{fill:var(--ink);font-family:var(--font-num);font-weight:700;font-size:var(--chart-fs,14px)}
 #chart .star-label.saver{fill:var(--save-ink)}
 .chart-tip{
   position:absolute;pointer-events:none;background:var(--ink);color:var(--card);
@@ -449,7 +473,8 @@ label.sugg input{width:auto;min-height:auto;margin-top:4px}
   .saver-row button{width:100%}
   .under-card button{width:100%}
   .chart-panel{padding:16px}
-  #chart .tick,#chart .axis-label{font-size:13px}
+  #chart .tick{font-size:13px}
+  #chart .axis-label{display:none}
   #chart .star-label{display:none}
   .chart-legend{display:none}
   .star-legend{display:grid}
@@ -467,6 +492,16 @@ label.sugg input{width:auto;min-height:auto;margin-top:4px}
   .rc-ppy{font-family:var(--font-num);font-weight:700;font-size:16px;white-space:nowrap}
   .site-foot{padding:18px 0;flex-direction:column;gap:6px}
   .site-foot .right{text-align:left}
+  /* 页头：GitHub 按钮固定在右上，非官方胶囊移到页脚 */
+  .site-head .brand-pill{display:none}
+  /* 第一行：品牌 + GitHub；数据徽标换到第二行整行 */
+  .head-inner{gap:8px 10px;flex-wrap:wrap}
+  .head-right{display:contents}
+  .brand{order:1;flex:1 1 0;min-width:0}
+  .gh-btn{order:2;height:32px;padding:0 10px;font-size:12px;gap:5px}
+  .gh-btn svg{width:14px;height:14px}
+  .data-source{order:3;flex:1 1 100%;max-width:none;font-size:11px;padding:5px 9px;margin-top:2px}
+  .foot-pill{display:inline-flex;align-self:flex-start;margin-bottom:4px}
   .sub{font-size:12px}
 }
 
@@ -517,3 +552,6 @@ label.sugg input{width:auto;min-height:auto;margin-top:4px}
   font-size: 12px;
   color: #7a7a76;
 }
+
+/* 编号点错开时连回真实位置 */
+#chart .dot-link{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 2}

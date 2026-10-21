@@ -18,6 +18,11 @@ PAIRS = [
     ("web/app.js", "docs/demo/app.js"),
     ("web/style.css", "docs/demo/style.css"),
     ("web/solver.js", "docs/demo/solver.js"),
+    ("web/fonts/barlow-condensed-latin-600-normal.woff2",
+     "docs/demo/fonts/barlow-condensed-latin-600-normal.woff2"),
+    ("web/fonts/barlow-condensed-latin-700-normal.woff2",
+     "docs/demo/fonts/barlow-condensed-latin-700-normal.woff2"),
+    ("web/fonts/OFL.txt", "docs/demo/fonts/OFL.txt"),
 ]
 
 
@@ -40,6 +45,8 @@ class DemoAssetsTest(unittest.TestCase):
         self.assertNotIn('src="/app.js"', html)
         self.assertNotIn("127.0.0.1", html)
         self.assertNotIn("localhost", html)
+        self.assertNotIn("fonts.googleapis.com", html)
+        self.assertNotIn("fonts.gstatic.com", html)
 
     def test_snapshot_is_small_and_clean(self) -> None:
         path = ROOT / "docs/demo/snapshot.json"
