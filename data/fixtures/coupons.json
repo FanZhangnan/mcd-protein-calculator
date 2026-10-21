@@ -1,0 +1,21 @@
+{
+  "_comment": "合成测试券，仅用于离线测试。不是任何真实账号的券，不含真实 couponId / couponCode。",
+  "success": true,
+  "code": 200,
+  "message": "offline",
+  "data": [
+    {
+      "title": "测试券 11.9 元板烧鸡腿堡",
+      "couponId": "OFFLINE-TEST-COUPON",
+      "couponCode": "OFFLINE-TEST-CODE",
+      "tradeDateTime": "2026-10-01 00:00:00-2026-12-31 23:59:59",
+      "products": [
+        {
+          "productCode": "1406",
+          "productName": "板烧鸡腿堡"
+        }
+      ],
+      "priceFen": 1190
+    }
+  ]
+}

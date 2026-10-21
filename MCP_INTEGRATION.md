@@ -37,9 +37,10 @@
 | `query-meals` | 按门店 + 餐次时间取菜单（早/午/晚各一次） | `Service.refresh()` |
 | `list-nutrition-foods` | 全量官方营养表（160 行 / 158 个唯一名称） | `Service.refresh()` |
 | `query-meal-detail` | 单 SKU 特调树，取可去项（`unselectedKey` / `selectedKey`） | `Service.removable_options()`，逐主食调用 |
-| `calculate-price` | 当前方案的组合试算价（带 `reservationDate`） | `Service.quote_meal()` |
+| `calculate-price` | 当前方案的组合试算价（带 `reservationDate`）；支持 `items[].couponId/couponCode` 带券试算 | `Service.quote_meal()`、`Service.quote_with_coupon()` |
+| `query-store-coupons` | 只读：指定门店 + 订单类型下可用的券（不领取、不核销） | `Service.coupons()`，券后价前调用 |
 
-只在查询与试算链路里调用，没有调用任何下单、券、积分、地址相关接口。
+只在查询与试算链路里调用。券相关只用了 `query-store-coupons` 这一个只读接口：**不调用 `auto-bind-coupons`（领券），也不调用任何下单、积分、地址接口**。券 id/code 只留在进程内存里，接口返回时会被剔除。
 
 ---
 

@@ -201,6 +201,10 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/ladder":
             return self._guarded(lambda: self._json({
                 "pairs": self.service.upgrade_ladder()}))
+        if path == "/api/coupons":
+            qs = parse_qs(parsed.query)
+            meal = (qs.get("meal") or ["lunch"])[0]
+            return self._guarded(lambda: self._json(self.service.coupons(meal)))
         return self._send(404, b"not found", "text/plain; charset=utf-8")
 
     def do_POST(self) -> None:  # noqa: N802
@@ -211,6 +215,7 @@ class Handler(BaseHTTPRequestHandler):
             "/api/settings": lambda: self._settings(body),
             "/api/meal": lambda: self._meal(body),
             "/api/quote": lambda: self._quote(body),
+            "/api/quote_with_coupon": lambda: self._quote_with_coupon(body),
             "/api/recompute": lambda: self._recompute(body),
         }
         handler = routes.get(path)
@@ -297,6 +302,15 @@ class Handler(BaseHTTPRequestHandler):
     def _quote(self, body: dict[str, Any]) -> None:
         """Quote the plan currently on screen. Never re-runs the solver."""
         payload, status = self.service.quote_working(str(body.get("signature") or ""))
+        self._json(payload, status)
+
+    def _quote_with_coupon(self, body: dict[str, Any]) -> None:
+        """Trial-quote the current plan with store coupons (never redeems one)."""
+        meal = str(body.get("meal") or "lunch")
+        if meal not in planner_mod.MEALS:
+            raise InputError("meal 必须是 breakfast / lunch / dinner")
+        payload, status = self.service.quote_with_coupon(
+            meal, str(body.get("signature") or ""))
         self._json(payload, status)
 
     def _meal(self, body: dict[str, Any]) -> None:

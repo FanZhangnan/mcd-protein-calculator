@@ -469,3 +469,51 @@ label.sugg input{width:auto;min-height:auto;margin-top:4px}
   .site-foot .right{text-align:left}
   .sub{font-size:12px}
 }
+
+/* ---------- 券后价（门店试算，不领券） ---------- */
+.coupon-line {
+  margin: 10px 0 2px;
+  padding: 9px 12px;
+  border-left: 3px solid #1a1a1a;
+  background: #f7f7f5;
+  font-size: 13px;
+  line-height: 1.75;
+  color: #1f1f1f;
+}
+.coupon-line.slim { background: transparent; }
+.coupon-line.muted {
+  border-left-color: #d8d8d4;
+  background: transparent;
+  color: #7a7a76;
+}
+.coupon-line s { color: #8d8d88; }
+.coupon-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #7a7a76;
+}
+
+/* ---------- 券后价（门店试算，不领券） ---------- */
+.coupon-line {
+  margin: 10px 0 2px;
+  padding: 9px 12px;
+  border-left: 3px solid #1a1a1a;
+  background: #f7f7f5;
+  font-size: 13px;
+  line-height: 1.75;
+  color: #1f1f1f;
+}
+.coupon-line.slim { background: transparent; }
+.coupon-line.muted {
+  border-left-color: #d8d8d4;
+  background: transparent;
+  color: #7a7a76;
+}
+.coupon-line s { color: #8d8d88; }
+.coupon-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #7a7a76;
+}

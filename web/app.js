@@ -649,18 +649,23 @@ function renderSingle(s) {
   const main = items.find((i) => i.kind === "main");
   const quoted = q && q.status === "ok";
   const hasItems = items.length > 0;
-  const price = quoted ? Number(q.amount) : Number(s.cost || 0);
+  const couponQuote = s.coupon_quote || null;
+  const couponOk = !!(couponQuote && couponQuote.status === "ok" && couponQuote.coupon);
+  const basePrice = quoted ? Number(q.amount) : Number(s.cost || 0);
+  const price = couponOk ? Number(couponQuote.coupon.amount) : basePrice;
   const priceText = hasItems ? num(price, 2) : "—";
   const status = s.protein_status || (s.feasible ? "met" : "under");
   const mealLabel = s.meal_label || MEAL_LABEL[s.meal] || "这一餐";
 
   const priceSide = !hasItems
     ? `<span class="price-tag">未选到商品</span>`
-    : quoted
-      ? `<span class="price-tag quoted">已试算</span><span class="price-time">· 查询于 ${q.queried_at || "—"}</span>`
-      : isSnapshot()
-        ? `<span class="price-tag">快照参考价 · 未试算</span>`
-        : `<span class="price-tag">参考价，未试算</span>`;
+    : couponOk
+      ? `<span class="price-tag quoted">券后价</span>`
+      : quoted
+        ? `<span class="price-tag quoted">已试算</span><span class="price-time">· 查询于 ${q.queried_at || "—"}</span>`
+        : isSnapshot()
+          ? `<span class="price-tag">快照参考价 · 未试算</span>`
+          : `<span class="price-tag">参考价，未试算</span>`;
 
   const itemRows = itemRowsHtml(items);
 
@@ -694,6 +699,21 @@ function renderSingle(s) {
   }).join("");
 
   const saver = s.saver;
+  // 券后价只展示门店试算结果；没有券或没降价时明确写「暂无可用券」
+  let couponLine = "";
+  if (!isSnapshot() && hasItems) {
+    if (couponOk) {
+      const c = couponQuote.coupon;
+      couponLine = `<div class="coupon-line ok">
+        <b>券后 ${num(c.amount, 2)} 元</b>（用 ${c.title}）· 原价 <s>${num(c.original_amount != null ? c.original_amount : basePrice, 2)} 元</s>${couponQuote.protein_per_yuan != null ? ` · 券后每元 ${num(couponQuote.protein_per_yuan, 1)} g 蛋白质` : ""}
+        <span class="coupon-note">券后价来自门店试算，下单时以 App 为准</span>
+      </div>`;
+    } else if (couponQuote) {
+      couponLine = `<div class="coupon-line muted">${couponQuote.status === "none" ? "暂无可用券" : "券后价暂不可用"}</div>`;
+    } else {
+      couponLine = `<div class="coupon-line muted" id="coupon-pending">正在查询门店券…</div>`;
+    }
+  }
   // 省钱选项：标题与目标比，正文写清方案本身 + 与推荐方案相比省多少
   const saverGap = saver ? Number(saver.protein_gap || 0) : 0;
   const saverTol = Number(s.protein_tolerance || 0);
@@ -742,6 +762,7 @@ function renderSingle(s) {
       </div>
       ${metricsBlock(s, priceText)}
       ${progressBlock(s, hasItems ? price : NaN)}
+      ${couponLine}
       ${itemRows}
       ${saverRow}
       ${underCard}
@@ -792,6 +813,25 @@ function renderSingle(s) {
 
   renderRank();
   drawChart();
+  if (!isSnapshot() && hasItems && !s.coupon_checked) loadCouponQuote(s);
+}
+
+async function loadCouponQuote(s) {
+  if (s._couponLoading) return;
+  s._couponLoading = true;
+  try {
+    const list = await api(`/api/coupons?meal=${encodeURIComponent(s.meal)}`, undefined, "GET");
+    if (!(list.coupons || []).length) {
+      s.coupon_quote = { status: "none", note: list.note || "" };
+    } else {
+      s.coupon_quote = await api("/api/quote_with_coupon", { meal: s.meal, signature: SSIG });
+    }
+  } catch (e) {
+    s.coupon_quote = { status: "unavailable", error: String(e.message || e) };
+  }
+  s.coupon_checked = true;
+  s._couponLoading = false;
+  if (S === s) renderSingle(s);
 }
 
 // ---------------------------------------------------------------------- flows
@@ -842,7 +882,8 @@ async function singleRecompute() {
     const out = await api("/api/recompute", { customizations: custom });
     S = { ...S, ...out, removable: S.removable, suggestions: S.suggestions,
           upgrade: S.upgrade, upgrades: S.upgrades, frontier: S.frontier,
-          meal: S.meal, meal_label: S.meal_label };
+          meal: S.meal, meal_label: S.meal_label,
+          coupon_quote: null, coupon_checked: false };
     SLAST = S; SSIG = out.signature || "";
     renderSingle(S);
     setSStatus(hasCustom
@@ -864,7 +905,8 @@ async function singleQuote() {
     const out = await api("/api/quote", { signature: SSIG });
     S = { ...S, ...out, removable: S.removable, suggestions: S.suggestions,
           upgrade: S.upgrade, upgrades: S.upgrades, frontier: S.frontier,
-          meal: S.meal, meal_label: S.meal_label };
+          meal: S.meal, meal_label: S.meal_label,
+          coupon_quote: null, coupon_checked: false };
     SLAST = S; SSIG = out.signature || "";
     renderSingle(S);
     const q = out.quotes && out.quotes[S.meal];

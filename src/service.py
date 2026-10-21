@@ -87,6 +87,14 @@ class LiveProvider:
             payload["reservationDate"] = when
         return self.client.call("calculate-price", payload)
 
+    def coupons(self, store_code: str, be_type: int, order_type: int,
+                when: str | None = None) -> dict:
+        """Read-only coupon list for this store; never claims or redeems one."""
+        payload = {"storeCode": store_code, "orderType": order_type, "beType": be_type}
+        if when:
+            payload["reservationDate"] = when
+        return self.client.call("query-store-coupons", payload)
+
 
 class OfflineProvider:
     """Fixture-backed provider. Must never be advertised as live."""
@@ -135,6 +143,14 @@ class OfflineProvider:
                 return json.loads(specific.read_text("utf-8"))
         return self._load(f"combo_{code}_detail")
 
+    def coupons(self, store_code: str, be_type: int, order_type: int,
+                when: str | None = None) -> dict:
+        """Synthetic coupon fixture for tests; empty when the fixture is absent."""
+        path = self.dir / "coupons.json"
+        if not path.exists():
+            return {"success": True, "code": 200, "message": "offline", "data": []}
+        return json.loads(path.read_text("utf-8"))
+
     def price(self, store_code: str, be_type: int, order_type: int,
               items: list[dict], need_tableware: bool = False,
               when: str | None = None) -> dict:
@@ -149,6 +165,11 @@ class OfflineProvider:
             # test hook: prove the UI never turns a failed quote into ¥0
             return {"success": False, "code": 60006,
                     "message": "离线桩：模拟试算失败", "datetime": "offline", "data": None}
+        coupon_path = self.dir / "coupons.json"
+        coupon_map: dict[str, dict] = {}
+        if coupon_path.exists():
+            for c in (json.loads(coupon_path.read_text("utf-8")).get("data") or []):
+                coupon_map[str(c.get("couponId"))] = c
         total = 0.0
         for line in items:
             code = str(line.get("productCode"))
@@ -158,7 +179,15 @@ class OfflineProvider:
                 return {"success": False, "code": 60006,
                         "message": f"离线桩：菜单中没有 {code} 的价格",
                         "datetime": "offline", "data": None}
-            total += float(unit) * int(line.get("quantity") or 1)
+            qty = int(line.get("quantity") or 1)
+            coupon = coupon_map.get(str(line.get("couponId")))
+            coupon_code = ""
+            if coupon:
+                coupon_code = str(((coupon.get("products") or [{}])[0]).get("productCode"))
+            if coupon and coupon_code == code:
+                total += float(coupon.get("priceFen", 0)) / 100 * qty
+            else:
+                total += float(unit) * qty
         fen = int(round(total * 100))
         return {"success": True, "code": 200, "message": "请求成功（离线桩，按菜单价）",
                 "datetime": "offline",
@@ -239,6 +268,9 @@ class Service:
         self._baseline: dict[str, Any] | None = None
         self._working: dict[str, Any] | None = None
         self._ladder: list[dict[str, Any]] | None = None
+        # coupon data lives in memory only — never on disk, never in /api output
+        self._coupon_raw: list[dict[str, Any]] | None = None
+        self._coupon_key: str = ""
 
     # ------------------------------------------------------------- context/cache
     def context(self, day: str | None = None, state: dict[str, Any] | None = None) -> CacheContext:
@@ -875,6 +907,129 @@ class Service:
             "source": getattr(self.provider, "source_name", "live"),
             "requested_items": items,
         }
+
+    # -------------------------------------------------------------------- coupons
+    def coupons(self, meal: str) -> dict[str, Any]:
+        """Read-only coupons usable at this store for one meal slot.
+
+        The POS returns coupon ids/codes; they stay in ``self._coupon_raw`` and
+        are never echoed to the client. Nothing here claims a coupon.
+        """
+        cache = self.ensure_cache()
+        ctx = self.context()
+        key = f"{ctx.key()}:{meal}"
+        if self._coupon_raw is None or self._coupon_key != key:
+            when = f"{ctx.day} {ctx.meal_times.get(meal, '12:15')}"
+            try:
+                resp = self.provider.coupons(ctx.store_code, ctx.be_type,
+                                             ctx.order_type, when)
+                self._coupon_raw = list(resp.get("data") or [])
+            except McpError:
+                self._coupon_raw = []
+            self._coupon_key = key
+        return {
+            "meal": meal,
+            "source": getattr(self.provider, "source_name", "live"),
+            "reservation_date": f"{cache.get('date')} {(cache.get('meal_times') or {}).get(meal, '')}".strip(),
+            "coupons": [{
+                "title": c.get("title"),
+                "products": [p.get("productName") for p in (c.get("products") or [])],
+                "trade_window": c.get("tradeDateTime"),
+                "need_claim": False,
+            } for c in (self._coupon_raw or [])],
+            "note": "券列表来自门店实时查询；本工具不领券、不下单，券后价需门店试算。",
+        }
+
+    def quote_with_coupon(self, meal: str, signature: str) -> tuple[dict[str, Any], int]:
+        """Trial-quote the current plan with each applicable coupon.
+
+        Only coupons the POS really discounts survive; the coupon id/code never
+        leaves this method. A missing/failed coupon is reported as ``none`` — the
+        UI must not invent a post-coupon price.
+        """
+        if not self._working:
+            return {"error": "当前没有可报价的方案，请先生成方案", "kind": "no_plan"}, 409
+        if not signature:
+            return {"error": "缺少方案签名，拒绝为未知方案报价", "kind": "missing_signature"}, 400
+        if not self._context_matches(self._working.get("context")):
+            self._working = None
+            return {"error": "门店/日期/时段已变化，旧方案已失效，请重新规划",
+                    "kind": "stale_context"}, 409
+        current = self.working_signature()
+        if not current or signature != current:
+            return {"error": "方案已改变，请求与当前方案不一致，请重新报价",
+                    "kind": "stale_signature", "expected": current}, 409
+
+        meals = [self._meal_from_dict(d) for d in self._working.get("meals", [])]
+        meal_plan = next((m for m in meals if m.meal == meal), meals[0] if meals else None)
+        if meal_plan is None:
+            return {"status": "none", "meal": meal, "coupon": None,
+                    "note": "当前没有可试算的方案。"}, 200
+
+        cache = self.ensure_cache()
+        when = f"{cache['date']} {(cache.get('meal_times') or {}).get(meal, '12:15')}".strip()
+        base = self.quote_meal(meal_plan)
+        base_amount = base.get("amount") if base.get("status") == "ok" else None
+
+        self.coupons(meal)
+        best: dict[str, Any] | None = None
+        checked = 0
+        for coupon in self._coupon_raw or []:
+            codes = {str(p.get("productCode")) for p in (coupon.get("products") or [])}
+            target = next((i for i in meal_plan.items if str(i.code) in codes), None)
+            if target is None:
+                continue
+            checked += 1
+            items = []
+            for item in meal_plan.items:
+                qty = quantity_mod.purchase_quantity(
+                    item.quantity, f"「{item.name or item.code}」的待买数量")
+                entry: dict[str, Any] = {"productCode": item.code, "quantity": qty}
+                if item.modification:
+                    entry["modification"] = {"values": item.modification}
+                if item is target:
+                    entry["couponId"] = coupon.get("couponId")
+                    entry["couponCode"] = coupon.get("couponCode")
+                items.append(entry)
+            try:
+                resp = self.provider.price(
+                    cache["store_code"], cache["be_type"], cache["order_type"],
+                    items, when=when)
+            except McpError:
+                continue
+            data = resp.get("data") or {}
+            if not resp.get("success") or data.get("price") is None:
+                continue
+            amount = round(float(data["price"]) / 100, 2)
+            if base_amount is not None and amount >= base_amount - 1e-9:
+                continue
+            if best is None or amount < best["amount"]:
+                best = {
+                    "title": coupon.get("title"),
+                    "amount": amount,
+                    "discount": round((base_amount or 0) - amount, 2),
+                    "original_amount": base_amount,
+                    "quoted_at": resp.get("datetime"),
+                }
+
+        protein = meal_plan.nutrition.get("protein") if meal_plan.nutrition else None
+        if protein is None:
+            totals, _ = planner_mod.sum_nutrition(meal_plan.items)
+            protein = totals.get("protein")
+        payload: dict[str, Any] = {
+            "meal": meal,
+            "status": "ok" if best else "none",
+            "baseline_amount": base_amount,
+            "quote_status": base.get("status"),
+            "coupon": best,
+            "checked": checked,
+            "reservation_date": when,
+            "source": getattr(self.provider, "source_name", "live"),
+            "note": "券后价来自门店试算，下单时以 App 为准。" if best else "暂无可用券。",
+        }
+        if best and protein is not None and best["amount"] > 0:
+            payload["protein_per_yuan"] = round(float(protein) / best["amount"], 1)
+        return payload, 200
 
     # ------------------------------------------------------- baseline & recompute
     def _read_baseline_file(self) -> dict[str, Any] | None:

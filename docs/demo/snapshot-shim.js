@@ -222,6 +222,18 @@
     }
     if (path === "/api/meal") return mealPlan(body);
     if (path === "/api/recompute") return mealPlan(body && body.plan ? body.plan : { meal: "lunch", protein_min: 40, budget: 45 });
+    if (path === "/api/coupons") {
+      return { meal: "lunch", coupons: [], note: "在线版不连接门店，不显示券后价。" };
+    }
+    if (path === "/api/quote_with_coupon") {
+      return { status: "none", coupon: null, note: "在线版不连接门店，不显示券后价。" };
+    }
+    if (path === "/api/coupons") {
+      return { meal: "lunch", coupons: [], note: "在线版不连接门店，不显示券后价。" };
+    }
+    if (path === "/api/quote_with_coupon") {
+      return { status: "none", coupon: null, note: "在线版不连接门店，不显示券后价。" };
+    }
     if (path === "/api/quote") {
       return { status: "unsupported", amount: null, message: "在线版不连接门店，无法试算。", __status: 200 };
     }

@@ -125,7 +125,20 @@ curl -s localhost:8765/api/ladder
 - 说明这是「整款换掉」，不是「在原款上加一块」。
 - 若阶梯起点不在当前餐单中，明确它只是可查询的整款替代示例，不能假装已经替换当前商品。升级阶梯没有覆盖的商品，只能说「本轮返回的阶梯未提供」，不能断言整个门店或所有渠道都不存在。任何另行建议的组合未经报价，只能标为参考金额，不能声称已验证可点或已报价。
 
-### 6. 门店与时段
+### 6. 券后价（只读试算，不领券）
+
+```bash
+curl -s "localhost:8765/api/coupons?meal=lunch"
+curl -s -X POST localhost:8765/api/quote_with_coupon -H 'Content-Type: application/json' \
+  -d '{"meal":"lunch","signature":"<当前方案的 signature>"}'
+```
+
+- 券后价**只引用这两个接口的返回**：`status=ok` 才显示 `coupon.amount` 与 `protein_per_yuan`；`status=none` 就说「暂无可用券」，不要自己算折扣。
+- 不调用领券接口、不领券、不核销、不下单；券 id/code 不要复述给用户。
+- 结果里必须带「券后价来自门店试算，下单时以 App 为准」；原价与券后价同时给出。
+- 换方案、改数量、去料后签名会变，旧的券后价作废，必须用新签名重查。
+
+### 7. 门店与时段
 
 ```bash
 curl -s -X POST localhost:8765/api/settings -H 'Content-Type: application/json' \
