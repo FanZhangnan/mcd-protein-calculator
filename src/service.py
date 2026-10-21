@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 from dataclasses import dataclass
-from datetime import date as date_cls, datetime, timedelta
+from datetime import date as date_cls, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -351,7 +351,9 @@ class Service:
             **ctx.as_dict(),
             "cache_key": ctx.key(),
             "source": self.provider.source_name,
-            "fetched_at": datetime.now().isoformat(timespec="seconds"),
+            # The store's menu, meal times and dates are all Beijing time, so the
+            # timestamps shown next to them must be too — not the laptop's zone.
+            "fetched_at": datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds"),
             "server_time": (menus.get("lunch") or {}).get("datetime"),
             "menus": menus,
             "nutrition": nutrition,

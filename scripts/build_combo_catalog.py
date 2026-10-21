@@ -25,7 +25,7 @@ import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -153,7 +153,7 @@ def main() -> int:
         "version": 1,
         "context": ctx,
         "source": "live",
-        "built_at": datetime.now().isoformat(timespec="seconds"),
+        "built_at": datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds"),
         "store_name": store.get("name"),
         "meals": {},
     }
