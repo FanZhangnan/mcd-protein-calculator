@@ -158,6 +158,9 @@ def main() -> int:
                         round(float(totals.get("energyKcal") or 0.0), 1),
                     ])
 
+        desserts = [item_row(i) for i in service.pools(meal)["dessert"]
+                    if i.nutrition and i.price_ref is not None]
+
         removable: dict[str, list[str]] = {}
         for main in mains:
             try:
@@ -183,6 +186,7 @@ def main() -> int:
             "combos": combos,
             "comboVariants": combo_variants,
             "comboCombos": combo_combos,
+            "desserts": desserts,
         }
         total_combos += len(combos) + len(combo_combos)
         print(f"{meal}: {len(mains)} mains, {len(drinks)} drinks, {len(sides)} sides, "

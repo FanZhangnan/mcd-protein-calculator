@@ -222,17 +222,25 @@ DRINK_WORDS = ("可乐", "雪碧", "咖啡", "牛奶", "红茶", "豆浆", "橙�
                "美式", "奶铁", "拿铁", "矿泉水", "纯净水", "奶昔", "怡泉",
                "果汁", "蔬菜汁", "朱古力", "黑巧", "燕麦奶",
                "卡布奇诺", "玛奇朵", "阿芙佳朵", "茶")
-SIDE_WORDS = ("薯条", "玉米杯", "鸡块", "麦乐鸡", "苹果片", "薯饼", "油条", "扭扭薯", "派",
+SIDE_WORDS = ("薯条", "玉米杯", "鸡块", "麦乐鸡", "苹果片", "薯饼", "油条", "扭扭薯",
               "沙拉", "鸡排", "鸡翅", "鸡球", "脆汁鸡", "香肠", "芝士条")
+#: desserts are checked first: 朱古力新地 contains a drink word, 麦旋风 contains
+#: nothing at all — without this list they were either misfiled as drinks or
+#: dropped as "other".
+DESSERT_WORDS = ("新地", "麦旋风", "圣代", "布丁", "蛋挞", "冰淇淋", "雪糕", "摩斯",
+                 "蛋糕", "曲奇", "派")
 MAIN_WORDS = ("堡", "卷", "麦满分", "粥", "松饼", "叠叠", "麦香鸡", "麦香鱼")
 
 
 def classify(name: str) -> str:
     """Coarse slot classification used only to build meal pools.
 
-    Order matters: drinks first (a 奶铁 is not a main), then mains (a 营养卷 is a
-    wrap even though it contains 香肠), then sides.
+    Order matters: desserts first (朱古力新地 contains a drink word, 麦旋风
+    matches nothing), then drinks (a 奶铁 is not a main), then mains (a 营养卷
+    is a wrap even though it contains 香肠), then sides.
     """
+    if any(w in name for w in DESSERT_WORDS):
+        return "dessert"
     if any(w in name for w in DRINK_WORDS):
         return "drink"
     if any(w in name for w in MAIN_WORDS):

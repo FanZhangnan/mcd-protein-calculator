@@ -248,12 +248,16 @@ class Handler(BaseHTTPRequestHandler):
         info: dict[str, Any] = {}
         catalog_info: dict[str, Any] = {}
         unknown: dict[str, list] = {}
+        combos: dict[str, dict] = {}
+        desserts: dict[str, list] = {}
         try:
             self.service.ensure_cache()
             info = self.service.cache_info()
             catalog_info = self.service.catalog().describe()
             for meal in planner_mod.MEALS:
                 unknown[meal] = self.service.unknown_items(meal)
+                combos[meal] = self.service.combo_report(meal)
+                desserts[meal] = self.service.dessert_items(meal)
         except Exception as exc:
             info = {"source": "unavailable", "error": str(exc)}
         source = self._source_kind(info)
@@ -262,6 +266,8 @@ class Handler(BaseHTTPRequestHandler):
             "cache": info,
             "catalog": catalog_info,
             "unknown": unknown,
+            "combos": combos,
+            "desserts": desserts,
             "baseline": self.service.baseline_status(),
             "working_signature": self.service.working_signature(),
             "provider_source": getattr(self.service.provider, "source_name", "live"),

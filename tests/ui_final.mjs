@@ -26,7 +26,9 @@ const SCENARIOS = [
   { id: "2_lunch_44_45", meal: "lunch", protein: 44, budget: 45, fat: "", expect: "met", saver: true },
   { id: "3_lunch_35_25", meal: "lunch", protein: 35, budget: 25, fat: "", expect: "under" },
   { id: "4_breakfast_25_20", meal: "breakfast", protein: 25, budget: 20, fat: "", expect: "met" },
-  { id: "5_lunch_40_45_fat30", meal: "lunch", protein: 40, budget: 45, fat: 30, expect: "under", upgradeOver: true },
+  // 「升级超限」样式需要方案里有一款带肉量阶梯的主食。麦香鱼 22 元不再是最优解，
+  // 午餐 40 g / 45 元 场景已经没有升级项，改用早餐场景继续覆盖同一条断言。
+  { id: "5_breakfast_23_20_fat22", meal: "breakfast", protein: 23, budget: 20, fat: 22, expect: "met", upgradeOver: true },
 ];
 
 async function main() {
@@ -108,8 +110,13 @@ async function main() {
         document.querySelector('#s_fat').dispatchEvent(new Event('input'));
       })()`);
     await waitFor(`LAND && LAND.meal === '${sc.meal}'`, "性价比图切换");
+    // 页面打开时会自动算一次默认方案；必须等到「本次请求」的方案回来
+    await evalJs(`window.__sig = (typeof S !== 'undefined' && S && S.signature) || ''`);
     await evalJs(`S = null; document.querySelector('#s-plan').click()`);
-    await waitFor(`S && S.meal === '${sc.meal}' && S.protein_status`, "方案返回");
+    await waitFor(`S && S.meal === '${sc.meal}' && S.protein_status
+      && Math.abs(Number(S.targets.protein_min) - ${sc.protein}) < 0.01
+      && Math.abs(Number(S.targets.budget) - ${sc.budget}) < 0.01
+      && S.signature !== window.__sig`, "方案返回");
     await sleep(250);
   };
 

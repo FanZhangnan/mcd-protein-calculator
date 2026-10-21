@@ -123,8 +123,8 @@ async function main() {
   })`).then(JSON.parse);
   check("场景2 预算内最多 28 g / 25.00 元",
     c2.status === "under" && c2.protein === 28 && c2.cost === 25, JSON.stringify(c2));
-  // 套餐让「加预算」的上限从 39.00 降到 34.50（酥脆无双套餐 + 麦香鸡 = 38 g）
-  check("场景2 显示加预算卡片", c2.text.includes("加预算到") && c2.text.includes("34.50"), "");
+  // 套餐让「加预算」的上限从 39.00 降到 32.00（酥脆无双套餐 + 汉堡包 = 36 g）
+  check("场景2 显示加预算卡片", c2.text.includes("加预算到") && c2.text.includes("32.00"), "");
   const clicked = await evalJs(`(() => {
     const b = document.querySelector('#s-budget-up');
     if (!b) return false;
@@ -135,9 +135,9 @@ async function main() {
     budget: document.querySelector('#s_budget').value,
     status: S.protein_status, cost: S.cost, protein: S.totals.protein
   })`).then(JSON.parse);
-  check("场景2 按 34.5 元重算后达标",
-    clicked === true && c2b.budget === "34.5" && c2b.status === "met"
-    && c2b.protein === 38 && c2b.cost === 34.5, JSON.stringify(c2b));
+  check("场景2 按 32 元重算后达标",
+    clicked === true && c2b.budget === "32" && c2b.status === "met"
+    && c2b.protein === 36 && c2b.cost === 32, JSON.stringify(c2b));
 
   // 3) breakfast 25 / 20
   await setInputs("breakfast", 25, 20);

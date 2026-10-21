@@ -55,6 +55,38 @@
     return { rows: rows, unique_names: rows, aliases: 0, duplicates: 0 };
   }
 
+  function dessertList(meal) {
+    return ((SNAP.meals[meal] || {}).desserts || []).map(function (d) {
+      return { code: d.code, name: d.name, price: d.price,
+               protein: (d.nutrition || {}).protein };
+    });
+  }
+
+  // 套餐目录状态（在线版：快照里已经带上了套餐变体）
+  function combosByMeal() {
+    var out = {};
+    ["breakfast", "lunch", "dinner"].forEach(function (meal) {
+      var m = SNAP.meals[meal] || {};
+      var variants = m.comboVariants || [];
+      var codes = {};
+      variants.forEach(function (v) { codes[v.code] = true; });
+      out[meal] = {
+        available: true,
+        source: "snapshot",
+        built_at: SNAP.meta.fetched_at,
+        checked: (m.mains || []).length,
+        combos_found: Object.keys(codes).length,
+        variants_used: variants.length,
+        excluded: 0,
+        reasons: {},
+        excluded_categories: [],
+        items: [],
+        note: "在线版使用静态快照里的套餐变体（构建时已逐款核对营养与真实试算价）。",
+      };
+    });
+    return out;
+  }
+
   function bootstrap() {
     return {
       state: {
@@ -73,6 +105,12 @@
       fetched_at: SNAP.meta.fetched_at,
       catalog: catalog(),
       unknown: { breakfast: [], lunch: [], dinner: [] },
+      combos: combosByMeal(),
+      desserts: {
+        breakfast: dessertList("breakfast"),
+        lunch: dessertList("lunch"),
+        dinner: dessertList("dinner"),
+      },
       baseline: null,
     };
   }
@@ -210,6 +248,12 @@
       targets: result.targets,
       note: result.note || "",
       quotes: {},
+      combos: {
+        applied: items.some(function (i) { return i.kind === "combo"; }),
+        unsupported: items.some(function (i) { return i.kind === "combo"; })
+          ? "套餐暂不支持去配料与券后价" : "",
+        catalog: combosByMeal()[body.meal] || null,
+      },
     };
   }
 

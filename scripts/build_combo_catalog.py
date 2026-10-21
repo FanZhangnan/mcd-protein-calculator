@@ -185,10 +185,25 @@ def main() -> int:
 
         combos_found: list[dict] = []
         not_combo: list[str] = []
+        single_round: list[dict] = []
+        singles_ok: list[dict] = []
         for code in codes:
             payload = details.get(code)
             info = meals_map.get(code) or {}
             name = info.get("name") or ""
+            if combos_mod.is_single_round_detail(payload):
+                choice = combos_mod.single_round_choice(payload) or {}
+                single_round.append({
+                    "code": code, "name": name,
+                    "choice_code": str(choice.get("code") or ""),
+                    "choice_name": choice.get("name") or name,
+                    "menu_price": float(info.get("currentPrice") or 0),
+                    "diff_price": combos_mod.parse_diff_price(choice.get("diffPrice")),
+                    "categories": by_cat.get(code, []),
+                    "tags": tags_by_code.get(code, []),
+                    "info": info,
+                })
+                continue
             if not combos_mod.is_combo_detail(payload):
                 not_combo.append(code)
                 continue
@@ -204,6 +219,72 @@ def main() -> int:
         stats["sku"] += len(codes)
         stats["combos"] += len(combos_found)
         print(f"  combos (rounds-based): {len(combos_found)} / {len(codes)} SKU", flush=True)
+
+        # ---- one-round products: single items, priced by their own menu price
+        singles: list[dict] = []
+        singles_excluded: list[dict] = []
+        for single in single_round:
+            markers = combos_mod.membership_markers(
+                single["categories"], single["tags"], single["info"])
+            if markers:
+                singles_excluded.append({
+                    "code": single["code"], "name": single["name"],
+                    "reason": "membership", "detail": "；".join(markers)})
+                continue
+            # the menu name is what the customer sees; the round's choice is
+            # the product itself. Try the menu name first, then the choice.
+            resolved = combos_mod.nutrition_for(
+                {"code": single["code"], "name": single["name"]}, nutrition)
+            display = single["name"]
+            if resolved is None:
+                resolved = combos_mod.nutrition_for(
+                    {"code": single["choice_code"], "name": single["choice_name"]}, nutrition)
+                display = single["choice_name"]
+            entry = {
+                "code": single["code"], "name": single["name"],
+                "choice_code": single["choice_code"],
+                "choice_name": single["choice_name"],
+                "display_name": display,
+                "kind": catalog_mod.classify(display),
+                "reference_price": round(single["menu_price"] + single["diff_price"], 2),
+                "status": "ok",
+            }
+            if resolved is None:
+                entry.update({"status": "excluded", "reason": "nutrition_unknown",
+                              "detail": f"缺官方营养：{single['choice_name']}"})
+                singles_excluded.append(entry)
+                continue
+            entry["nutrition"] = {k: round(float(resolved[k]), 1)
+                                  for k in combos_mod.NUTRI_KEYS}
+            singles.append(entry)
+
+        def price_single(entry: dict) -> dict:
+            try:
+                payload = WORKER.call("calculate-price", {
+                    "storeCode": ctx["store_code"], "orderType": ctx["order_type"],
+                    "beType": ctx["be_type"], "reservationDate": when,
+                    "items": [{"productCode": entry["code"], "quantity": 1}]})
+            except McpError as exc:
+                return {**entry, "status": "excluded", "reason": "price_failed",
+                        "detail": f"试算失败：{exc}"}
+            data = payload.get("data") or {}
+            if not payload.get("success") or data.get("price") is None:
+                return {**entry, "status": "excluded", "reason": "price_failed",
+                        "detail": f"试算失败：{payload.get('code')} {payload.get('message')}"}
+            quoted = round(float(data["price"]) / 100, 2)
+            if abs(quoted - float(entry["reference_price"])) > 0.005:
+                return {**entry, "status": "excluded", "reason": "price_mismatch",
+                        "detail": f"参考价 {entry['reference_price']:.2f} / 试算 {quoted:.2f}",
+                        "quoted_price": quoted}
+            return {**entry, "quoted_price": quoted}
+
+        if singles:
+            with ThreadPoolExecutor(max_workers=max(1, args.workers)) as pool:
+                for result in pool.map(price_single, singles):
+                    if result["status"] == "ok":
+                        singles_ok.append(result)
+                    else:
+                        singles_excluded.append(result)
 
         variants: list[dict] = []
         excluded: list[dict] = []
@@ -253,8 +334,11 @@ def main() -> int:
             "excluded_categories": excluded_cats,
             "variants": variants,
             "excluded": excluded,
+            "single_round": singles_ok,
+            "single_round_excluded": singles_excluded,
         }
-        print(f"  variants kept {len(variants)}, excluded {len(excluded)}", flush=True)
+        print(f"  variants kept {len(variants)}, excluded {len(excluded)}, "
+              f"single-round kept {len(singles_ok)}, excluded {len(singles_excluded)}", flush=True)
 
     out["stats"] = stats
     path = Path(args.out)

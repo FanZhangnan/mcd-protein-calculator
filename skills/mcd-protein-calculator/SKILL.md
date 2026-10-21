@@ -79,7 +79,12 @@ curl -s -X POST localhost:8765/api/meal -H 'Content-Type: application/json' \
 
 关键返回：`feasible`、`protein_status`、`protein_gap`、`saver`、`items[]`、`totals`、`cost`、`protein_per_yuan`、`signature`、`suggestions[]`、`upgrades[]`、`frontier`、`context_warning`、`removable`、`removables`。
 
-### 1.1 套餐（`kind = "combo"`）
+### 1.1 套餐（`kind = "combo"`）与套餐目录
+
+**套餐目录要先构建**：`python3 scripts/build_combo_catalog.py`（约 5 分钟，逐个 SKU 查 `query-meal-detail`、逐个变体用 `calculate-price` 真实试算，结果写进 `data/combo_catalog.json`，按门店 + 日期 + 餐次时间校验）。
+
+- **目录缺失时必须如实说明**：`/api/meal` 返回的 `combos.catalog.available` 为 `false`，页面也会显示「套餐目录未加载，本次结果不含套餐」。这时要告诉用户「本次结果没有把套餐算进去」，**不能**说成「这家店没有套餐」，也不能悄悄按旧的纯单品结论回答。需要套餐时先跑构建脚本。
+- **只有一轮选项的商品不算套餐**：麦麦脆汁鸡1块、新地、麦旋风这类只有口味/规格可选的商品，按单品处理——能匹配官方营养就能单独点，进入主食 / 小食 / 饮品 / 甜品对应的池；甜品不参与组合，但会出现在数据说明里。
 
 `/api/meal` 的 `items[]` 里可能出现 `kind = "combo"` 的一行：套餐作为一个整体参与求解，`combo.rounds` 是各轮选中的内容（主食 / 小食 / 饮品），`round_list` 是报价要回传的轮次参数。
 
@@ -90,6 +95,7 @@ curl -s -X POST localhost:8765/api/meal -H 'Content-Type: application/json' \
 - 套餐暂不支持去配料与券后价：`removable.reason` 会是「套餐暂不支持去配料」，`/api/quote_with_coupon` 返回 `status = "unsupported"`。直接说「套餐暂不支持」，不要报错或自行估算券后价。
 - 报价仍用 `/api/quote`，服务端会把 `roundList` 一起发出去；**不要把套餐拆成单品分别报价**。
 - 性价比图与排行表只画单品主食，不画套餐；不要因此说套餐不在计算范围内。
+- 用户问「有没有套餐更划算」时，可以引用 `combos.catalog` 里的数字（识别到多少套餐、纳入多少变体、排除原因分别是什么），但**不要自己把套餐拆开算价**。
 
 ### 2. 性价比图
 

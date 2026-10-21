@@ -82,6 +82,24 @@ def is_combo_detail(payload: dict | None) -> bool:
     return len(rounds_of(payload)) >= MIN_COMBO_ROUNDS
 
 
+def is_single_round_detail(payload: dict | None) -> bool:
+    """A product with exactly one round: a configurable *single* item.
+
+    新地 / 麦旋风 / 麦麦脆汁鸡1块 answer with one round (flavour or size).
+    They are not combos — they are one product that can be ordered on its own,
+    so they belong in the single-item pools, priced by their menu price.
+    """
+    return len(rounds_of(payload)) == 1
+
+
+def single_round_choice(payload: dict | None) -> dict | None:
+    """The default choice of a one-round product (its own composition)."""
+    rounds = rounds_of(payload)
+    if len(rounds) != 1:
+        return None
+    return default_choice(rounds[0])
+
+
 def default_choice(round_payload: dict) -> dict:
     choices = round_payload.get("choices") or []
     for choice in choices:

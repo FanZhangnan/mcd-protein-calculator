@@ -86,8 +86,14 @@ async function main() {
         document.querySelector('#s_fat').dispatchEvent(new Event('input'));
       })()`);
     await waitFor(`LAND && LAND.meal === '${meal}'`, "切换餐次");
+    // 页面打开时会自动算一次默认方案；必须等到「本次请求」的方案回来，
+    // 否则可能读到上一次的结果（签名或目标不同）。
+    await evalJs(`window.__sig = (typeof S !== 'undefined' && S && S.signature) || ''`);
     await evalJs(`S = null; document.querySelector('#s-plan').click()`);
-    await waitFor(`S && S.meal === '${meal}' && S.protein_status`, "方案返回");
+    await waitFor(`S && S.meal === '${meal}' && S.protein_status
+      && Math.abs(Number(S.targets.protein_min) - ${protein}) < 0.01
+      && Math.abs(Number(S.targets.budget) - ${budget}) < 0.01
+      && S.signature !== window.__sig`, "方案返回");
     await sleep(250);
   };
 

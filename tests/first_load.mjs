@@ -77,7 +77,9 @@ async function main() {
     rec: !!document.querySelector('#chart .rec-marker'),
     text: document.querySelector('#s-result').textContent
   })`).then(JSON.parse);
-  check("默认值出 42 g / 39.00 元", info.protein === 42 && info.cost === 39,
+  // 菜单里麦香鸡 13.5 → 16.5 元、单轮商品「牛肉堡单品精选」以 14 元的汉堡包
+  // 进入主食池之后，默认 40 g / 45 元的最省解变成 双层吉士 + 汉堡包 = 40 g / 36.50 元
+  check("默认值出 40 g / 36.50 元", info.protein === 40 && info.cost === 36.5,
     `${info.protein} g / ${info.cost} 元`);
   check("图上有推荐星标", info.rec === true);
 

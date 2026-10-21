@@ -117,12 +117,13 @@ h2{font-size:18px;font-weight:900;margin:0 0 4px;letter-spacing:.2px}
   display:inline-flex;align-items:center;gap:8px;font-size:12px;
   padding:6px 12px;border:1px solid var(--line);border-radius:999px;
   background:var(--card);white-space:nowrap;max-width:100%;color:var(--muted);
+  overflow:hidden;
 }
 .data-source .src-dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--dot-gray)}
 .data-source .src-dot.src-live{background:var(--ok)}
 .data-source .src-dot.src-cache{background:var(--dot-gray)}
 .data-source .src-dot.src-offline{background:var(--amber)}
-.data-source .src-text{overflow:hidden;text-overflow:ellipsis}
+.data-source .src-text{overflow:hidden;text-overflow:ellipsis;min-width:0;white-space:nowrap}
 .data-source[data-source="live"]{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
 .data-source[data-source="cache"]{border-color:var(--line);background:var(--card);color:var(--muted)}
 .data-source[data-source="offline"]{border-color:var(--amber);background:var(--amber-bg);color:var(--amber-ink)}
@@ -592,4 +593,16 @@ label.sugg input{width:auto;min-height:auto;margin-top:4px}
   margin: 6px 0 0;
   padding-left: 18px;
   line-height: 1.7;
+}
+
+.combo-note.warn {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fdf6e9;
+  color: #7a5a1f;
+}
+.combo-note code {
+  font-family: var(--font-num);
+  font-size: 12px;
 }

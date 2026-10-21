@@ -467,13 +467,14 @@ class Service:
         combo_codes = self.combo_codes(meal)
         has_catalog = bool(meta)
 
+        single_codes = self.single_round_codes(meal)
         buckets: dict[str, list[planner_mod.Item]] = {"main": [], "side": [], "drink": [],
-                                                      "combo": [], "other": []}
+                                                      "combo": [], "dessert": [], "other": []}
         for code, info in meals_map.items():
             name = (info or {}).get("name") or ""
             if not name:
                 continue
-            if str(code) in combo_codes:
+            if str(code) in combo_codes or str(code) in single_codes:
                 continue
             if not has_catalog and catalog_mod.is_combo_name(name):
                 continue
@@ -492,6 +493,8 @@ class Service:
                 price_ref=price, meal=meal,
             ))
         buckets["combo"] = self.combo_items(meal)
+        for item in self.single_round_items(meal):
+            buckets.setdefault(item.kind, []).append(item)
         for kind in buckets:
             buckets[kind].sort(key=lambda i: (
                 i.nutrition is None,
@@ -549,6 +552,45 @@ class Service:
             return (catalog.get("meals") or {}).get("lunch") or {}
         return {}
 
+    def single_round_entries(self, meal: str) -> list[dict[str, Any]]:
+        """Products the POS answers with exactly one round.
+
+        They are single items (新地 / 麦旋风 / 麦麦脆汁鸡1块), not combos: the
+        round is a flavour or size choice, and the product can be ordered on
+        its own. The build resolves their official nutrition and price.
+        """
+        return self.combo_meal(meal).get("single_round") or []
+
+    def single_round_codes(self, meal: str) -> set[str]:
+        return {str(e.get("code")) for e in self.single_round_entries(meal)}
+
+    def single_round_items(self, meal: str) -> list[planner_mod.Item]:
+        items: list[planner_mod.Item] = []
+        for entry in self.single_round_entries(meal):
+            if entry.get("status") != "ok":
+                continue
+            nutrition = entry.get("nutrition") or {}
+            if any(nutrition.get(k) is None for k in planner_mod.NUTRI_KEYS):
+                continue
+            price = entry.get("quoted_price")
+            if price is None:
+                continue
+            kind = entry.get("kind") or catalog_mod.classify(entry.get("choice_name") or "")
+            items.append(planner_mod.Item(
+                code=str(entry["code"]),
+                name=entry.get("display_name") or entry.get("choice_name") or entry.get("name") or "",
+                kind=kind, nutrition=nutrition, nutrition_status="official",
+                nutrition_note="单轮商品的官方营养（该商品只有口味/规格可选）",
+                price_ref=float(price), meal=meal,
+            ))
+        return items
+
+    def dessert_items(self, meal: str) -> list[dict[str, Any]]:
+        """Desserts are orderable but never part of a protein plan."""
+        return [{"code": i.code, "name": i.name, "price": round(float(i.price_ref or 0), 2),
+                 "protein": round(float((i.nutrition or {}).get("protein") or 0), 1)}
+                for i in self.single_round_items(meal) if i.kind == "dessert"]
+
     def combo_codes(self, meal: str) -> set[str]:
         meta = self.combo_meal(meal)
         codes = {str(v.get("combo_code")) for v in meta.get("variants") or []}
@@ -590,10 +632,14 @@ class Service:
         for item in excluded:
             reason = item.get("reason") or "other"
             counts[reason] = counts.get(reason, 0) + 1
+        singles = meta.get("single_round") or []
+        single_excluded = meta.get("single_round_excluded") or []
         return {
             "available": bool(meta),
             "source": catalog.get("source"),
             "built_at": catalog.get("built_at"),
+            "single_round": len(singles),
+            "single_round_excluded": len(single_excluded),
             "checked": meta.get("checked"),
             "combos_found": meta.get("combo_count"),
             "variants_used": len(self.combo_items(meal)),
@@ -609,10 +655,16 @@ class Service:
 
     def unknown_items(self, meal: str) -> list[dict[str, Any]]:
         buckets = self.pools(meal)
-        return [{
+        out = [{
             "code": item.code, "name": item.name, "kind": item.kind,
             "status": item.nutrition_status, "note": item.nutrition_note,
         } for kind in ("main", "side", "drink") for item in buckets[kind] if not item.nutrition]
+        for entry in self.combo_meal(meal).get("single_round_excluded") or []:
+            if entry.get("reason") == "nutrition_unknown":
+                out.append({"code": entry.get("code"), "name": entry.get("name"),
+                            "kind": "single", "status": "nutrition_unknown",
+                            "note": entry.get("detail") or ""})
+        return out
 
     # ----------------------------------------------------------- detail / removal
     def _meal_for_code(self, code: str) -> str:

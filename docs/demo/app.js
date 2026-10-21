@@ -47,6 +47,22 @@ function comboName(o) {
 }
 
 // ---------------------------------------------------------------- bootstrap
+// 套餐目录状态：已加载（含组合数与生成时间）或未加载（结果不含套餐）
+function comboCatalogInfo(meal) {
+  const all = (BOOT && BOOT.combos) || {};
+  return all[meal] || null;
+}
+
+function comboCatalogText(meal, full = true) {
+  const info = comboCatalogInfo(meal);
+  if (!info || !info.available) return "套餐目录：未加载，本次结果不含套餐";
+  const n = info.combos_found || 0;
+  const v = info.variants_used || 0;
+  if (!full) return `套餐目录：已加载 ${n} 个组合`;
+  const at = String(info.built_at || "").replace("T", " ").slice(0, 16);
+  return `套餐目录：已加载（${n} 个组合 / ${v} 个可用变体，生成于 ${at || "—"}）`;
+}
+
 function renderDataSource() {
   const el = $("data-source");
   if (!el) return;
@@ -76,7 +92,11 @@ function renderDataSource() {
     kind = "live";
     text = `实时数据 · ${storeName || "—"} · ${date} ${mealLabel} ${mealTime}`;
   }
+  const comboFull = comboCatalogText(meal, true);
+  const comboShort = comboCatalogText(meal, false);
+  text += " · " + comboShort;
   el.setAttribute("data-source", kind);
+  el.setAttribute("title", `${text.replace(comboShort, comboFull)}`);
   el.innerHTML = `<span class="src-dot src-${kind}"></span><span class="src-text">${text}</span>`;
 }
 
@@ -125,6 +145,7 @@ function renderMeta() {
   html += `<div class="meta-row"><b>餐次时间</b>早餐 ${s.meal_times?.breakfast || "—"} · 午餐 ${s.meal_times?.lunch || "—"} · 晚餐 ${s.meal_times?.dinner || "—"}</div>`;
   html += `<div class="meta-row"><b>数据来源</b>${srcLabel}${c.fetched_at ? ` · 抓取于 ${c.fetched_at}` : ""}</div>`;
   html += `<div class="meta-row"><b>营养条目</b>${rows} 条，${names} 个唯一名称，别名 ${aliases} 个，同名冲突 ${dupes} 个</div>`;
+  html += `<div class="meta-row"><b>套餐目录</b>${comboCatalogText($("s_meal") ? $("s_meal").value : "lunch")}</div>`;
   html += `<div class="meta-row"><b>严格模式</b>营养只取官方整款标准版；去除配料只改点单，不改显示的数值。</div>`;
   if (c.error) html += `<div class="meta-row err"><b>错误</b>${c.error}</div>`;
   $("meta").innerHTML = html;
@@ -133,6 +154,11 @@ function renderMeta() {
 function renderUnknown() {
   const meal = $("s_meal").value;
   const unk = (BOOT && BOOT.unknown || {})[meal] || [];
+  const desserts = (BOOT && BOOT.desserts || {})[meal] || [];
+  const dessertLine = desserts.length
+    ? `<div class="meta-row"><b>甜品（可单点，不参与组合）</b>${desserts.map((d) =>
+        `${d.name} ${num(d.price, 2)} 元 / 蛋白质 ${nutri(d.protein)} g`).join(" · ")}</div>`
+    : "";
   const rows = unk.map((u) => `<tr><td>${u.name}</td><td>${u.code}</td><td>${u.status}</td><td>${u.note || ""}</td></tr>`);
   if (rows.length) {
     $("unknown").innerHTML =
@@ -144,6 +170,9 @@ function renderUnknown() {
   } else {
     $("unknown").innerHTML =
       `<div class="meta-row"><b>未纳入计算的商品</b>0 个 · 本餐次参与计算的所有 SKU 均有可核实的官方营养来源。</div>`;
+  }
+  if (dessertLine) {
+    $("unknown").innerHTML += `<div class="unknown-box">${dessertLine}</div>`;
   }
 }
 
@@ -802,8 +831,10 @@ function renderSingle(s) {
     </details>`;
   })() : "";
 
+  const comboMissing = comboInfo && comboInfo.available === false;
   $("s-result").innerHTML = `
     <div class="single-card">
+      ${comboMissing ? `<div class="combo-note warn">套餐目录未加载，本次结果不含套餐（可用 <code>python3 scripts/build_combo_catalog.py</code> 生成）。</div>` : ""}
       <div class="single-head">
         <div class="head-left">
           ${statusPill(s)}
@@ -1021,6 +1052,8 @@ $("s_meal").addEventListener("change", () => {
   syncMealSeg();
   invalidateResult();
   loadLandscape();
+  renderDataSource();
+  renderMeta();
 });
 $("s_max_mains").addEventListener("change", () => { invalidateResult(); loadLandscape(); });
 $("s_budget").addEventListener("input", () => { invalidateResult(); updateCapHint(); });

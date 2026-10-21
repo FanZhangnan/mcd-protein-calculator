@@ -107,6 +107,106 @@ class DetectionTest(unittest.TestCase):
         self.assertEqual(roles, ["side", "side", "drink"])
 
 
+class SingleRoundTest(unittest.TestCase):
+    """只有一轮选项的商品（麦麦脆汁鸡1块、新地、麦旋风）按单品处理。"""
+
+    def test_single_round_is_not_a_combo(self):
+        payload = {"data": {"rounds": [{"id": 1, "name": "选择口味", "choices": [
+            {"code": "9900008754", "name": "奥利奥麦旋风", "isDefault": 1}]}]}}
+        self.assertTrue(combos_mod.is_single_round_detail(payload))
+        self.assertFalse(combos_mod.is_combo_detail(payload))
+        self.assertEqual(combos_mod.single_round_choice(payload)["name"], "奥利奥麦旋风")
+
+    def test_single_round_enters_the_pool_by_kind(self):
+        catalog = json.loads((FIX / "combo_catalog.json").read_text("utf-8"))
+        catalog["meals"]["lunch"]["single_round"] = [{
+            "code": "9900008747", "name": "牛肉堡单品精选",
+            "choice_code": "1440", "choice_name": "汉堡包", "display_name": "汉堡包",
+            "kind": "main", "reference_price": 14.0, "quoted_price": 14.0,
+            "status": "ok",
+            "nutrition": {"energyKj": 0, "energyKcal": 250, "protein": 13.0, "fat": 9.0,
+                          "carbohydrate": 30.0, "sodium": 700.0, "calcium": 100.0},
+        }]
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = new_service(tmp)
+            (Path(tmp) / "combo_catalog.json").write_text(
+                json.dumps(catalog, ensure_ascii=False), "utf-8")
+            svc.invalidate()
+            pool = svc.pools("lunch")
+            names = {i.name for i in pool["main"]}
+            self.assertIn("汉堡包", names)
+            item = next(i for i in pool["main"] if i.name == "汉堡包")
+            self.assertEqual(item.price_ref, 14.0)
+            self.assertEqual(item.nutrition["protein"], 13.0)
+            # a single main is selectable
+            self.assertTrue(any(i.name == "汉堡包" for i in svc.single_pools("lunch")["lunch"]["main"]))
+
+    def test_dessert_is_visible_but_not_selectable(self):
+        catalog = json.loads((FIX / "combo_catalog.json").read_text("utf-8"))
+        catalog["meals"]["lunch"]["single_round"] = [{
+            "code": "9900008754", "name": "经典麦旋风",
+            "choice_code": "1", "choice_name": "奥利奥麦旋风", "display_name": "奥利奥麦旋风",
+            "kind": "dessert", "reference_price": 14.5, "quoted_price": 14.5,
+            "status": "ok",
+            "nutrition": {"energyKj": 0, "energyKcal": 300, "protein": 5.0, "fat": 12.0,
+                          "carbohydrate": 40.0, "sodium": 200.0, "calcium": 150.0},
+        }]
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = new_service(tmp)
+            (Path(tmp) / "combo_catalog.json").write_text(
+                json.dumps(catalog, ensure_ascii=False), "utf-8")
+            svc.invalidate()
+            desserts = svc.dessert_items("lunch")
+            self.assertEqual([d["name"] for d in desserts], ["奥利奥麦旋风"])
+            selectable = {i.name for i in svc.single_pools("lunch")["lunch"]["main"]}
+            self.assertNotIn("奥利奥麦旋风", selectable)
+
+    def test_unknown_nutrition_is_reported_as_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = new_service(tmp)
+            catalog = json.loads((FIX / "combo_catalog.json").read_text("utf-8"))
+            catalog["meals"]["lunch"]["single_round_excluded"] = [{
+                "code": "9900008746", "name": "鸡肉堡单品精选", "reason": "nutrition_unknown",
+                "detail": "缺官方营养：双层脆鸡堡"}]
+            (Path(tmp) / "combo_catalog.json").write_text(
+                json.dumps(catalog, ensure_ascii=False), "utf-8")
+            svc.invalidate()
+            missing = svc.unknown_items("lunch")
+        self.assertTrue([m for m in missing if m["code"] == "9900008746"])
+
+
+class CatalogStatusTest(unittest.TestCase):
+    """套餐目录状态必须能被前端读到，缺失时如实报告。"""
+
+    def test_missing_catalog_is_reported(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = new_service(tmp)   # no catalog in the data dir
+            report = svc.combo_report("lunch")
+        self.assertFalse(report["available"])
+
+    def test_loaded_catalog_is_reported(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = service_with_fixture_catalog(tmp)
+            report = svc.combo_report("lunch")
+        self.assertTrue(report["available"])
+        self.assertGreaterEqual(report["combos_found"], 1)
+        self.assertTrue(report["built_at"])
+
+    def test_plan_payload_carries_the_catalog_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = service_with_fixture_catalog(tmp)
+            payload = svc.plan_meal(
+                "lunch", planner_mod.Targets(protein_min=44, budget=45, protein_tolerance=3),
+                max_mains=2)
+            self.assertTrue(payload["combos"]["catalog"]["available"])
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = new_service(tmp)
+            payload = svc.plan_meal(
+                "lunch", planner_mod.Targets(protein_min=44, budget=45, protein_tolerance=3),
+                max_mains=2)
+            self.assertFalse(payload["combos"]["catalog"]["available"])
+
+
 class MembershipTest(unittest.TestCase):
     def test_markers(self):
         hits = combos_mod.membership_markers(
