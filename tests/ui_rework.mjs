@@ -135,8 +135,10 @@ async function main() {
 
   // 进度条右侧预算信息
   const foot = await evalJs(`document.querySelector('#s-result .progress-foot').textContent`);
+  // 套餐纳入后：54 g / 45.00（多 10 g、刚好用完）→ 50 g / 40.50
+  // （多 6 g、还剩 4.50 元）。更便宜、仍达标，故更新预期。
   check("进度条写出目标差额与预算余额",
-        /目标 44 g，多出 10 g/.test(foot) && /预算 45 元，刚好用完/.test(foot),
+        /目标 44 g，多出 6 g/.test(foot) && /预算 45 元，还剩 4\.50 元/.test(foot),
         foot.replace(/\s+/g, " "));
 
   // 整数刻度
@@ -290,17 +292,18 @@ async function main() {
             return bad.length;
           })()`)) === 0);
 
-  // 按 39 元重新算
+  // 按加预算卡片给的上限重新算（套餐让上限从 39.00 降到 34.50）
+  const upCost = await evalJs(`document.querySelector('#s-budget-up').dataset.cost`);
   await evalJs(`document.querySelector('#s-budget-up').click()`);
-  await waitFor(`document.querySelector('#s_budget').value === '39'`, "价格改成 39");
-  await waitFor(`S && S.protein_status === 'met' && S.cost <= 39`, "按 39 元重算");
+  await waitFor(`document.querySelector('#s_budget').value === '${upCost}'`, `价格改成 ${upCost}`);
+  await waitFor(`S && S.protein_status === 'met' && S.cost <= ${upCost}`, "按上限重算");
   const redo = await evalJs(`JSON.stringify({
       budget: document.querySelector('#s_budget').value,
       status: S.protein_status, cost: S.cost,
       panelShown: !document.querySelector('#s-result-panel').hidden
     })`).then(JSON.parse);
-  check("点「按 39 元重新算」把价格改成 39 并重新出结果",
-        redo.budget === "39" && redo.status === "met" && redo.cost <= 39 && redo.panelShown,
+  check("点「重新算」把价格改成卡片上限并重新出结果",
+        redo.budget === upCost && redo.status === "met" && redo.cost <= Number(upCost) && redo.panelShown,
         JSON.stringify(redo));
 
   // --------------------------------------------------------------- mobile

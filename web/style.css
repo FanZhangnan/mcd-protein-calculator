@@ -555,3 +555,41 @@ label.sugg input{width:auto;min-height:auto;margin-top:4px}
 
 /* 编号点错开时连回真实位置 */
 #chart .dot-link{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 2}
+
+/* ---------- 套餐（各轮官方营养相加，价格按真实试算） ---------- */
+.combo-tag {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  vertical-align: 2px;
+}
+.combo-parts {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--label);
+}
+.combo-note {
+  margin: 8px 0 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.combo-audit {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.combo-audit summary {
+  cursor: pointer;
+  line-height: 1.7;
+}
+.combo-audit ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  line-height: 1.7;
+}

@@ -114,6 +114,12 @@ class Item:
     #: still the standard version (strict mode).
     nutrition_basis: str = "official"
     removal_notes: list[str] = field(default_factory=list)
+    #: combo variants only: the rounds sent back to ``calculate-price``
+    round_list: list[dict[str, Any]] | None = None
+    #: combo variants only: ``[{role, code, name, diff_price}]`` for the card
+    combo_rounds: list[dict[str, Any]] | None = None
+    combo_variant: str = ""
+    combo_menu_price: float | None = None
 
     def copy(self) -> "Item":
         return Item(
@@ -124,13 +130,23 @@ class Item:
             modification=self.modification, removals=self.removals,
             nutrition_basis=self.nutrition_basis,
             removal_notes=list(self.removal_notes or []),
+            round_list=[dict(r) for r in (self.round_list or [])] or None,
+            combo_rounds=[dict(r) for r in (self.combo_rounds or [])] or None,
+            combo_variant=self.combo_variant,
+            combo_menu_price=self.combo_menu_price,
         )
 
     def as_dict(self) -> dict[str, Any]:
-        return {
+        payload = {
             "code": self.code,
             "name": self.name,
             "kind": self.kind,
+            "combo": (None if self.kind != "combo" else {
+                "variant": self.combo_variant,
+                "menu_price": self.combo_menu_price,
+                "rounds": self.combo_rounds or [],
+                "round_list": self.round_list or [],
+            }),
             "nutrition": self.nutrition,
             "nutrition_status": self.nutrition_status,
             "nutrition_note": self.nutrition_note,
@@ -144,6 +160,7 @@ class Item:
             "modification": self.modification or [],
             "removals": self.removals or [],
         }
+        return payload
 
 
 @dataclass
@@ -381,8 +398,14 @@ def _merge_mains(picks: list[Item]) -> list[Item]:
 
 
 def build_meal_options(mains: list[Item], sides: list[Item], drinks: list[Item],
-                       *, max_mains: int = 1) -> list[list[Item]]:
-    """Every structure-legal combo: 1..N mains × {no side, side} × {no drink, drink}.
+                       *, max_mains: int = 1,
+                       combos: list[Item] | None = None) -> list[list[Item]]:
+    """Every structure-legal combo.
+
+    * no combo: 1..N mains × {no side, side} × {no drink, drink}
+    * combo: exactly one combo + 0..N-1 mains, and no extra side/drink — the
+      combo already carries them. The combo counts as one main towards
+      ``max_mains``, so ``max_mains = 1`` means "combo alone".
 
     Only items with official nutrition *and* a known price can enter: a price
     cap cannot be enforced against an unknown price, so such an item is not a
@@ -391,6 +414,7 @@ def build_meal_options(mains: list[Item], sides: list[Item], drinks: list[Item],
     usable_mains = [m for m in mains if m.nutrition and m.price_ref is not None]
     usable_sides = [s for s in sides if s.nutrition and s.price_ref is not None]
     usable_drinks = [d for d in drinks if d.nutrition and d.price_ref is not None]
+    usable_combos = [c for c in (combos or []) if c.nutrition and c.price_ref is not None]
 
     max_mains = max(1, int(max_mains))
     combos: list[list[Item]] = []
@@ -406,6 +430,13 @@ def build_meal_options(mains: list[Item], sides: list[Item], drinks: list[Item],
                     if drink:
                         combo.append(drink.copy())
                     combos.append(combo)
+
+    # at most one combo per meal; with a combo there is no extra drink or side
+    for combo_item in usable_combos:
+        for size in range(0, max_mains):
+            for idx in combinations_with_replacement(range(len(usable_mains)), size):
+                picks = [usable_mains[i] for i in idx]
+                combos.append([combo_item.copy()] + _merge_mains(picks))
     return combos
 
 
@@ -429,7 +460,8 @@ def plan_open(pools: dict[str, dict[str, list[Item]]], targets: Targets,
     meal = open_meals[0]
     pool = pools.get(meal, {})
     combos = build_meal_options(pool.get("main", []), pool.get("side", []),
-                                pool.get("drink", []), max_mains=max_mains)
+                                pool.get("drink", []), max_mains=max_mains,
+                                combos=pool.get("combo", []))
     if not combos:
         return PlanResult(
             feasible=False, meals=[], totals={}, unknowns=[], is_estimate=False,
@@ -502,10 +534,11 @@ def plan_open(pools: dict[str, dict[str, list[Item]]], targets: Targets,
 def brief(combo: list[Item], totals: dict[str, float | None],
           cost: float | None, targets: Targets) -> dict[str, Any]:
     """Compact one-line description of a combo (used by payloads and charts)."""
-    main = next((i for i in combo if i.kind == "main"), None)
+    head = (next((i for i in combo if i.kind == "combo"), None)
+            or next((i for i in combo if i.kind == "main"), None))
     return {
-        "code": main.code if main else "",
-        "name": main.name if main else "",
+        "code": head.code if head else "",
+        "name": head.name if head else "",
         "protein": None if totals.get("protein") is None else round(float(totals["protein"]), 1),
         "fat": None if totals.get("fat") is None else round(float(totals["fat"]), 1),
         "kcal": None if totals.get("energyKcal") is None else round(float(totals["energyKcal"]), 1),
@@ -525,7 +558,8 @@ def single_meal_frontier(pools: dict[str, dict[str, list[Item]]], targets: Targe
     """
     pool = pools.get(meal, {})
     combos = build_meal_options(pool.get("main", []), pool.get("side", []),
-                                pool.get("drink", []), max_mains=max_mains)
+                                pool.get("drink", []), max_mains=max_mains,
+                                combos=pool.get("combo", []))
     rows: list[dict[str, Any]] = []
     for combo in combos:
         totals, _ = sum_nutrition(combo)

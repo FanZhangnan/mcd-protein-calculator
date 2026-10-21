@@ -105,9 +105,11 @@ async function main() {
     items: S.items.map(i => i.name + '×' + i.quantity),
     saver: S.saver ? { cost: S.saver.cost, protein: S.saver.protein, items: S.saver.items } : null
   })`).then(JSON.parse);
-  check("场景1 达标 54 g / 45.00 元",
-    c1.status === "met" && c1.protein === 54 && c1.cost === 45
-    && c1.items.join(" + ") === "双层吉士汉堡×2", JSON.stringify(c1.items));
+  // 套餐纳入后：旧 54 g / 45.00（双层吉士汉堡×2）→ 新 50 g / 40.50
+  // （酥脆无双套餐 + 双层吉士汉堡）：更便宜、仍达标。
+  check("场景1 达标 50 g / 40.50 元",
+    c1.status === "met" && c1.protein === 50 && c1.cost === 40.5
+    && c1.items.join(" + ") === "酥脆无双套餐×1 + 双层吉士汉堡×1", JSON.stringify(c1.items));
   check("场景1 有省钱选项 42 g / 39.00 元",
     !!c1.saver && c1.saver.protein === 42 && c1.saver.cost === 39,
     JSON.stringify(c1.saver));
@@ -121,7 +123,8 @@ async function main() {
   })`).then(JSON.parse);
   check("场景2 预算内最多 28 g / 25.00 元",
     c2.status === "under" && c2.protein === 28 && c2.cost === 25, JSON.stringify(c2));
-  check("场景2 显示加预算卡片", c2.text.includes("加预算到") && c2.text.includes("39.00"), "");
+  // 套餐让「加预算」的上限从 39.00 降到 34.50（酥脆无双套餐 + 麦香鸡 = 38 g）
+  check("场景2 显示加预算卡片", c2.text.includes("加预算到") && c2.text.includes("34.50"), "");
   const clicked = await evalJs(`(() => {
     const b = document.querySelector('#s-budget-up');
     if (!b) return false;
@@ -132,9 +135,9 @@ async function main() {
     budget: document.querySelector('#s_budget').value,
     status: S.protein_status, cost: S.cost, protein: S.totals.protein
   })`).then(JSON.parse);
-  check("场景2 按 39 元重算后达标",
-    clicked === true && c2b.budget === "39" && c2b.status === "met"
-    && c2b.protein === 42 && c2b.cost === 39, JSON.stringify(c2b));
+  check("场景2 按 34.5 元重算后达标",
+    clicked === true && c2b.budget === "34.5" && c2b.status === "met"
+    && c2b.protein === 38 && c2b.cost === 34.5, JSON.stringify(c2b));
 
   // 3) breakfast 25 / 20
   await setInputs("breakfast", 25, 20);
@@ -167,7 +170,7 @@ async function main() {
     status: S.protein_status, protein: S.totals.protein
   })`).then(JSON.parse);
   check("手机 390px 无横向滚动", m.scroll <= m.inner + 1, `scroll=${m.scroll} inner=${m.inner}`);
-  check("手机结果正确", m.status === "met" && m.protein === 54, JSON.stringify(m));
+  check("手机结果正确", m.status === "met" && m.protein === 50, JSON.stringify(m));
   await shot("demo-mobile", 390);
 
   const failed = results.filter((r) => !r.ok);

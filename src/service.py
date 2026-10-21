@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 import catalog as catalog_mod
+import combos as combos_mod
 import planner as planner_mod
 import quantity as quantity_mod
 from mcp_client import McpClient, McpError
@@ -143,6 +144,35 @@ class OfflineProvider:
                 return json.loads(specific.read_text("utf-8"))
         return self._load(f"combo_{code}_detail")
 
+    def _round_diff(self, code: str, round_list: list[dict]) -> float:
+        """Combo upgrade surcharge, read from the same detail fixture.
+
+        The real POS charges ``menu price + Σ diffPrice``; the offline stub must
+        do the same, otherwise every combo variant would look like a price
+        mismatch and be excluded for the wrong reason.
+        """
+        if not round_list:
+            return 0.0
+        path = self.dir / f"combo_{code}_detail.json"
+        if not path.exists():
+            return 0.0
+        try:
+            data = json.loads(path.read_text("utf-8")).get("data") or {}
+        except Exception:
+            return 0.0
+        wanted = {str(r.get("round")): (r.get("comboItemList") or [{}])[0].get("code")
+                  for r in round_list}
+        total = 0.0
+        for rnd in data.get("rounds") or []:
+            code_wanted = wanted.get(str(rnd.get("id")))
+            if not code_wanted:
+                continue
+            for choice in rnd.get("choices") or []:
+                if str(choice.get("code")) == str(code_wanted):
+                    total += combos_mod.parse_diff_price(choice.get("diffPrice"))
+                    break
+        return total
+
     def coupons(self, store_code: str, be_type: int, order_type: int,
                 when: str | None = None) -> dict:
         """Synthetic coupon fixture for tests; empty when the fixture is absent."""
@@ -180,6 +210,8 @@ class OfflineProvider:
                         "message": f"离线桩：菜单中没有 {code} 的价格",
                         "datetime": "offline", "data": None}
             qty = int(line.get("quantity") or 1)
+            diff = self._round_diff(code, line.get("roundList") or [])
+            unit = float(unit) + diff
             coupon = coupon_map.get(str(line.get("couponId")))
             coupon_code = ""
             if coupon:
@@ -271,6 +303,9 @@ class Service:
         # coupon data lives in memory only — never on disk, never in /api output
         self._coupon_raw: list[dict[str, Any]] | None = None
         self._coupon_key: str = ""
+        #: verified combo catalog; empty means "no combo data for this context"
+        self._combo_catalog: dict[str, Any] | None = None
+        self._combo_key: str = ""
 
     # ------------------------------------------------------------- context/cache
     def context(self, day: str | None = None, state: dict[str, Any] | None = None) -> CacheContext:
@@ -361,6 +396,8 @@ class Service:
         self._cache_key = ""
         self._catalog = None
         self._baseline = None
+        self._combo_catalog = None
+        self._combo_key = ""
 
     # ---------------------------------------------------------------- context id
     def _fingerprint(self, ctx: CacheContext | None = None) -> dict[str, Any]:
@@ -423,11 +460,22 @@ class Service:
         data = (cache["menus"].get(meal) or {}).get("data") or {}
         meals_map: dict[str, Any] = data.get("meals") or {}
         cat = self.catalog()
+        # Detected combos never enter the single-item pools. When no verified
+        # catalog exists we fall back to the name heuristic, so a fresh clone
+        # without a build step still cannot price a combo as if it were a main.
+        meta = self.combo_meal(meal)
+        combo_codes = self.combo_codes(meal)
+        has_catalog = bool(meta)
 
-        buckets: dict[str, list[planner_mod.Item]] = {"main": [], "side": [], "drink": [], "other": []}
+        buckets: dict[str, list[planner_mod.Item]] = {"main": [], "side": [], "drink": [],
+                                                      "combo": [], "other": []}
         for code, info in meals_map.items():
             name = (info or {}).get("name") or ""
-            if not name or catalog_mod.is_combo_name(name):
+            if not name:
+                continue
+            if str(code) in combo_codes:
+                continue
+            if not has_catalog and catalog_mod.is_combo_name(name):
                 continue
             kind = catalog_mod.classify(name)
             if kind == "other":
@@ -443,6 +491,7 @@ class Service:
                 nutrition_status=match.status, nutrition_note=match.note,
                 price_ref=price, meal=meal,
             ))
+        buckets["combo"] = self.combo_items(meal)
         for kind in buckets:
             buckets[kind].sort(key=lambda i: (
                 i.nutrition is None,
@@ -450,6 +499,113 @@ class Service:
                 i.code,
             ))
         return buckets
+
+    # ----------------------------------------------------------------- combos
+    def combo_catalog(self) -> dict[str, Any]:
+        """Verified combo catalog for the current store/date/meal times.
+
+        Combos are validated by a build step (``scripts/build_combo_catalog.py``)
+        because that needs one detail call per SKU plus one quote per variant.
+        A catalog from another store, date or meal-time set is ignored rather
+        than silently reused — prices are time-specific.
+        """
+        cache = self.ensure_cache()
+        key = cache.get("cache_key", "")
+        if self._combo_catalog is not None and self._combo_key == key:
+            return self._combo_catalog
+        self._combo_catalog = {}
+        self._combo_key = key
+        candidates = [self.base / "combo_catalog.json",
+                      Path(__file__).resolve().parents[1] / "data" / "combo_catalog.json"]
+        for path in candidates:
+            if not path.exists():
+                continue
+            try:
+                raw = json.loads(path.read_text("utf-8"))
+            except Exception:
+                continue
+            ctx = raw.get("context") or {}
+            if (str(ctx.get("store_code")) != str(cache.get("store_code"))
+                    or ctx.get("date") != cache.get("date")
+                    or ctx.get("meal_times") != cache.get("meal_times")):
+                continue
+            self._combo_catalog = raw
+            break
+        return self._combo_catalog
+
+    def combo_meal(self, meal: str) -> dict[str, Any]:
+        catalog = self.combo_catalog()
+        meta = (catalog.get("meals") or {}).get(meal) or {}
+        if meta or meal != "dinner":
+            return meta
+        # The POS serves the same SKU set at lunch and dinner (documented in
+        # README). When the two menus are byte-identical, lunch's verified
+        # combos are valid for dinner too — but only under that evidence.
+        cache = self.ensure_cache()
+        menus = cache.get("menus") or {}
+        lunch = _menu_codes(menus.get("lunch"))
+        dinner = _menu_codes(menus.get("dinner"))
+        if lunch and lunch == dinner:
+            return (catalog.get("meals") or {}).get("lunch") or {}
+        return {}
+
+    def combo_codes(self, meal: str) -> set[str]:
+        meta = self.combo_meal(meal)
+        codes = {str(v.get("combo_code")) for v in meta.get("variants") or []}
+        codes |= {str(e.get("combo_code")) for e in meta.get("excluded") or []
+                  if e.get("combo_code")}
+        return codes
+
+    def combo_items(self, meal: str) -> list[planner_mod.Item]:
+        """Only variants whose reference price equals the real quote and whose
+        nutrition is fully official can become candidates."""
+        items: list[planner_mod.Item] = []
+        for v in self.combo_meal(meal).get("variants") or []:
+            if v.get("status") != "ok":
+                continue
+            nutrition = v.get("nutrition") or {}
+            if any(nutrition.get(k) is None for k in planner_mod.NUTRI_KEYS):
+                continue
+            price = v.get("quoted_price")
+            if price is None:
+                continue
+            items.append(planner_mod.Item(
+                code=str(v["combo_code"]), name=v.get("combo_name") or "",
+                kind="combo", nutrition=nutrition, nutrition_status="official",
+                nutrition_note="套餐各轮官方营养相加",
+                price_ref=float(price), meal=meal,
+                round_list=v.get("round_list") or [],
+                combo_rounds=v.get("rounds") or [],
+                combo_variant=v.get("variant") or "default",
+                combo_menu_price=v.get("menu_price"),
+            ))
+        return items
+
+    def combo_report(self, meal: str) -> dict[str, Any]:
+        """What the build found, including everything it had to exclude."""
+        meta = self.combo_meal(meal)
+        catalog = self.combo_catalog()
+        excluded = meta.get("excluded") or []
+        counts: dict[str, int] = {}
+        for item in excluded:
+            reason = item.get("reason") or "other"
+            counts[reason] = counts.get(reason, 0) + 1
+        return {
+            "available": bool(meta),
+            "source": catalog.get("source"),
+            "built_at": catalog.get("built_at"),
+            "checked": meta.get("checked"),
+            "combos_found": meta.get("combo_count"),
+            "variants_used": len(self.combo_items(meal)),
+            "excluded": len(excluded),
+            "reasons": counts,
+            "excluded_categories": meta.get("excluded_categories") or [],
+            "items": [{"code": e.get("combo_code"), "name": e.get("combo_name"),
+                       "variant": e.get("variant"), "reason": e.get("reason"),
+                       "detail": e.get("detail")} for e in excluded[:30]],
+            "note": ("套餐目录由构建脚本逐款核对营养与真实试算价；"
+                     "营养未知、价格不一致与会员价套餐已排除。"),
+        }
 
     def unknown_items(self, meal: str) -> list[dict[str, Any]]:
         buckets = self.pools(meal)
@@ -584,6 +740,7 @@ class Service:
             "main": pool["main"],
             "side": pool["side"] if allow_side else [],
             "drink": [d for d in pool["drink"] if self.is_single_drink(d)],
+            "combo": pool.get("combo", []),
         }}
 
     def landscape(self, meal: str, max_mains: int = DEFAULT_MAX_MAINS) -> dict[str, Any]:
@@ -791,9 +948,15 @@ class Service:
                 upgrades.append(step)
         for step in upgrades:
             self._annotate_upgrade(step, meal_plan, result, targets)
-        removable = (next(iter(removables_map.values()))
-                     if removables_map else {"ok": False, "options": [], "groups": [],
-                                        "reason": "没有主食"})
+        combo_items = [i for i in (meal_plan.items if meal_plan else [])
+                       if i.kind == "combo"]
+        if removables_map:
+            removable = next(iter(removables_map.values()))
+        elif combo_items:
+            removable = {"ok": False, "options": [], "groups": [],
+                         "reason": "套餐暂不支持去配料"}
+        else:
+            removable = {"ok": False, "options": [], "groups": [], "reason": "没有主食"}
         upgrade = upgrades[0] if upgrades else None
         frontier = None
         if not result.feasible:
@@ -834,6 +997,12 @@ class Service:
             "upgrades": upgrades,
             "frontier": frontier,
             "basis": "single_meal",
+            "combos": {
+                "applied": bool(combo_items),
+                "used": [i.as_dict() for i in combo_items],
+                "unsupported": "套餐暂不支持去配料与券后价" if combo_items else "",
+                "catalog": self.combo_report(meal),
+            },
             "targets": targets.as_dict(),
         })
         self.set_working(result.meals, targets, mode="single")
@@ -852,7 +1021,8 @@ class Service:
             "meals": [
                 {"meal": m.meal, "items": [
                     {"c": i.code, "q": quantity_mod.signature_quantity(i.quantity),
-                     "mod": i.modification or []} for i in m.items
+                     "mod": i.modification or [], "rl": i.round_list or []}
+                    for i in m.items
                 ]} for m in meals
             ],
         }
@@ -868,6 +1038,8 @@ class Service:
             entry: dict[str, Any] = {"productCode": item.code, "quantity": qty}
             if item.modification:
                 entry["modification"] = {"values": item.modification}
+            if item.round_list:
+                entry["roundList"] = item.round_list
             items.append(entry)
         if not items:
             return {"status": "empty", "amount": None, "unit": "CNY", "message": "无商品"}
@@ -968,6 +1140,14 @@ class Service:
 
         cache = self.ensure_cache()
         when = f"{cache['date']} {(cache.get('meal_times') or {}).get(meal, '12:15')}".strip()
+        if any(i.kind == "combo" for i in meal_plan.items):
+            base = self.quote_meal(meal_plan)
+            return {"meal": meal, "status": "unsupported",
+                    "baseline_amount": base.get("amount") if base.get("status") == "ok" else None,
+                    "quote_status": base.get("status"), "coupon": None,
+                    "checked": 0, "reservation_date": when,
+                    "source": getattr(self.provider, "source_name", "live"),
+                    "note": "套餐暂不支持券后价；上方价格是门店原价试算。"}, 200
         base = self.quote_meal(meal_plan)
         base_amount = base.get("amount") if base.get("status") == "ok" else None
 
@@ -1229,6 +1409,7 @@ class Service:
             raw = i.get("quantity", 1)
             label = f"「{i.get('name') or i.get('code')}」的待买数量"
             qty = quantity_mod.purchase_quantity(raw, label)
+            combo = i.get("combo") or {}
             out.append(planner_mod.Item(
                 code=i.get("code"), name=i.get("name"), kind=i.get("kind", "other"),
                 nutrition=i.get("nutrition"), nutrition_status=i.get("nutrition_status", ""),
@@ -1236,6 +1417,10 @@ class Service:
                 quantity=qty, meal=meal, modification=i.get("modification") or [],
                 nutrition_basis=i.get("nutrition_basis") or "official",
                 removal_notes=list(i.get("removal_notes") or []),
+                round_list=combo.get("round_list") or None,
+                combo_rounds=combo.get("rounds") or None,
+                combo_variant=combo.get("variant") or "",
+                combo_menu_price=combo.get("menu_price"),
             ))
         return out
 

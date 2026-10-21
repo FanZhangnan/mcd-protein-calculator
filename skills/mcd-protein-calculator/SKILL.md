@@ -79,6 +79,18 @@ curl -s -X POST localhost:8765/api/meal -H 'Content-Type: application/json' \
 
 关键返回：`feasible`、`protein_status`、`protein_gap`、`saver`、`items[]`、`totals`、`cost`、`protein_per_yuan`、`signature`、`suggestions[]`、`upgrades[]`、`frontier`、`context_warning`、`removable`、`removables`。
 
+### 1.1 套餐（`kind = "combo"`）
+
+`/api/meal` 的 `items[]` 里可能出现 `kind = "combo"` 的一行：套餐作为一个整体参与求解，`combo.rounds` 是各轮选中的内容（主食 / 小食 / 饮品），`round_list` 是报价要回传的轮次参数。
+
+- 结构规则由服务端保证：**一餐最多 1 个套餐**，套餐计 1 个主食；有套餐时不再额外加饮品或配菜。不要自己在对话里拼「套餐 + 另点一杯饮料」。
+- 套餐营养 = 各轮官方单品营养之和；价格 = 门店真实试算价。**不要用菜单价或各轮 diffPrice 自己加减**。
+- `combos.catalog` 是核查记录：`variants_used` 纳入的变体数、`excluded` 与 `reasons`（`nutrition_unknown` / `price_mismatch` / `price_failed` / `membership`）。用户问「为什么没算某个套餐」时，先查这里再回答。
+- 会员价套餐（早餐卡 / 麦金卡）**不进入候选**，因为价格依赖账号权益；不要拿菜单会员价和普通价混着比较。
+- 套餐暂不支持去配料与券后价：`removable.reason` 会是「套餐暂不支持去配料」，`/api/quote_with_coupon` 返回 `status = "unsupported"`。直接说「套餐暂不支持」，不要报错或自行估算券后价。
+- 报价仍用 `/api/quote`，服务端会把 `roundList` 一起发出去；**不要把套餐拆成单品分别报价**。
+- 性价比图与排行表只画单品主食，不画套餐；不要因此说套餐不在计算范围内。
+
 ### 2. 性价比图
 
 ```bash

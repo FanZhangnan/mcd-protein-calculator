@@ -9,6 +9,8 @@ let WARN = {};             // { meal: "该时段返回的是另一餐次的菜�
 let RANK_EXPANDED = false;
 
 const MEAL_LABEL = { breakfast: "早餐", lunch: "午餐", dinner: "晚餐" };
+const COMBOR = { nutrition_unknown: "营养未知", price_mismatch: "价格不一致",
+  price_failed: "试算失败", membership: "会员价" };
 
 async function api(path, body, method = "POST") {
   const opts = { method, headers: { "Content-Type": "application/json" } };
@@ -641,13 +643,19 @@ function progressBlock(s, price) {
     </div>`;
 }
 
+function comboRoundsText(combo) {
+  const rounds = (combo && combo.rounds) || [];
+  return rounds.map((r) => `${r.role}：${r.name}`).join(" · ");
+}
+
 function itemRowsHtml(items) {
   return items.map((i) => `
     <div class="item">
       <div class="qty">×${i.quantity}</div>
       <div class="item-main">
-        <div class="item-name">${i.name}</div>
+        <div class="item-name">${i.name}${i.kind === "combo" ? ' <span class="combo-tag">套餐</span>' : ""}</div>
         <div class="item-sub">${num(i.price_ref, 2)} 元/份 · 蛋白质 ${nutri(i.nutrition?.protein)} g</div>
+        ${i.kind === "combo" ? `<div class="combo-parts">${comboRoundsText(i.combo)}</div>` : ""}
         <details class="item-detail">
           <summary>明细</summary>
           <div class="sub">${num(i.nutrition?.energyKcal, 0)} kcal · 蛋白质 ${nutri(i.nutrition?.protein)} g ·
@@ -665,12 +673,16 @@ function itemRowsHtml(items) {
 function renderSingle(s) {
   if (!s) { $("s-result-panel").hidden = true; return; }
   const items = s.items || [];
+  const combos = s.combos || {};
+  const comboInfo = combos.catalog || {};
+  const comboApplied = !!(combos.applied || items.some((i) => i.kind === "combo"));
   const t = s.totals || {};
   const q = s.quotes && s.quotes[s.meal];
   const main = items.find((i) => i.kind === "main");
   const quoted = q && q.status === "ok";
   const hasItems = items.length > 0;
-  const couponQuote = s.coupon_quote || null;
+  const couponQuote = s.coupon_quote
+    || (comboApplied ? { status: "unsupported", note: "套餐暂不支持券后价；上方价格是门店原价试算。" } : null);
   const couponOk = !!(couponQuote && couponQuote.status === "ok" && couponQuote.coupon);
   const basePrice = quoted ? Number(q.amount) : Number(s.cost || 0);
   const price = couponOk ? Number(couponQuote.coupon.amount) : basePrice;
@@ -730,7 +742,10 @@ function renderSingle(s) {
         <span class="coupon-note">券后价来自门店试算，下单时以 App 为准</span>
       </div>`;
     } else if (couponQuote) {
-      couponLine = `<div class="coupon-line muted">${couponQuote.status === "none" ? "暂无可用券" : "券后价暂不可用"}</div>`;
+      couponLine = `<div class="coupon-line muted">${
+        couponQuote.status === "none" ? "暂无可用券"
+          : couponQuote.status === "unsupported" ? (couponQuote.note || "套餐暂不支持券后价")
+            : "券后价暂不可用"}</div>`;
     } else {
       couponLine = `<div class="coupon-line muted" id="coupon-pending">正在查询门店券…</div>`;
     }
@@ -772,6 +787,21 @@ function renderSingle(s) {
     underCard = card + relaxFat + note;
   }
 
+  const comboAudit = comboInfo.available ? (() => {
+    const r = comboInfo.reasons || {};
+    const parts = [];
+    if (r.nutrition_unknown) parts.push(`营养未知 ${r.nutrition_unknown}`);
+    if (r.price_mismatch) parts.push(`价格不一致 ${r.price_mismatch}`);
+    if (r.price_failed) parts.push(`试算失败 ${r.price_failed}`);
+    if (r.membership) parts.push(`会员价 ${r.membership}`);
+    const list = (comboInfo.items || []).slice(0, 12).map((x) =>
+      `<li>${x.name}${x.variant === "muscle" ? "（增肌组合）" : ""} · ${COMBOR[x.reason] || x.reason}${x.detail ? ` · ${x.detail}` : ""}</li>`).join("");
+    return `<details class="combo-audit"><summary>套餐核查：已查 ${comboInfo.checked || 0} 个 SKU，识别 ${comboInfo.combos_found || 0} 个套餐，纳入 ${comboInfo.variants_used || 0} 个变体；排除 ${comboInfo.excluded || 0} 个${parts.length ? `（${parts.join("、")}）` : ""}</summary>
+      <ul>${list}</ul>
+      <div class="sub">${comboInfo.note || ""}</div>
+    </details>`;
+  })() : "";
+
   $("s-result").innerHTML = `
     <div class="single-card">
       <div class="single-head">
@@ -785,6 +815,7 @@ function renderSingle(s) {
       ${progressBlock(s, hasItems ? price : NaN)}
       ${couponLine}
       ${itemRows}
+      ${comboApplied ? `<div class="combo-note">${combos.unsupported || "套餐暂不支持去配料与券后价"}</div>` : ""}
       ${saverRow}
       ${underCard}
       <div class="quote-row">
@@ -796,6 +827,7 @@ function renderSingle(s) {
           <div class="sub">去掉配料只写进点单参数；营养数值仍为标准版官方数据。</div></details>` : ""}
       </div>
       ${upgrade ? `<details class="upgrade-box"><summary>肉量升级（整款替换）</summary>${upgrade}</details>` : ""}
+      ${comboAudit}
       <div class="sub strict-foot">严格模式：营养一律取官方整款标准版；去除配料只影响点单参数，不扣减任何数值。</div>
     </div>`;
   $("s-result-panel").hidden = false;
@@ -834,7 +866,8 @@ function renderSingle(s) {
 
   renderRank();
   drawChart();
-  if (!isSnapshot() && hasItems && !s.coupon_checked && s.coupon_allowed !== false) loadCouponQuote(s);
+  if (!isSnapshot() && hasItems && !comboApplied && !s.coupon_checked
+      && s.coupon_allowed !== false) loadCouponQuote(s);
 }
 
 async function loadCouponQuote(s) {

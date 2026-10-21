@@ -121,6 +121,43 @@ def main() -> int:
                             round(float(totals.get("energyKcal") or 0.0), 1),
                         ])
 
+        combo_items = service.combo_items(meal)
+        combo_variants = [{
+            "code": str(i.code), "name": i.name, "variant": i.combo_variant,
+            "price": round(float(i.price_ref or 0), 2),
+            "menu_price": i.combo_menu_price,
+            "nutrition": {k: (i.nutrition or {}).get(k) for k in NUTRI_KEYS},
+            "rounds": i.combo_rounds or [],
+            "round_list": i.round_list or [],
+        } for i in combo_items]
+
+        combo_combos: list[list] = []
+        for ci, item in enumerate(combo_items):
+            base = [item]
+            base_total, _ = planner_mod.sum_nutrition(base)
+            combo_combos.append([
+                ci, -1, -1,
+                round(float(item.price_ref or 0), 2),
+                round(float(base_total.get("protein") or 0.0), 1),
+                round(float(base_total.get("fat") or 0.0), 1),
+                round(float(base_total.get("energyKcal") or 0.0), 1),
+            ])
+            for size in range(1, max(1, args.max_mains)):
+                for idx in combinations_with_replacement(range(len(mains)), size):
+                    chosen = base + [mains[i] for i in idx]
+                    totals, _ = planner_mod.sum_nutrition(chosen)
+                    cost = planner_mod.sum_reference_cost(chosen)
+                    if totals.get("protein") is None or cost is None:
+                        continue
+                    padded = list(idx) + [-1] * (2 - size)
+                    combo_combos.append([
+                        ci, *padded,
+                        round(float(cost), 2),
+                        round(float(totals.get("protein") or 0.0), 1),
+                        round(float(totals.get("fat") or 0.0), 1),
+                        round(float(totals.get("energyKcal") or 0.0), 1),
+                    ])
+
         removable: dict[str, list[str]] = {}
         for main in mains:
             try:
@@ -144,9 +181,13 @@ def main() -> int:
             "drinks": [item_row(i) for i in drinks],
             "sides": [item_row(i) for i in sides],
             "combos": combos,
+            "comboVariants": combo_variants,
+            "comboCombos": combo_combos,
         }
-        total_combos += len(combos)
-        print(f"{meal}: {len(mains)} mains, {len(drinks)} drinks, {len(sides)} sides, {len(combos)} combos")
+        total_combos += len(combos) + len(combo_combos)
+        print(f"{meal}: {len(mains)} mains, {len(drinks)} drinks, {len(sides)} sides, "
+              f"{len(combos)} single combos, {len(combo_items)} combo variants, "
+              f"{len(combo_combos)} combo rows")
 
     snapshot = {
         "meta": meta,
@@ -160,6 +201,8 @@ def main() -> int:
             "drink_whitelist": "纯牛奶 / 零度可乐 / 美式咖啡 / 官方热量 < 20 kcal",
             "side_max": 1,
             "nutrition_basis": "official_standard",
+            "combo_rules": ("一餐最多 1 个套餐；套餐计 1 个主食；有套餐时不额外加饮品/配菜；"
+                            "套餐营养为各轮官方营养相加，价格必须与真实试算一致。"),
         },
         "counts": {"combos": total_combos},
     }

@@ -55,6 +55,30 @@
     });
   }
 
+  // Combo row: [comboIdx, main1, main2, cost, protein, fat, kcal]
+  function expandCombo(mealData, row) {
+    var variant = mealData.comboVariants[row[0]];
+    var items = [{
+      code: variant.code,
+      name: variant.name,
+      kind: "combo",
+      quantity: 1,
+      price_ref: variant.price,
+      nutrition: variant.nutrition,
+      removable: [],
+      combo: { variant: variant.variant, rounds: variant.rounds, menu_price: variant.menu_price },
+    }];
+    for (var i = 1; i <= 2; i++) {
+      var idx = row[i];
+      if (idx >= 0) {
+        var m = mealData.mains[idx];
+        items.push({ code: m.code, name: m.name, kind: "main", quantity: 1,
+          price_ref: m.price, nutrition: m.nutrition, removable: m.removable || [] });
+      }
+    }
+    return items;
+  }
+
   function totalsOf(items) {
     var totals = {};
     var unknown = false;
@@ -132,10 +156,11 @@
 
   function brief(row) {
     if (!row) return null;
-    var main = row.items.find(function (i) { return i.kind === "main"; });
+    var head = row.items.find(function (i) { return i.kind === "combo"; })
+      || row.items.find(function (i) { return i.kind === "main"; });
     return {
-      code: main ? main.code : "",
-      name: main ? main.name : "",
+      code: head ? head.code : "",
+      name: head ? head.name : "",
       protein: row.totals.protein === null ? null : round(row.totals.protein, 1),
       fat: row.totals.fat === null ? null : round(row.totals.fat, 1),
       kcal: row.totals.energyKcal === null ? null : round(row.totals.energyKcal, 1),
@@ -231,6 +256,13 @@
       if (size > maxMains) return;
       if (!allowSide && raw[3] >= 0) return;
       rows.push(build(data, raw, lim));
+    });
+    (data.comboCombos || []).forEach(function (raw) {
+      var mains = (raw[1] >= 0 ? 1 : 0) + (raw[2] >= 0 ? 1 : 0);
+      if (mains + 1 > maxMains) return;   // the combo itself counts as one main
+      var items = expandCombo(data, raw);
+      var t = totalsOf(items);
+      rows.push({ items: items, totals: t.totals, cost: costOf(items), row: raw });
     });
 
     var strict = rows.filter(function (r) { return feasible(r.totals, r.cost, lim, target); });

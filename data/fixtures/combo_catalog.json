@@ -1,0 +1,288 @@
+{
+ "version": 1,
+ "context": {
+  "store_code": "1440054",
+  "date": "2026-10-19",
+  "be_type": 1,
+  "order_type": 1,
+  "meal_times": {
+   "breakfast": "08:15",
+   "lunch": "12:15",
+   "dinner": "18:30"
+  }
+ },
+ "source": "fixture",
+ "built_at": "2026-10-21T00:00:00",
+ "store_name": "麦当劳珠海屏湾一路餐厅（离线样例）",
+ "meals": {
+  "breakfast": {
+   "checked": 86,
+   "combo_count": 1,
+   "no_rounds": [],
+   "excluded_categories": [],
+   "variants": [
+    {
+     "combo_code": "9900003728",
+     "combo_name": "脆香油条豆浆组合",
+     "variant": "default",
+     "menu_price": 17.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "脆香油条",
+       "role": "小食",
+       "code": "2631",
+       "name": "脆香油条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择早餐套餐饮料",
+       "role": "饮品",
+       "code": "1089",
+       "name": "优品豆浆大杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 17.0,
+     "nutrition": {
+      "energyKj": 1688.0,
+      "energyKcal": 404.0,
+      "protein": 13.0,
+      "fat": 16.0,
+      "carbohydrate": 52.0,
+      "sodium": 273.0,
+      "calcium": 39.0
+     },
+     "status": "ok",
+     "quoted_price": 17.0,
+     "quoted_at": "2026-10-19 00:00:00"
+    }
+   ],
+   "excluded": []
+  },
+  "lunch": {
+   "checked": 77,
+   "combo_count": 2,
+   "no_rounds": [],
+   "excluded_categories": [],
+   "variants": [
+    {
+     "combo_code": "9900005462",
+     "combo_name": "板烧鸡腿堡三件套",
+     "variant": "default",
+     "menu_price": 34.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "板烧鸡腿堡",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "小食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 34.5,
+     "nutrition": {
+      "energyKj": 3464.0,
+      "energyKcal": 827.0,
+      "protein": 27.0,
+      "fat": 29.0,
+      "carbohydrate": 109.0,
+      "sodium": 1206.0,
+      "calcium": 121.0
+     },
+     "status": "ok",
+     "quoted_price": 34.5,
+     "quoted_at": "2026-10-19 00:00:00"
+    },
+    {
+     "combo_code": "9900005462",
+     "combo_name": "板烧鸡腿堡三件套",
+     "variant": "muscle",
+     "menu_price": 34.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "板烧鸡腿堡",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "小食",
+       "code": "4820",
+       "name": "大薯条",
+       "diff_price": 2.5
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "2",
+       "comboItemList": [
+        {
+         "code": "4820",
+         "quantity": 1
+        }
+       ]
+      },
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 38.5,
+     "nutrition": {
+      "energyKj": 3279.0,
+      "energyKcal": 783.0,
+      "protein": 30.0,
+      "fat": 33.0,
+      "carbohydrate": 85.0,
+      "sodium": 1260.0,
+      "calcium": 124.0
+     },
+     "status": "ok",
+     "quoted_price": 38.5,
+     "quoted_at": "2026-10-19 00:00:00"
+    },
+    {
+     "combo_code": "9900011126",
+     "combo_name": "酥脆无双套餐",
+     "variant": "default",
+     "menu_price": 20.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择炸鸡",
+       "role": "小食",
+       "code": "505416",
+       "name": "麦麦脆汁鸡-琵琶腿",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "迷你薯条",
+       "role": "小食",
+       "code": "504643",
+       "name": "迷你薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3071",
+       "name": "无糖可口可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 20.0,
+     "nutrition": {
+      "energyKj": 1816.0,
+      "energyKcal": 434.0,
+      "protein": 23.0,
+      "fat": 24.0,
+      "carbohydrate": 31.0,
+      "sodium": 1001.0,
+      "calcium": 30.0
+     },
+     "status": "ok",
+     "quoted_price": 20.0,
+     "quoted_at": "2026-10-19 00:00:00"
+    },
+    {
+     "combo_code": "9900011126",
+     "combo_name": "酥脆无双套餐",
+     "variant": "muscle",
+     "menu_price": 20.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择炸鸡",
+       "role": "小食",
+       "code": "505416",
+       "name": "麦麦脆汁鸡-琵琶腿",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "迷你薯条",
+       "role": "小食",
+       "code": "504643",
+       "name": "迷你薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3757",
+       "name": "纯悦",
+       "diff_price": -2.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "3757",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 17.5,
+     "nutrition": {
+      "energyKj": 1816.0,
+      "energyKcal": 434.0,
+      "protein": 23.0,
+      "fat": 24.0,
+      "carbohydrate": 30.0,
+      "sodium": 966.0,
+      "calcium": 30.0
+     },
+     "status": "ok",
+     "quoted_price": 17.5,
+     "quoted_at": "2026-10-19 00:00:00"
+    }
+   ],
+   "excluded": []
+  }
+ }
+}

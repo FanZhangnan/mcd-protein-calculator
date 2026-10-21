@@ -1,0 +1,3791 @@
+{
+ "version": 1,
+ "context": {
+  "store_code": "1440054",
+  "date": "2026-10-22",
+  "be_type": 1,
+  "order_type": 1,
+  "meal_times": {
+   "breakfast": "08:15",
+   "lunch": "12:15",
+   "dinner": "18:30"
+  }
+ },
+ "source": "live",
+ "built_at": "2026-10-21T22:40:38",
+ "store_name": "麦当劳珠海屏湾一路餐厅",
+ "meals": {
+  "breakfast": {
+   "checked": 96,
+   "combo_count": 41,
+   "no_rounds": [
+    "1088",
+    "1254",
+    "2430",
+    "2631",
+    "3505",
+    "3755",
+    "3757",
+    "4437",
+    "4825",
+    "4989",
+    "5022",
+    "5024",
+    "502773",
+    "505235",
+    "507328",
+    "507368",
+    "507387",
+    "507394",
+    "507409",
+    "507411",
+    "510041",
+    "510427",
+    "510479",
+    "510488",
+    "513112",
+    "513113",
+    "513606",
+    "514700",
+    "514851",
+    "515280",
+    "515520",
+    "515837",
+    "515946",
+    "515949",
+    "515955",
+    "520689",
+    "520830",
+    "521315",
+    "521734",
+    "521735",
+    "521736",
+    "521817",
+    "521917",
+    "521950",
+    "521951",
+    "521981",
+    "521982",
+    "5888",
+    "5889",
+    "6362",
+    "6800",
+    "9900008745",
+    "9900008751",
+    "9900008752",
+    "9900008754"
+   ],
+   "excluded_categories": [
+    "6折起早餐卡专区"
+   ],
+   "variants": [
+    {
+     "combo_code": "9900003728",
+     "combo_name": "脆香油条豆浆组合",
+     "variant": "default",
+     "menu_price": 17.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "脆香油条",
+       "role": "小食",
+       "code": "2631",
+       "name": "脆香油条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择早餐套餐饮料",
+       "role": "饮品",
+       "code": "1089",
+       "name": "优品豆浆大杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 17.5,
+     "nutrition": {
+      "energyKj": 1688.0,
+      "energyKcal": 404.0,
+      "protein": 13.0,
+      "fat": 16.0,
+      "carbohydrate": 52.0,
+      "sodium": 273.0,
+      "calcium": 39.0
+     },
+     "status": "ok",
+     "quoted_price": 17.5,
+     "quoted_at": "2026-10-21 20:42:48"
+    },
+    {
+     "combo_code": "9900005437",
+     "combo_name": "粥王系列组合",
+     "variant": "default",
+     "menu_price": 12.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "雪菜脆笋鸡肉粥",
+       "role": "主食",
+       "code": "513606",
+       "name": "雪菜脆笋鸡肉粥",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择小食",
+       "role": "小食",
+       "code": "2631",
+       "name": "脆香油条",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 12.5,
+     "nutrition": {
+      "energyKj": 1348.0,
+      "energyKcal": 322.0,
+      "protein": 9.0,
+      "fat": 14.0,
+      "carbohydrate": 41.0,
+      "sodium": 782.0,
+      "calcium": 32.0
+     },
+     "status": "ok",
+     "quoted_price": 12.5,
+     "quoted_at": "2026-10-21 20:42:45"
+    },
+    {
+     "combo_code": "9900005470",
+     "combo_name": "粥王系列精选套餐",
+     "variant": "default",
+     "menu_price": 15.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "雪菜脆笋鸡肉粥",
+       "role": "主食",
+       "code": "513606",
+       "name": "雪菜脆笋鸡肉粥",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "脆香油条",
+       "role": "小食",
+       "code": "2631",
+       "name": "脆香油条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择早餐套餐小食",
+       "role": "小食",
+       "code": "4825",
+       "name": "脆薯饼",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 15.5,
+     "nutrition": {
+      "energyKj": 1960.0,
+      "energyKcal": 468.0,
+      "protein": 10.0,
+      "fat": 23.0,
+      "carbohydrate": 55.0,
+      "sodium": 1093.0,
+      "calcium": 39.0
+     },
+     "status": "ok",
+     "quoted_price": 15.5,
+     "quoted_at": "2026-10-21 20:42:45"
+    },
+    {
+     "combo_code": "9900005470",
+     "combo_name": "粥王系列精选套餐",
+     "variant": "muscle",
+     "menu_price": 15.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "雪菜脆笋鸡肉粥",
+       "role": "主食",
+       "code": "513606",
+       "name": "雪菜脆笋鸡肉粥",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "脆香油条",
+       "role": "小食",
+       "code": "2631",
+       "name": "脆香油条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择早餐套餐小食",
+       "role": "小食",
+       "code": "2631",
+       "name": "脆香油条",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "2631",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 15.5,
+     "nutrition": {
+      "energyKj": 2192.0,
+      "energyKcal": 524.0,
+      "protein": 14.0,
+      "fat": 26.0,
+      "carbohydrate": 60.0,
+      "sodium": 1012.0,
+      "calcium": 50.0
+     },
+     "status": "ok",
+     "quoted_price": 15.5,
+     "quoted_at": "2026-10-21 20:42:43"
+    }
+   ],
+   "excluded": [
+    {
+     "combo_code": "9900003423",
+     "combo_name": "猪柳麦满分组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 10.5
+    },
+    {
+     "combo_code": "9900003424",
+     "combo_name": "原味板烧鸡腿炒双蛋堡组合",
+     "reason": "membership",
+     "detail": "分类「6折起早餐卡专区」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 13.2
+    },
+    {
+     "combo_code": "9900003425",
+     "combo_name": "猪柳炒双蛋堡组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 13.2
+    },
+    {
+     "combo_code": "9900003428",
+     "combo_name": "火腿扒早安营养卷组合",
+     "reason": "membership",
+     "detail": "分类「6折起早餐卡专区」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 11.4
+    },
+    {
+     "combo_code": "9900003429",
+     "combo_name": "图林根香肠早安营养卷组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 12.0
+    },
+    {
+     "combo_code": "9900003431",
+     "combo_name": "大脆鸡扒麦满分组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 8.1
+    },
+    {
+     "combo_code": "9900003432",
+     "combo_name": "吉士蛋麦满分组合",
+     "reason": "membership",
+     "detail": "分类「6折起早餐卡专区」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 7.5
+    },
+    {
+     "combo_code": "9900003449",
+     "combo_name": "火腿扒麦满分套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 10.8
+    },
+    {
+     "combo_code": "9900003451",
+     "combo_name": "大脆鸡扒麦满分套餐",
+     "reason": "membership",
+     "detail": "分类「6折起早餐卡专区」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 10.8
+    },
+    {
+     "combo_code": "9900003453",
+     "combo_name": "吉士蛋麦满分套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 10.2
+    },
+    {
+     "combo_code": "9900003454",
+     "combo_name": "猪柳麦满分套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 13.2
+    },
+    {
+     "combo_code": "9900003457",
+     "combo_name": "原味板烧鸡腿麦满分套餐",
+     "reason": "membership",
+     "detail": "标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 13.8
+    },
+    {
+     "combo_code": "9900003458",
+     "combo_name": "猪柳蛋麦满分套餐",
+     "reason": "membership",
+     "detail": "分类「6折起早餐卡专区」；标签「早餐卡专享价」；标签「早餐卡专享价」；标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.6
+    },
+    {
+     "combo_code": "9900003459",
+     "combo_name": "双层原味板烧鸡腿麦满分套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 16.2
+    },
+    {
+     "combo_code": "9900003465",
+     "combo_name": "猪柳炒双蛋堡套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.9
+    },
+    {
+     "combo_code": "9900003466",
+     "combo_name": "原味板烧鸡腿炒双蛋堡套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.9
+    },
+    {
+     "combo_code": "9900003468",
+     "combo_name": "火腿扒早安营养卷套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 14.1
+    },
+    {
+     "combo_code": "9900003469",
+     "combo_name": "图林根香肠早安营养卷套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 14.7
+    },
+    {
+     "combo_code": "9900003491",
+     "combo_name": "猪柳蛋麦满分组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 12.9
+    },
+    {
+     "combo_code": "9900003493",
+     "combo_name": "原味板烧鸡腿麦满分组合",
+     "reason": "membership",
+     "detail": "分类「6折起早餐卡专区」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 11.1
+    },
+    {
+     "combo_code": "9900003504",
+     "combo_name": "双层原味板烧鸡腿麦满分组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 13.5
+    },
+    {
+     "combo_code": "9900011708",
+     "combo_name": "火腿扒麦满分组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 8.1
+    },
+    {
+     "combo_code": "9900011872",
+     "combo_name": "芝芝火腿扒堡组合",
+     "variant": "default",
+     "menu_price": 9.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "芝芝火腿扒堡",
+       "role": "主食",
+       "code": "521315",
+       "name": "芝芝火腿扒堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择早餐组合饮料",
+       "role": "饮品",
+       "code": "520689",
+       "name": "小杯鲜萃咖啡",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 9.9,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：芝芝火腿扒堡"
+    },
+    {
+     "combo_code": "9900011873",
+     "combo_name": "芝芝火腿扒堡套餐",
+     "reason": "membership",
+     "detail": "标签「早餐卡专享价」；标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 11.4
+    },
+    {
+     "combo_code": "9900012729",
+     "combo_name": "脆香油条组合",
+     "reason": "membership",
+     "detail": "分类「6折起早餐卡专区」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 6.6
+    },
+    {
+     "combo_code": "9900013221",
+     "combo_name": "一早现磨 超值二件套",
+     "variant": "default",
+     "menu_price": 14.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择早餐主食",
+       "role": "主食",
+       "code": "5888",
+       "name": "吉士蛋麦满分",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择麦咖啡饮品",
+       "role": "饮品",
+       "code": "507411",
+       "name": "麦咖啡™冰美式中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 14.9,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：吉士蛋麦满分、麦咖啡™冰美式中杯"
+    },
+    {
+     "combo_code": "9900013411",
+     "combo_name": "精选麦满分套餐",
+     "reason": "membership",
+     "detail": "标签「麦金卡同享」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.6
+    },
+    {
+     "combo_code": "9900014820",
+     "combo_name": "北非蛋风味麦满分组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 12.9
+    },
+    {
+     "combo_code": "9900014826",
+     "combo_name": "北非蛋风味脆鸡排麦满分组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 14.4
+    },
+    {
+     "combo_code": "9900014829",
+     "combo_name": "北非蛋风味麦满分套餐",
+     "reason": "membership",
+     "detail": "标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.6
+    },
+    {
+     "combo_code": "9900014830",
+     "combo_name": "北非蛋风味猪柳蛋麦满分组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.3
+    },
+    {
+     "combo_code": "9900014833",
+     "combo_name": "北非蛋风味脆鸡排麦满分套餐",
+     "reason": "membership",
+     "detail": "标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 17.1
+    },
+    {
+     "combo_code": "9900014835",
+     "combo_name": "北非蛋风味猪柳蛋麦满分套餐",
+     "reason": "membership",
+     "detail": "标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 18.0
+    },
+    {
+     "combo_code": "9900016132",
+     "combo_name": "巧克力味厚松饼猪柳堡套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.54
+    },
+    {
+     "combo_code": "9900016145",
+     "combo_name": "巧克力味厚松饼猪柳蛋堡组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.3
+    },
+    {
+     "combo_code": "9900016146",
+     "combo_name": "巧克力味厚松饼猪柳堡组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 12.9
+    },
+    {
+     "combo_code": "9900016178",
+     "combo_name": "巧克力味厚松饼猪柳蛋堡套餐",
+     "reason": "membership",
+     "detail": "标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 17.94
+    },
+    {
+     "combo_code": "9900016524",
+     "combo_name": "厚松饼猪柳蛋堡三件套",
+     "reason": "membership",
+     "detail": "标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 17.94
+    }
+   ]
+  },
+  "lunch": {
+   "checked": 103,
+   "combo_count": 50,
+   "no_rounds": [
+    "1100",
+    "1106",
+    "1120",
+    "1401",
+    "1406",
+    "1440",
+    "1450",
+    "1600",
+    "1700",
+    "2430",
+    "3505",
+    "3755",
+    "3757",
+    "4437",
+    "4648",
+    "4810",
+    "506189",
+    "507387",
+    "507394",
+    "507409",
+    "507411",
+    "510479",
+    "510488",
+    "511781",
+    "511782",
+    "514782",
+    "514851",
+    "515280",
+    "515520",
+    "515837",
+    "515946",
+    "515949",
+    "515955",
+    "520445",
+    "520689",
+    "521156",
+    "521316",
+    "521817",
+    "521881",
+    "521917",
+    "521950",
+    "521951",
+    "521952",
+    "6102",
+    "6362",
+    "9900003586",
+    "9900005432",
+    "9900008745",
+    "9900008746",
+    "9900008747",
+    "9900008751",
+    "9900008752",
+    "9900008754"
+   ],
+   "excluded_categories": [],
+   "variants": [
+    {
+     "combo_code": "9900004064",
+     "combo_name": "精选单人餐三件套",
+     "variant": "default",
+     "menu_price": 35.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "主食任意选",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 35.0,
+     "nutrition": {
+      "energyKj": 3464.0,
+      "energyKcal": 827.0,
+      "protein": 27.0,
+      "fat": 29.0,
+      "carbohydrate": 109.0,
+      "sodium": 1206.0,
+      "calcium": 121.0
+     },
+     "status": "ok",
+     "quoted_price": 35.0,
+     "quoted_at": "2026-10-21 20:45:05"
+    },
+    {
+     "combo_code": "9900004064",
+     "combo_name": "精选单人餐三件套",
+     "variant": "muscle",
+     "menu_price": 35.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "主食任意选",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 36.5,
+     "nutrition": {
+      "energyKj": 2902.0,
+      "energyKcal": 693.0,
+      "protein": 28.0,
+      "fat": 29.0,
+      "carbohydrate": 73.0,
+      "sodium": 1209.0,
+      "calcium": 119.0
+     },
+     "status": "ok",
+     "quoted_price": 36.5,
+     "quoted_at": "2026-10-21 20:44:59"
+    },
+    {
+     "combo_code": "9900004835",
+     "combo_name": "麦乐鸡套餐",
+     "variant": "default",
+     "menu_price": 25.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦乐鸡5块",
+       "role": "小食",
+       "code": "1401",
+       "name": "麦乐鸡5块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 25.5,
+     "nutrition": {
+      "energyKj": 2716.0,
+      "energyKcal": 649.0,
+      "protein": 16.0,
+      "fat": 24.0,
+      "carbohydrate": 87.0,
+      "sodium": 587.0,
+      "calcium": 37.0
+     },
+     "status": "ok",
+     "quoted_price": 25.5,
+     "quoted_at": "2026-10-21 20:44:58"
+    },
+    {
+     "combo_code": "9900004835",
+     "combo_name": "麦乐鸡套餐",
+     "variant": "muscle",
+     "menu_price": 25.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦乐鸡5块",
+       "role": "小食",
+       "code": "1401",
+       "name": "麦乐鸡5块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 27.0,
+     "nutrition": {
+      "energyKj": 2154.0,
+      "energyKcal": 515.0,
+      "protein": 17.0,
+      "fat": 24.0,
+      "carbohydrate": 51.0,
+      "sodium": 590.0,
+      "calcium": 35.0
+     },
+     "status": "ok",
+     "quoted_price": 27.0,
+     "quoted_at": "2026-10-21 20:45:03"
+    },
+    {
+     "combo_code": "9900005411",
+     "combo_name": "不素之霸双层牛堡三件套",
+     "variant": "default",
+     "menu_price": 37.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "不素之霸双层牛堡",
+       "role": "主食",
+       "code": "4648",
+       "name": "不素之霸双层牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 37.5,
+     "nutrition": {
+      "energyKj": 3888.0,
+      "energyKcal": 929.0,
+      "protein": 32.0,
+      "fat": 39.0,
+      "carbohydrate": 108.0,
+      "sodium": 1177.0,
+      "calcium": 103.0
+     },
+     "status": "ok",
+     "quoted_price": 37.5,
+     "quoted_at": "2026-10-21 20:45:01"
+    },
+    {
+     "combo_code": "9900005411",
+     "combo_name": "不素之霸双层牛堡三件套",
+     "variant": "muscle",
+     "menu_price": 37.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "不素之霸双层牛堡",
+       "role": "主食",
+       "code": "4648",
+       "name": "不素之霸双层牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 39.0,
+     "nutrition": {
+      "energyKj": 3326.0,
+      "energyKcal": 795.0,
+      "protein": 33.0,
+      "fat": 39.0,
+      "carbohydrate": 72.0,
+      "sodium": 1180.0,
+      "calcium": 101.0
+     },
+     "status": "ok",
+     "quoted_price": 39.0,
+     "quoted_at": "2026-10-21 20:45:00"
+    },
+    {
+     "combo_code": "9900005428",
+     "combo_name": "培根安格斯厚牛堡三件套",
+     "variant": "default",
+     "menu_price": 45.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "培根安格斯厚牛堡",
+       "role": "主食",
+       "code": "511781",
+       "name": "培根安格斯厚牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 45.5,
+     "nutrition": {
+      "energyKj": 4785.0,
+      "energyKcal": 1143.0,
+      "protein": 38.0,
+      "fat": 56.0,
+      "carbohydrate": 117.0,
+      "sodium": 1202.0,
+      "calcium": 189.0
+     },
+     "status": "ok",
+     "quoted_price": 45.5,
+     "quoted_at": "2026-10-21 20:45:05"
+    },
+    {
+     "combo_code": "9900005428",
+     "combo_name": "培根安格斯厚牛堡三件套",
+     "variant": "muscle",
+     "menu_price": 45.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "培根安格斯厚牛堡",
+       "role": "主食",
+       "code": "511781",
+       "name": "培根安格斯厚牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 47.0,
+     "nutrition": {
+      "energyKj": 4223.0,
+      "energyKcal": 1009.0,
+      "protein": 39.0,
+      "fat": 56.0,
+      "carbohydrate": 81.0,
+      "sodium": 1205.0,
+      "calcium": 187.0
+     },
+     "status": "ok",
+     "quoted_price": 47.0,
+     "quoted_at": "2026-10-21 20:45:06"
+    },
+    {
+     "combo_code": "9900005430",
+     "combo_name": "芝士安格斯厚牛堡三件套",
+     "variant": "default",
+     "menu_price": 42.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "芝士安格斯厚牛堡",
+       "role": "主食",
+       "code": "511782",
+       "name": "芝士安格斯厚牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 42.5,
+     "nutrition": {
+      "energyKj": 4740.0,
+      "energyKcal": 1132.0,
+      "protein": 36.0,
+      "fat": 56.0,
+      "carbohydrate": 117.0,
+      "sodium": 1062.0,
+      "calcium": 178.0
+     },
+     "status": "ok",
+     "quoted_price": 42.5,
+     "quoted_at": "2026-10-21 20:45:04"
+    },
+    {
+     "combo_code": "9900005430",
+     "combo_name": "芝士安格斯厚牛堡三件套",
+     "variant": "muscle",
+     "menu_price": 42.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "芝士安格斯厚牛堡",
+       "role": "主食",
+       "code": "511782",
+       "name": "芝士安格斯厚牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 44.0,
+     "nutrition": {
+      "energyKj": 4178.0,
+      "energyKcal": 998.0,
+      "protein": 37.0,
+      "fat": 56.0,
+      "carbohydrate": 81.0,
+      "sodium": 1065.0,
+      "calcium": 176.0
+     },
+     "status": "ok",
+     "quoted_price": 44.0,
+     "quoted_at": "2026-10-21 20:45:08"
+    },
+    {
+     "combo_code": "9900005449",
+     "combo_name": "吉士汉堡包套餐",
+     "variant": "default",
+     "menu_price": 26.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "吉士汉堡包",
+       "role": "主食",
+       "code": "1010",
+       "name": "吉士汉堡包",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 26.0,
+     "nutrition": {
+      "energyKj": 3057.0,
+      "energyKcal": 730.0,
+      "protein": 20.0,
+      "fat": 24.0,
+      "carbohydrate": 104.0,
+      "sodium": 838.0,
+      "calcium": 172.0
+     },
+     "status": "ok",
+     "quoted_price": 26.0,
+     "quoted_at": "2026-10-21 20:45:09"
+    },
+    {
+     "combo_code": "9900005449",
+     "combo_name": "吉士汉堡包套餐",
+     "variant": "muscle",
+     "menu_price": 26.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "吉士汉堡包",
+       "role": "主食",
+       "code": "1010",
+       "name": "吉士汉堡包",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 27.5,
+     "nutrition": {
+      "energyKj": 2495.0,
+      "energyKcal": 596.0,
+      "protein": 21.0,
+      "fat": 24.0,
+      "carbohydrate": 68.0,
+      "sodium": 841.0,
+      "calcium": 170.0
+     },
+     "status": "ok",
+     "quoted_price": 27.5,
+     "quoted_at": "2026-10-21 20:45:10"
+    },
+    {
+     "combo_code": "9900005453",
+     "combo_name": "麦香鸡套餐",
+     "variant": "default",
+     "menu_price": 27.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦香鸡",
+       "role": "主食",
+       "code": "1450",
+       "name": "麦香鸡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 27.5,
+     "nutrition": {
+      "energyKj": 3372.0,
+      "energyKcal": 805.0,
+      "protein": 19.0,
+      "fat": 29.0,
+      "carbohydrate": 113.0,
+      "sodium": 896.0,
+      "calcium": 101.0
+     },
+     "status": "ok",
+     "quoted_price": 27.5,
+     "quoted_at": "2026-10-21 20:45:12"
+    },
+    {
+     "combo_code": "9900005453",
+     "combo_name": "麦香鸡套餐",
+     "variant": "muscle",
+     "menu_price": 27.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦香鸡",
+       "role": "主食",
+       "code": "1450",
+       "name": "麦香鸡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 29.0,
+     "nutrition": {
+      "energyKj": 2810.0,
+      "energyKcal": 671.0,
+      "protein": 20.0,
+      "fat": 29.0,
+      "carbohydrate": 77.0,
+      "sodium": 899.0,
+      "calcium": 99.0
+     },
+     "status": "ok",
+     "quoted_price": 29.0,
+     "quoted_at": "2026-10-21 20:45:11"
+    },
+    {
+     "combo_code": "9900005456",
+     "combo_name": "麦辣鸡腿汉堡三件套",
+     "variant": "default",
+     "menu_price": 34.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦辣鸡腿汉堡",
+       "role": "主食",
+       "code": "1440",
+       "name": "麦辣鸡腿汉堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 34.0,
+     "nutrition": {
+      "energyKj": 3855.0,
+      "energyKcal": 921.0,
+      "protein": 28.0,
+      "fat": 36.0,
+      "carbohydrate": 116.0,
+      "sodium": 1373.0,
+      "calcium": 182.0
+     },
+     "status": "ok",
+     "quoted_price": 34.0,
+     "quoted_at": "2026-10-21 20:45:16"
+    },
+    {
+     "combo_code": "9900005456",
+     "combo_name": "麦辣鸡腿汉堡三件套",
+     "variant": "muscle",
+     "menu_price": 34.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦辣鸡腿汉堡",
+       "role": "主食",
+       "code": "1440",
+       "name": "麦辣鸡腿汉堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 35.5,
+     "nutrition": {
+      "energyKj": 3293.0,
+      "energyKcal": 787.0,
+      "protein": 29.0,
+      "fat": 36.0,
+      "carbohydrate": 80.0,
+      "sodium": 1376.0,
+      "calcium": 180.0
+     },
+     "status": "ok",
+     "quoted_price": 35.5,
+     "quoted_at": "2026-10-21 20:45:17"
+    },
+    {
+     "combo_code": "9900005460",
+     "combo_name": "麦香鱼套餐",
+     "variant": "default",
+     "menu_price": 33.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦香鱼",
+       "role": "主食",
+       "code": "1600",
+       "name": "麦香鱼",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 33.0,
+     "nutrition": {
+      "energyKj": 3185.0,
+      "energyKcal": 761.0,
+      "protein": 20.0,
+      "fat": 25.0,
+      "carbohydrate": 109.0,
+      "sodium": 721.0,
+      "calcium": 127.0
+     },
+     "status": "ok",
+     "quoted_price": 33.0,
+     "quoted_at": "2026-10-21 20:45:15"
+    },
+    {
+     "combo_code": "9900005460",
+     "combo_name": "麦香鱼套餐",
+     "variant": "muscle",
+     "menu_price": 33.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦香鱼",
+       "role": "主食",
+       "code": "1600",
+       "name": "麦香鱼",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 34.5,
+     "nutrition": {
+      "energyKj": 2623.0,
+      "energyKcal": 627.0,
+      "protein": 21.0,
+      "fat": 25.0,
+      "carbohydrate": 73.0,
+      "sodium": 724.0,
+      "calcium": 125.0
+     },
+     "status": "ok",
+     "quoted_price": 34.5,
+     "quoted_at": "2026-10-21 20:45:20"
+    },
+    {
+     "combo_code": "9900005462",
+     "combo_name": "板烧鸡腿堡三件套",
+     "variant": "default",
+     "menu_price": 35.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "板烧鸡腿堡",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 35.0,
+     "nutrition": {
+      "energyKj": 3464.0,
+      "energyKcal": 827.0,
+      "protein": 27.0,
+      "fat": 29.0,
+      "carbohydrate": 109.0,
+      "sodium": 1206.0,
+      "calcium": 121.0
+     },
+     "status": "ok",
+     "quoted_price": 35.0,
+     "quoted_at": "2026-10-21 20:45:20"
+    },
+    {
+     "combo_code": "9900005462",
+     "combo_name": "板烧鸡腿堡三件套",
+     "variant": "muscle",
+     "menu_price": 35.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "板烧鸡腿堡",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 36.5,
+     "nutrition": {
+      "energyKj": 2902.0,
+      "energyKcal": 693.0,
+      "protein": 28.0,
+      "fat": 29.0,
+      "carbohydrate": 73.0,
+      "sodium": 1209.0,
+      "calcium": 119.0
+     },
+     "status": "ok",
+     "quoted_price": 36.5,
+     "quoted_at": "2026-10-21 20:45:18"
+    },
+    {
+     "combo_code": "9900005464",
+     "combo_name": "双层吉士汉堡套餐",
+     "variant": "default",
+     "menu_price": 33.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "双层吉士汉堡",
+       "role": "主食",
+       "code": "1120",
+       "name": "双层吉士汉堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 33.5,
+     "nutrition": {
+      "energyKj": 3622.0,
+      "energyKcal": 865.0,
+      "protein": 31.0,
+      "fat": 34.0,
+      "carbohydrate": 105.0,
+      "sodium": 1182.0,
+      "calcium": 260.0
+     },
+     "status": "ok",
+     "quoted_price": 33.5,
+     "quoted_at": "2026-10-21 20:45:23"
+    },
+    {
+     "combo_code": "9900005464",
+     "combo_name": "双层吉士汉堡套餐",
+     "variant": "muscle",
+     "menu_price": 33.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "双层吉士汉堡",
+       "role": "主食",
+       "code": "1120",
+       "name": "双层吉士汉堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 35.0,
+     "nutrition": {
+      "energyKj": 3060.0,
+      "energyKcal": 731.0,
+      "protein": 32.0,
+      "fat": 34.0,
+      "carbohydrate": 69.0,
+      "sodium": 1185.0,
+      "calcium": 258.0
+     },
+     "status": "ok",
+     "quoted_price": 35.0,
+     "quoted_at": "2026-10-21 20:45:24"
+    },
+    {
+     "combo_code": "9900005466",
+     "combo_name": "巨无霸三件套",
+     "variant": "default",
+     "menu_price": 37.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "新升级巨无霸",
+       "role": "主食",
+       "code": "1100",
+       "name": "巨无霸",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 37.5,
+     "nutrition": {
+      "energyKj": 3972.0,
+      "energyKcal": 949.0,
+      "protein": 31.0,
+      "fat": 38.0,
+      "carbohydrate": 116.0,
+      "sodium": 1126.0,
+      "calcium": 199.0
+     },
+     "status": "ok",
+     "quoted_price": 37.5,
+     "quoted_at": "2026-10-21 20:45:25"
+    },
+    {
+     "combo_code": "9900005466",
+     "combo_name": "巨无霸三件套",
+     "variant": "muscle",
+     "menu_price": 37.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "新升级巨无霸",
+       "role": "主食",
+       "code": "1100",
+       "name": "巨无霸",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 39.0,
+     "nutrition": {
+      "energyKj": 3410.0,
+      "energyKcal": 815.0,
+      "protein": 32.0,
+      "fat": 38.0,
+      "carbohydrate": 80.0,
+      "sodium": 1129.0,
+      "calcium": 197.0
+     },
+     "status": "ok",
+     "quoted_price": 39.0,
+     "quoted_at": "2026-10-21 20:45:23"
+    },
+    {
+     "combo_code": "9900005468",
+     "combo_name": "培根蔬萃双层牛堡三件套",
+     "variant": "default",
+     "menu_price": 35.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "培根蔬萃双层牛堡",
+       "role": "主食",
+       "code": "1106",
+       "name": "培根蔬萃双层牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 35.5,
+     "nutrition": {
+      "energyKj": 3676.0,
+      "energyKcal": 878.0,
+      "protein": 28.0,
+      "fat": 35.0,
+      "carbohydrate": 108.0,
+      "sodium": 893.0,
+      "calcium": 101.0
+     },
+     "status": "ok",
+     "quoted_price": 35.5,
+     "quoted_at": "2026-10-21 20:45:25"
+    },
+    {
+     "combo_code": "9900005468",
+     "combo_name": "培根蔬萃双层牛堡三件套",
+     "variant": "muscle",
+     "menu_price": 35.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "培根蔬萃双层牛堡",
+       "role": "主食",
+       "code": "1106",
+       "name": "培根蔬萃双层牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 37.0,
+     "nutrition": {
+      "energyKj": 3114.0,
+      "energyKcal": 744.0,
+      "protein": 29.0,
+      "fat": 35.0,
+      "carbohydrate": 72.0,
+      "sodium": 896.0,
+      "calcium": 99.0
+     },
+     "status": "ok",
+     "quoted_price": 37.0,
+     "quoted_at": "2026-10-21 20:45:28"
+    },
+    {
+     "combo_code": "9900006332",
+     "combo_name": "薄皮V翅双拼十翅",
+     "variant": "default",
+     "menu_price": 49.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦辣鸡翅-2块",
+       "role": "小食",
+       "code": "516013",
+       "name": "麦辣鸡翅-2块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择小食",
+       "role": "主食",
+       "code": "520450",
+       "name": "薄皮焦香V翅",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 49.9,
+     "nutrition": {
+      "energyKj": 1741.0,
+      "energyKcal": 416.0,
+      "protein": 30.0,
+      "fat": 26.0,
+      "carbohydrate": 15.0,
+      "sodium": 1131.0,
+      "calcium": 28.0
+     },
+     "status": "ok",
+     "quoted_price": 49.9,
+     "quoted_at": "2026-10-21 20:45:29"
+    },
+    {
+     "combo_code": "9900009245",
+     "combo_name": "牛气满满套餐",
+     "variant": "default",
+     "menu_price": 34.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "培根蔬萃双层牛堡",
+       "role": "主食",
+       "code": "1106",
+       "name": "培根蔬萃双层牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "小杯玉米杯",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3071",
+       "name": "无糖可口可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 34.0,
+     "nutrition": {
+      "energyKj": 2073.0,
+      "energyKcal": 495.0,
+      "protein": 26.0,
+      "fat": 24.0,
+      "carbohydrate": 42.0,
+      "sodium": 764.0,
+      "calcium": 79.0
+     },
+     "status": "ok",
+     "quoted_price": 34.0,
+     "quoted_at": "2026-10-21 20:45:29"
+    },
+    {
+     "combo_code": "9900009245",
+     "combo_name": "牛气满满套餐",
+     "variant": "muscle",
+     "menu_price": 34.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "培根蔬萃双层牛堡",
+       "role": "主食",
+       "code": "1106",
+       "name": "培根蔬萃双层牛堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "小杯玉米杯",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3757",
+       "name": "纯悦",
+       "diff_price": -2.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "3757",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 31.5,
+     "nutrition": {
+      "energyKj": 2073.0,
+      "energyKcal": 495.0,
+      "protein": 26.0,
+      "fat": 24.0,
+      "carbohydrate": 41.0,
+      "sodium": 729.0,
+      "calcium": 79.0
+     },
+     "status": "ok",
+     "quoted_price": 31.5,
+     "quoted_at": "2026-10-21 20:45:33"
+    },
+    {
+     "combo_code": "9900011126",
+     "combo_name": "酥脆无双套餐",
+     "variant": "default",
+     "menu_price": 20.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择炸鸡",
+       "role": "小食",
+       "code": "505416",
+       "name": "麦麦脆汁鸡-琵琶腿",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "迷你薯条",
+       "role": "小食",
+       "code": "504643",
+       "name": "迷你薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3071",
+       "name": "无糖可口可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 20.5,
+     "nutrition": {
+      "energyKj": 1816.0,
+      "energyKcal": 434.0,
+      "protein": 23.0,
+      "fat": 24.0,
+      "carbohydrate": 31.0,
+      "sodium": 1001.0,
+      "calcium": 30.0
+     },
+     "status": "ok",
+     "quoted_price": 20.5,
+     "quoted_at": "2026-10-21 20:45:36"
+    },
+    {
+     "combo_code": "9900011126",
+     "combo_name": "酥脆无双套餐",
+     "variant": "muscle",
+     "menu_price": 20.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择炸鸡",
+       "role": "小食",
+       "code": "505416",
+       "name": "麦麦脆汁鸡-琵琶腿",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "迷你薯条",
+       "role": "小食",
+       "code": "504643",
+       "name": "迷你薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3757",
+       "name": "纯悦",
+       "diff_price": -2.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "3757",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 18.0,
+     "nutrition": {
+      "energyKj": 1816.0,
+      "energyKcal": 434.0,
+      "protein": 23.0,
+      "fat": 24.0,
+      "carbohydrate": 30.0,
+      "sodium": 966.0,
+      "calcium": 30.0
+     },
+     "status": "ok",
+     "quoted_price": 18.0,
+     "quoted_at": "2026-10-21 20:45:31"
+    },
+    {
+     "combo_code": "9900015730",
+     "combo_name": "BFF四宫格小食盘",
+     "variant": "default",
+     "menu_price": 40.3,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择小食",
+       "role": "主食",
+       "code": "516013",
+       "name": "麦辣鸡翅-2块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择小食",
+       "role": "小食",
+       "code": "522012",
+       "name": "小薯条",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 40.3,
+     "nutrition": {
+      "energyKj": 1814.0,
+      "energyKcal": 434.0,
+      "protein": 16.0,
+      "fat": 24.0,
+      "carbohydrate": 37.0,
+      "sodium": 657.0,
+      "calcium": 26.0
+     },
+     "status": "ok",
+     "quoted_price": 40.3,
+     "quoted_at": "2026-10-21 20:45:40"
+    },
+    {
+     "combo_code": "9900015730",
+     "combo_name": "BFF四宫格小食盘",
+     "variant": "muscle",
+     "menu_price": 40.3,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择小食",
+       "role": "主食",
+       "code": "516013",
+       "name": "麦辣鸡翅-2块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择小食",
+       "role": "小食",
+       "code": "522013",
+       "name": "大薯条",
+       "diff_price": 5.0
+      }
+     ],
+     "round_list": [
+      {
+       "round": "2",
+       "comboItemList": [
+        {
+         "code": "522013",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 45.3,
+     "nutrition": {
+      "energyKj": 2524.0,
+      "energyKcal": 603.0,
+      "protein": 19.0,
+      "fat": 31.0,
+      "carbohydrate": 59.0,
+      "sodium": 753.0,
+      "calcium": 36.0
+     },
+     "status": "ok",
+     "quoted_price": 45.3,
+     "quoted_at": "2026-10-21 20:45:41"
+    }
+   ],
+   "excluded": [
+    {
+     "combo_code": "9900000881",
+     "combo_name": "培根安格斯厚牛堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 37.0
+    },
+    {
+     "combo_code": "9900000882",
+     "combo_name": "芝士安格斯厚牛堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 37.0
+    },
+    {
+     "combo_code": "9900000885",
+     "combo_name": "培根蔬萃双层牛堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 32.0
+    },
+    {
+     "combo_code": "9900000886",
+     "combo_name": "不素之霸双层牛堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 32.0
+    },
+    {
+     "combo_code": "9900000888",
+     "combo_name": "巨无霸四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 32.0
+    },
+    {
+     "combo_code": "9900000890",
+     "combo_name": "板烧鸡腿堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 28.0
+    },
+    {
+     "combo_code": "9900000891",
+     "combo_name": "麦辣鸡腿堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 28.0
+    },
+    {
+     "combo_code": "9900000893",
+     "combo_name": "双层深海鳕鱼堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 32.0
+    },
+    {
+     "combo_code": "9900004066",
+     "combo_name": "堡堡随心拼（7件任选）",
+     "variant": "default",
+     "menu_price": 73.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "主食任意选",
+       "role": "主食",
+       "code": "1440",
+       "name": "麦辣鸡腿汉堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择随心配小食",
+       "role": "主食",
+       "code": "1700",
+       "name": "麦辣鸡翅2块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 73.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦辣鸡翅2块"
+    },
+    {
+     "combo_code": "9900004066",
+     "combo_name": "堡堡随心拼（7件任选）",
+     "variant": "muscle",
+     "menu_price": 73.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "主食任意选",
+       "role": "主食",
+       "code": "1440",
+       "name": "麦辣鸡腿汉堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择随心配小食",
+       "role": "主食",
+       "code": "1700",
+       "name": "麦辣鸡翅2块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3505",
+       "name": "锡兰红茶",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "3505",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 73.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦辣鸡翅2块"
+    },
+    {
+     "combo_code": "9900004236",
+     "combo_name": "人气超值四件套随心选",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 28.0
+    },
+    {
+     "combo_code": "9900005321",
+     "combo_name": "BFF四宫格小食盘双人餐",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 62.9
+    },
+    {
+     "combo_code": "9900005413",
+     "combo_name": "双层深海鳕鱼堡三件套",
+     "variant": "default",
+     "menu_price": 36.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择双层深海鳕鱼堡",
+       "role": "主食",
+       "code": "520312",
+       "name": "原味双层深海鳕鱼堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 36.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：原味双层深海鳕鱼堡"
+    },
+    {
+     "combo_code": "9900005413",
+     "combo_name": "双层深海鳕鱼堡三件套",
+     "variant": "muscle",
+     "menu_price": 36.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择双层深海鳕鱼堡",
+       "role": "主食",
+       "code": "520312",
+       "name": "原味双层深海鳕鱼堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 37.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：原味双层深海鳕鱼堡"
+    },
+    {
+     "combo_code": "9900005451",
+     "combo_name": "麦辣鸡翅4块套餐",
+     "variant": "default",
+     "menu_price": 36.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦辣鸡翅-4块",
+       "role": "小食",
+       "code": "1705",
+       "name": "麦辣鸡翅4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 36.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦辣鸡翅4块"
+    },
+    {
+     "combo_code": "9900005451",
+     "combo_name": "麦辣鸡翅4块套餐",
+     "variant": "muscle",
+     "menu_price": 36.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦辣鸡翅-4块",
+       "role": "小食",
+       "code": "1705",
+       "name": "麦辣鸡翅4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 38.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦辣鸡翅4块"
+    },
+    {
+     "combo_code": "9900006957",
+     "combo_name": "安格斯厚牛堡四件套随心选",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 37.0
+    },
+    {
+     "combo_code": "9900009242",
+     "combo_name": "“苹板”支撑Pro套餐",
+     "variant": "default",
+     "menu_price": 39.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "新升级板烧鸡腿堡",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "小杯玉米杯",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "苹果片一袋(60g)",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3071",
+       "name": "无糖可口可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 39.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：苹果片一袋(60g)"
+    },
+    {
+     "combo_code": "9900009242",
+     "combo_name": "“苹板”支撑Pro套餐",
+     "variant": "muscle",
+     "menu_price": 39.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "新升级板烧鸡腿堡",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "小杯玉米杯",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "苹果片一袋(60g)",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3757",
+       "name": "纯悦",
+       "diff_price": -2.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "4",
+       "comboItemList": [
+        {
+         "code": "3757",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 37.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：苹果片一袋(60g)"
+    },
+    {
+     "combo_code": "9900010110",
+     "combo_name": "鱼牛汉堡四件套随心选",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 32.0
+    },
+    {
+     "combo_code": "9900011056",
+     "combo_name": "全明星双人分享餐八件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 49.9
+    },
+    {
+     "combo_code": "9900011121",
+     "combo_name": "“苹”水相“鱼”套餐",
+     "variant": "default",
+     "menu_price": 36.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦香鱼",
+       "role": "主食",
+       "code": "1600",
+       "name": "麦香鱼",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "小杯玉米杯",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "苹果片一袋(60g)",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3505",
+       "name": "锡兰红茶",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 36.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：苹果片一袋(60g)"
+    },
+    {
+     "combo_code": "9900011121",
+     "combo_name": "“苹”水相“鱼”套餐",
+     "variant": "muscle",
+     "menu_price": 36.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦香鱼",
+       "role": "主食",
+       "code": "1600",
+       "name": "麦香鱼",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "小杯玉米杯",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "苹果片一袋(60g)",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3757",
+       "name": "纯悦",
+       "diff_price": -4.0
+      }
+     ],
+     "round_list": [
+      {
+       "round": "4",
+       "comboItemList": [
+        {
+         "code": "3757",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 32.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：苹果片一袋(60g)"
+    },
+    {
+     "combo_code": "9900011123",
+     "combo_name": "“辣”么快乐套餐",
+     "variant": "default",
+     "menu_price": 24.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦辣鸡翅-2块",
+       "role": "小食",
+       "code": "1700",
+       "name": "麦辣鸡翅2块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "麦乐鸡4块",
+       "role": "小食",
+       "code": "515106",
+       "name": "麦乐鸡4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3071",
+       "name": "无糖可口可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 24.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦辣鸡翅2块"
+    },
+    {
+     "combo_code": "9900011123",
+     "combo_name": "“辣”么快乐套餐",
+     "variant": "muscle",
+     "menu_price": 24.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦辣鸡翅-2块",
+       "role": "小食",
+       "code": "1700",
+       "name": "麦辣鸡翅2块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "麦乐鸡4块",
+       "role": "小食",
+       "code": "515106",
+       "name": "麦乐鸡4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3757",
+       "name": "纯悦",
+       "diff_price": -2.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "3757",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 21.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦辣鸡翅2块"
+    },
+    {
+     "combo_code": "9900011128",
+     "combo_name": "“堡”你欢乐套餐",
+     "variant": "default",
+     "menu_price": 28.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "汉堡包",
+       "role": "主食",
+       "code": "1000",
+       "name": "汉堡包",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "麦乐鸡4块",
+       "role": "小食",
+       "code": "515106",
+       "name": "麦乐鸡4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "苹果片一袋(60g)",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3071",
+       "name": "无糖可口可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 28.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：苹果片一袋(60g)"
+    },
+    {
+     "combo_code": "9900011128",
+     "combo_name": "“堡”你欢乐套餐",
+     "variant": "muscle",
+     "menu_price": 28.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "汉堡包",
+       "role": "主食",
+       "code": "1000",
+       "name": "汉堡包",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "麦乐鸡4块",
+       "role": "小食",
+       "code": "515106",
+       "name": "麦乐鸡4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "苹果片一袋(60g)",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择饮料",
+       "role": "饮品",
+       "code": "3757",
+       "name": "纯悦",
+       "diff_price": -2.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "4",
+       "comboItemList": [
+        {
+         "code": "3757",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 25.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：苹果片一袋(60g)"
+    },
+    {
+     "combo_code": "9900013304",
+     "combo_name": "人气经典随心配",
+     "variant": "default",
+     "menu_price": 14.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "蓝区",
+       "role": "主食",
+       "code": "1120",
+       "name": "双层吉士汉堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "粉区",
+       "role": "主食",
+       "code": "521328",
+       "name": "可乐麦炫酷",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 14.9,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：可乐麦炫酷"
+    },
+    {
+     "combo_code": "9900015568",
+     "combo_name": "精选超值随心配",
+     "variant": "default",
+     "menu_price": 13.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "蓝区",
+       "role": "主食",
+       "code": "521156",
+       "name": "那么大鸡排（椒盐风味）",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "粉区",
+       "role": "主食",
+       "code": "521336",
+       "name": "怡泉+C麦炫酷",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 13.9,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：那么大鸡排（椒盐风味）、怡泉+C麦炫酷"
+    },
+    {
+     "combo_code": "9900015602",
+     "combo_name": "大堡口福三件套",
+     "variant": "default",
+     "menu_price": 22.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择主食",
+       "role": "主食",
+       "code": "521147",
+       "name": "Hold不住鸡排堡（椒盐风味）",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 22.9,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：Hold不住鸡排堡（椒盐风味）"
+    },
+    {
+     "combo_code": "9900015602",
+     "combo_name": "大堡口福三件套",
+     "variant": "muscle",
+     "menu_price": 22.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "选择主食",
+       "role": "主食",
+       "code": "521147",
+       "name": "Hold不住鸡排堡（椒盐风味）",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 24.4,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：Hold不住鸡排堡（椒盐风味）"
+    },
+    {
+     "combo_code": "9900016055",
+     "combo_name": "开心亲子双人餐",
+     "variant": "default",
+     "menu_price": 59.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "板烧鸡腿堡",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "4麦乐鸡",
+       "role": "小食",
+       "code": "2846",
+       "name": "麦乐鸡-4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "开心乐园餐小玉米",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "开心乐园餐苹果片",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "5",
+       "round_name": "选择套餐内小食",
+       "role": "小食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "6",
+       "round_name": "选择开心乐园餐饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 0.0
+      },
+      {
+       "round": "7",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "8",
+       "round_name": "海绵宝宝×航海王系列玩具",
+       "role": "主食",
+       "code": "521991",
+       "name": "海绵宝宝×航海王系列玩具",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 59.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦乐鸡-4块、苹果片一袋(60g)、纯牛奶、海绵宝宝×航海王系列玩具"
+    },
+    {
+     "combo_code": "9900016055",
+     "combo_name": "开心亲子双人餐",
+     "variant": "muscle",
+     "menu_price": 59.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "板烧鸡腿堡",
+       "role": "主食",
+       "code": "1406",
+       "name": "板烧鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "4麦乐鸡",
+       "role": "小食",
+       "code": "2846",
+       "name": "麦乐鸡-4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "开心乐园餐小玉米",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "开心乐园餐苹果片",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "5",
+       "round_name": "选择套餐内小食",
+       "role": "小食",
+       "code": "4820",
+       "name": "大薯条",
+       "diff_price": 1.5
+      },
+      {
+       "round": "6",
+       "round_name": "选择开心乐园餐饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 0.0
+      },
+      {
+       "round": "7",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      },
+      {
+       "round": "8",
+       "round_name": "海绵宝宝×航海王系列玩具",
+       "role": "主食",
+       "code": "521991",
+       "name": "海绵宝宝×航海王系列玩具",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [
+      {
+       "round": "5",
+       "comboItemList": [
+        {
+         "code": "4820",
+         "quantity": 1
+        }
+       ]
+      },
+      {
+       "round": "7",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 62.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦乐鸡-4块、苹果片一袋(60g)、纯牛奶、海绵宝宝×航海王系列玩具"
+    },
+    {
+     "combo_code": "9900016056",
+     "combo_name": "麦乐鸡开心乐园餐",
+     "variant": "default",
+     "menu_price": 25.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "麦乐鸡-4块",
+       "role": "小食",
+       "code": "2846",
+       "name": "麦乐鸡-4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "开心乐园餐苹果片",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "开心乐园餐小玉米",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择开心乐园餐饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 0.0
+      },
+      {
+       "round": "5",
+       "round_name": "海绵宝宝×航海王系列玩具",
+       "role": "主食",
+       "code": "521991",
+       "name": "海绵宝宝×航海王系列玩具",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 25.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：麦乐鸡-4块、苹果片一袋(60g)、纯牛奶、海绵宝宝×航海王系列玩具"
+    },
+    {
+     "combo_code": "9900016057",
+     "combo_name": "汉堡开心乐园餐",
+     "variant": "default",
+     "menu_price": 23.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "汉堡包",
+       "role": "主食",
+       "code": "1000",
+       "name": "汉堡包",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "迷你薯条",
+       "role": "小食",
+       "code": "504643",
+       "name": "迷你薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择开心乐园餐小食",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择开心乐园餐饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 0.0
+      },
+      {
+       "round": "5",
+       "round_name": "海绵宝宝×航海王系列玩具",
+       "role": "主食",
+       "code": "521991",
+       "name": "海绵宝宝×航海王系列玩具",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 23.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：苹果片一袋(60g)、纯牛奶、海绵宝宝×航海王系列玩具"
+    },
+    {
+     "combo_code": "9900016057",
+     "combo_name": "汉堡开心乐园餐",
+     "variant": "muscle",
+     "menu_price": 23.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "汉堡包",
+       "role": "主食",
+       "code": "1000",
+       "name": "汉堡包",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "迷你薯条",
+       "role": "小食",
+       "code": "504643",
+       "name": "迷你薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择开心乐园餐小食",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择开心乐园餐饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 0.0
+      },
+      {
+       "round": "5",
+       "round_name": "海绵宝宝×航海王系列玩具",
+       "role": "主食",
+       "code": "521991",
+       "name": "海绵宝宝×航海王系列玩具",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "4437",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 23.5,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：纯牛奶、海绵宝宝×航海王系列玩具"
+    },
+    {
+     "combo_code": "9900016058",
+     "combo_name": "鱼排堡开心乐园餐",
+     "variant": "default",
+     "menu_price": 24.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "鱼排堡",
+       "role": "主食",
+       "code": "504642",
+       "name": "鱼排堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "迷你薯条",
+       "role": "小食",
+       "code": "504643",
+       "name": "迷你薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择开心乐园餐小食",
+       "role": "小食",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择开心乐园餐饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 0.0
+      },
+      {
+       "round": "5",
+       "round_name": "海绵宝宝×航海王系列玩具",
+       "role": "主食",
+       "code": "521991",
+       "name": "海绵宝宝×航海王系列玩具",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 24.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：鱼排堡、苹果片一袋(60g)、纯牛奶、海绵宝宝×航海王系列玩具"
+    },
+    {
+     "combo_code": "9900016058",
+     "combo_name": "鱼排堡开心乐园餐",
+     "variant": "muscle",
+     "menu_price": 24.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "鱼排堡",
+       "role": "主食",
+       "code": "504642",
+       "name": "鱼排堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "迷你薯条",
+       "role": "小食",
+       "code": "504643",
+       "name": "迷你薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择开心乐园餐小食",
+       "role": "小食",
+       "code": "4437",
+       "name": "小杯玉米杯",
+       "diff_price": 0.0
+      },
+      {
+       "round": "4",
+       "round_name": "选择开心乐园餐饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 0.0
+      },
+      {
+       "round": "5",
+       "round_name": "海绵宝宝×航海王系列玩具",
+       "role": "主食",
+       "code": "521991",
+       "name": "海绵宝宝×航海王系列玩具",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "4437",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 24.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：鱼排堡、纯牛奶、海绵宝宝×航海王系列玩具"
+    },
+    {
+     "combo_code": "9900016073",
+     "combo_name": "龙焰鸡腿堡三件套",
+     "variant": "default",
+     "menu_price": 26.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "龙焰鸡腿堡",
+       "role": "主食",
+       "code": "521952",
+       "name": "龙焰鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 26.9,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：龙焰鸡腿堡"
+    },
+    {
+     "combo_code": "9900016073",
+     "combo_name": "龙焰鸡腿堡三件套",
+     "variant": "muscle",
+     "menu_price": 26.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "龙焰鸡腿堡",
+       "role": "主食",
+       "code": "521952",
+       "name": "龙焰鸡腿堡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "主食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "520688",
+       "name": "大杯鲜萃咖啡",
+       "diff_price": 1.5
+      }
+     ],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "520688",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 28.4,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：龙焰鸡腿堡"
+    },
+    {
+     "combo_code": "9900016081",
+     "combo_name": "“我就喜欢”鸡薯双全盒",
+     "variant": "default",
+     "menu_price": 15.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "5块心形薯饼(不含酱)",
+       "role": "小食",
+       "code": "521962",
+       "name": "5块心形薯饼",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "5块麦乐鸡",
+       "role": "小食",
+       "code": "521959",
+       "name": "5块麦乐鸡",
+       "diff_price": 0.0
+      },
+      {
+       "round": "3",
+       "round_name": "1个甜酸酱",
+       "role": "主食",
+       "code": "521960",
+       "name": "甜酸酱",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 15.9,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：5块心形薯饼、5块麦乐鸡、甜酸酱"
+    },
+    {
+     "combo_code": "9900016308",
+     "combo_name": "蘸酱脆皮鸡块8块",
+     "variant": "default",
+     "menu_price": 19.9,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "清货脆皮鸡块4块",
+       "role": "小食",
+       "code": "521995",
+       "name": "脆皮鸡块4块",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "1个甜酸酱",
+       "role": "主食",
+       "code": "521960",
+       "name": "甜酸酱",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 19.9,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：脆皮鸡块4块、甜酸酱"
+    },
+    {
+     "combo_code": "9900016309",
+     "combo_name": "龙焰鸡腿堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 29.0
+    },
+    {
+     "combo_code": "9900016311",
+     "combo_name": "龙焰美味四件套",
+     "reason": "membership",
+     "detail": "优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 29.0
+    },
+    {
+     "combo_code": "9900016566",
+     "combo_name": "心形薯饼8块",
+     "variant": "default",
+     "menu_price": 24.0,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "8块心形薯饼",
+       "role": "小食",
+       "code": "522029",
+       "name": "8块心形薯饼",
+       "diff_price": 0.0
+      },
+      {
+       "round": "2",
+       "round_name": "选择蘸酱",
+       "role": "主食",
+       "code": "521960",
+       "name": "甜酸酱",
+       "diff_price": 0.0
+      }
+     ],
+     "round_list": [],
+     "reference_price": 24.0,
+     "reason": "nutrition_unknown",
+     "detail": "缺官方营养：8块心形薯饼、甜酸酱"
+    }
+   ]
+  }
+ },
+ "stats": {
+  "sku": 199,
+  "combos": 91,
+  "variants": 37,
+  "excluded": 83,
+  "reasons": {
+   "membership": 51,
+   "nutrition_unknown": 32
+  }
+ }
+}
