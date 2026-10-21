@@ -36,6 +36,7 @@ const nutri = (v) => {
 };
 const isNarrow = () => window.matchMedia("(max-width: 600px)").matches;
 const isOffline = () => (BOOT && BOOT.source) === "offline";
+const isSnapshot = () => (BOOT && BOOT.source) === "snapshot";
 
 function comboName(o) {
   if (!o) return "";
@@ -61,6 +62,9 @@ function renderDataSource() {
   if (source === "offline") {
     kind = "offline";
     text = "离线样例数据，价格不是门店实时价";
+  } else if (source === "snapshot") {
+    kind = "snapshot";
+    text = `快照数据 · ${storeName || "—"} · 抓取于 ${(c.fetched_at || "—").replace("T", " ").slice(0, 16)}`;
   } else if (source === "cache") {
     kind = "cache";
     text = `缓存数据 · 抓取于 ${c.fetched_at || "—"}`;
@@ -654,7 +658,9 @@ function renderSingle(s) {
     ? `<span class="price-tag">未选到商品</span>`
     : quoted
       ? `<span class="price-tag quoted">已试算</span><span class="price-time">· 查询于 ${q.queried_at || "—"}</span>`
-      : `<span class="price-tag">参考价，未试算</span>`;
+      : isSnapshot()
+        ? `<span class="price-tag">快照参考价 · 未试算</span>`
+        : `<span class="price-tag">参考价，未试算</span>`;
 
   const itemRows = itemRowsHtml(items);
 
@@ -662,11 +668,12 @@ function renderSingle(s) {
   const suggestions = (s.suggestions || []).map((o) => {
     const target = String(o.target_code || main?.code || "");
     const checked = (SREMOVED[target] || []).includes(String(o.code));
+    const text = `去掉 ${o.name}${mainCount > 1 ? `（${o.target_name || target}）` : ""}
+        ${o.muscle_warning ? `<span class="muscle-warn">${o.muscle_note}</span>` : ""}`;
+    if (isSnapshot()) return `<div class="sugg-static"><span>${text}</span></div>`;
     return `<label class="sugg">
       <input type="checkbox" class="srem" data-code="${o.code}" data-target="${target}" ${checked ? "checked" : ""}>
-      <span>去掉 ${o.name}${mainCount > 1 ? `（${o.target_name || target}）` : ""}
-        ${o.muscle_warning ? `<span class="muscle-warn">${o.muscle_note}</span>` : ""}
-      </span>
+      <span>${text}</span>
     </label>`;
   }).join("");
   const suggNames = (s.suggestions || []).map((o) => o.name).filter(Boolean);
@@ -739,7 +746,9 @@ function renderSingle(s) {
       ${saverRow}
       ${underCard}
       <div class="quote-row">
-        <button id="s-quote" class="black" title="只按当前这一餐的商品/定制试算，不会重新选餐">为这一餐报价${isOffline() ? "（离线桩报价）" : ""}</button>
+        ${isSnapshot()
+          ? `<div class="quote-note">在线版不连接门店。实时价格和报价请在本地运行，或在 WorkBuddy 中使用 Skill。<a href="https://github.com/FanZhangnan/mcd-protein-calculator#安装" target="_blank" rel="noopener">安装说明</a></div>`
+          : `<button id="s-quote" class="black" title="只按当前这一餐的商品/定制试算，不会重新选餐">为这一餐报价${isOffline() ? "（离线桩报价）" : ""}</button>`}
         ${suggestions ? `<details class="sugg-box"><summary>${suggSummary}</summary>
           <div class="sugg-list">${suggestions}</div>
           <div class="sub">去掉配料只写进点单参数；营养数值仍为标准版官方数据。</div></details>` : ""}
