@@ -98,11 +98,20 @@ async function main() {
   const meta = await evalJs(`document.querySelector('#meta').textContent`);
   check("门店与数据说明里有套餐目录一行", meta.includes("套餐目录"), meta.replace(/\s+/g, " ").slice(0, 160));
   const unknownText = await evalJs(`document.querySelector('#unknown').textContent`);
-  check("门店说明展开区列出暂无官方营养的商品",
-    unknownText.includes("以下商品暂无官方营养数据，暂不参与计算")
-      && unknownText.includes("苹果片一袋(60g)")
-      && unknownText.includes("“苹板”支撑Pro套餐"),
-    unknownText.replace(/\s+/g, " ").slice(0, 160));
+  // 数字与名单都要来自目录：unavailable_products = 所有 nutrition_unknown 排除项的 missing 并集
+  const missNames = new Set();
+  if (entry) {
+    for (const e of entry.excluded) {
+      if ((e.reason || "") !== "nutrition_unknown") continue;
+      for (const n of e.missing || []) missNames.add(n);
+    }
+  }
+  const missRow = unknownText.replace(/\s+/g, " ")
+    .match(/以下商品暂无官方营养数据，暂不参与计算（(\d+) 个）/);
+  check("门店说明按目录列出暂无官方营养的商品",
+    !!missRow && Number(missRow[1]) === missNames.size
+      && [...missNames].every((n) => unknownText.includes(n)),
+    `${missNames.size} 个 | ${unknownText.replace(/\s+/g, " ").slice(0, 160)}`);
 
   await waitFor(`!document.querySelector('#s-result-panel').hidden`, "结果卡");
   const card = await evalJs(`document.querySelector('#s-result').textContent`);

@@ -686,7 +686,11 @@ function progressBlock(s, price) {
 
 function comboRoundsText(combo) {
   const rounds = (combo && combo.rounds) || [];
-  return rounds.map((r) => `${r.role}：${r.name}`).join(" · ");
+  // 随心配的轮次就叫「蓝区 / 粉区」：写成「主食 / 饮品」用户站在柜台前不知道该点哪个区，
+  // 替换说明又是按轮名写的（粉区：可乐麦炫酷 → …），两边对不上。带「区」的轮次直接用轮名。
+  return rounds
+    .map((r) => `${/区$/.test(r.round_name || "") ? r.round_name : r.role}：${r.name}`)
+    .join(" · ");
 }
 
 // 套餐里没有官方营养的选项被同轮其他选项替换时，点单时要让用户知道改了什么

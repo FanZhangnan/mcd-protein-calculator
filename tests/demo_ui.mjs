@@ -130,12 +130,18 @@ async function main() {
   // 之前 demo 桩漏传 combo 字段，页面上只剩「套餐」两个字。
   const c1parts = await evalJs(`JSON.stringify({
     parts: (document.querySelector('.combo-parts') || {}).textContent || '',
+    replace: (document.querySelector('.combo-replace') || {}).textContent || '',
     rounds: (S.items.find(i => i.kind === 'combo') || {}).combo?.rounds || [],
     audit: (document.querySelector('.combo-audit summary') || {}).textContent || ''
   })`).then(JSON.parse);
-  check("场景1 套餐列出各轮内容",
-    c1parts.parts.length > 0 && c1parts.parts.includes("主食") && c1parts.parts.includes("饮品"),
+  // 套餐必须在结果卡里展开各轮内容。随心配的轮次是「蓝区 / 粉区」，
+  // 必须按区打印，否则用户不知道每个区该点哪个（旧值：主食：… · 饮品：…）。
+  check("场景1 套餐按区列出各轮内容",
+    c1parts.parts.includes("蓝区：双层吉士汉堡") && c1parts.parts.includes("粉区：无糖可口可乐中杯"),
     c1parts.parts.slice(0, 80));
+  check("场景1 替换说明写明粉区改成了什么",
+    c1parts.replace.includes("粉区：可乐麦炫酷 → 无糖可口可乐中杯"),
+    c1parts.replace.slice(0, 100));
   check("场景1 套餐各轮数据在方案里",
     c1parts.rounds.length >= 2 && c1parts.rounds.every(r => r.name && r.role),
     JSON.stringify(c1parts.rounds.map(r => r.role + "：" + r.name)));
