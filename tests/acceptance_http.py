@@ -262,8 +262,10 @@ def main() -> int:
                                            "budget": 35}, "POST")
     check("37 g 也无解时仍为预算内最多", tol_under.get("protein_status") == "under",
           str(tol_under.get("protein_status")))
+    # 纯牛奶(盒装) 修好别名/括号匹配后进入饮品池：35 元内最多 35 g（差 5 g），
+    # 旧值 34 g（差 6 g）。更优，故更新预期。
     check("放宽方案仍按原目标 40 g 计算",
-          (tol_under.get("frontier") or {}).get("max_protein", {}).get("protein_gap") == 6.0,
+          (tol_under.get("frontier") or {}).get("max_protein", {}).get("protein_gap") == 5.0,
           str((tol_under.get("frontier") or {}).get("max_protein")))
     check("无解时不把容差说成达标", tol_under.get("feasible") is False, "feasible")
 
