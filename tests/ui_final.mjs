@@ -23,7 +23,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const SCENARIOS = [
   { id: "1_lunch_40_45", meal: "lunch", protein: 40, budget: 45, fat: "", expect: "met" },
-  { id: "2_lunch_44_45", meal: "lunch", protein: 44, budget: 45, fat: "", expect: "met", saver: true },
+  // 44 g / 45 元 只省 1.00 元（29.80 → 28.80），不到 2 元门槛，不再出省钱卡；
+  // 省钱流程改在 30 g / 30 元 上验证（主方案 27.80 元，省钱方案 14.90 元）。
+  { id: "2_lunch_44_45", meal: "lunch", protein: 44, budget: 45, fat: "", expect: "met" },
+  { id: "2b_lunch_30_30", meal: "lunch", protein: 30, budget: 30, fat: "", expect: "met", saver: true },
   { id: "3_lunch_35_25", meal: "lunch", protein: 35, budget: 25, fat: "", expect: "under" },
   { id: "4_breakfast_25_20", meal: "breakfast", protein: 25, budget: 20, fat: "", expect: "met" },
   // 「升级超限」样式需要方案里有一款带肉量阶梯的主食。麦香鱼 22 元不再是最优解，

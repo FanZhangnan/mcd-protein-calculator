@@ -1,7 +1,7 @@
 // Static demo acceptance: three scenarios, no backend calls, desktop + mobile shots.
 // Usage: node tests/demo_ui.mjs [url] [outDir]
 import { spawn } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const URL_ = process.argv[2] || "http://127.0.0.1:8941/";
 const OUT = process.argv[3] || new URL("../docs/screenshots/", import.meta.url).pathname;
@@ -9,6 +9,11 @@ const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const PORT = 9341;
 // 套餐核查那一行的唯一口径：构建脚本写下的套餐目录
 const CATALOG = JSON.parse(readFileSync(new URL("../data/combo_catalog.json", import.meta.url), "utf8"));
+// 多人分享套餐清单：这些套餐不参与单人推荐（文件为空时不做限制）
+const SHARED_FILE = new URL("../data/shared_combos.json", import.meta.url);
+const SHARED_NAMES = existsSync(SHARED_FILE)
+  ? Object.values(JSON.parse(readFileSync(SHARED_FILE, "utf8")).combos || {}).map((x) => x.name)
+  : [];
 const LUNCH = CATALOG.meals.lunch;
 const LUNCH_USABLE = new Set(LUNCH.variants.map((v) => v.combo_code));
 const LUNCH_EXCLUDED = new Set(LUNCH.excluded
@@ -123,9 +128,8 @@ async function main() {
   check("场景1 达标 54 g / 29.80 元",
     c1.status === "met" && c1.protein === 54 && c1.cost === 29.8
     && c1.items.join(" + ") === "人气经典随心配×2", JSON.stringify(c1.items));
-  check("场景1 有省钱选项 42 g / 28.80 元",
-    !!c1.saver && c1.saver.protein === 42 && c1.saver.cost === 28.8,
-    JSON.stringify(c1.saver));
+  // 便宜 1.00 元（29.80 → 28.80）不到 2 元：省钱卡片不显示
+  check("场景1 省不到 2 元不显示省钱选项", c1.saver === null, JSON.stringify(c1.saver));
   // 套餐必须在结果卡里展开各轮内容（小食 / 饮品分别是什么）。
   // 之前 demo 桩漏传 combo 字段，页面上只剩「套餐」两个字。
   const c1parts = await evalJs(`JSON.stringify({
@@ -214,6 +218,23 @@ async function main() {
   })`).then(JSON.parse);
   check("场景3 早餐达标",
     c3.status === "met" && c3.protein >= 25 && c3.cost <= 20, JSON.stringify(c3));
+
+  // 5) 高目标 80 g / 100 元：不能出现多人餐（堡堡随心拼 / 薄皮V翅 自带 2 个主食）
+  await setInputs("lunch", 80, 100);
+  const c5 = await evalJs(`JSON.stringify({
+    status: S.protein_status, protein: S.totals.protein, cost: S.cost,
+    items: S.items.map(i => i.name + '×' + i.quantity),
+    mains: S.items.reduce((n, i) => n + (i.combo ? (i.combo.mains || 1) : 1) * i.quantity, 0),
+    saver: S.saver ? { cost: S.saver.cost, protein: S.saver.protein, saved: S.saver.money_saved } : null
+  })`).then(JSON.parse);
+  // 多人分享套餐清单（data/shared_combos.json）里的套餐不能出现在推荐里
+  check("场景5 高目标不含多人分享套餐",
+    !c5.items.some((n) => SHARED_NAMES.some((x) => n.includes(x))), JSON.stringify(c5.items));
+  check("场景5 主食数不超过上限", c5.mains <= 2, `mains=${c5.mains}`);
+  // 具体数字取决于清单是否生效：清单前 89 g / 73.00（堡堡），清单后 77 g / 71.50
+  check("场景5 高目标给出可接受的结果",
+    ["met", "near"].includes(c5.status) && c5.protein >= 77 && c5.cost <= 73, JSON.stringify(c5));
+  check("场景5 省不到 2 元不显示省钱选项", c5.saver === null, JSON.stringify(c5.saver));
 
   // 4) snapshot-only guarantees
   const apiReqs = requests.filter((u) => u.includes("/api/") || u.includes("127.0.0.1"));

@@ -131,6 +131,7 @@ def main() -> int:
             "code": str(i.code), "name": i.name, "variant": i.combo_variant,
             "price": round(float(i.price_ref or 0), 2),
             "menu_price": i.combo_menu_price,
+            "mains": int(i.combo_mains or 1),
             "nutrition": {k: (i.nutrition or {}).get(k) for k in NUTRI_KEYS},
             "rounds": i.combo_rounds or [],
             "round_list": i.round_list or [],
@@ -139,6 +140,8 @@ def main() -> int:
 
         combo_combos: list[list] = []
         for ci, item in enumerate(combo_items):
+            # 套餐自带的主食也占额度：主食数 + 加的主食 ≤ 上限
+            room = max(0, int(args.max_mains) - int(item.combo_mains or 1))
             base = [item]
             base_total, _ = planner_mod.sum_nutrition(base)
             combo_combos.append([
@@ -148,7 +151,7 @@ def main() -> int:
                 round(float(base_total.get("fat") or 0.0), 1),
                 round(float(base_total.get("energyKcal") or 0.0), 1),
             ])
-            for size in range(1, max(1, args.max_mains)):
+            for size in range(1, room + 1):
                 for idx in combinations_with_replacement(range(len(mains)), size):
                     chosen = base + [mains[i] for i in idx]
                     totals, _ = planner_mod.sum_nutrition(chosen)
@@ -170,6 +173,10 @@ def main() -> int:
         for ia, a in enumerate(combo_items):
             for ib in range(ia, len(combo_items)):
                 b = combo_items[ib]
+                need = (2 * int(a.combo_mains or 1) if ia == ib
+                        else int(a.combo_mains or 1) + int(b.combo_mains or 1))
+                if need > int(args.max_mains):
+                    continue
                 if ia == ib:
                     if a.combo_x2_price is None:
                         continue

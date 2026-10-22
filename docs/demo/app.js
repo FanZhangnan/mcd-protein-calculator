@@ -174,8 +174,14 @@ function renderUnknown() {
   if (dessertLine) {
     $("unknown").innerHTML += `<div class="unknown-box">${dessertLine}</div>`;
   }
-  // 套餐里仍然没有官方营养的商品：门店说明里明确列出，不按 0 处理
+  // 多人分享套餐：进了目录但不进单人推荐，门店说明里写明是哪几个
   const comboInfo = comboCatalogInfo(meal);
+  const shared = (comboInfo && comboInfo.shared_combos) || [];
+  if (shared.length) {
+    $("unknown").innerHTML +=
+      `<div class="meta-row"><b>多人分享套餐</b>${shared.length} 个不参与单人推荐：` +
+      shared.map((x) => `${x.name}`).join("、") + `</div>`;
+  }
   const unavailable = (comboInfo && comboInfo.unavailable_products) || [];
   if (unavailable.length) {
     $("unknown").innerHTML +=

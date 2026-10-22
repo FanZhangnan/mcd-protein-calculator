@@ -278,13 +278,23 @@ def main() -> int:
                                             "budget": 45, "select": "cheapest"}, "POST")
     check("未知 select 400", status == 400, str(bad_select.get("error")))
 
-    status, saver = call("/api/meal", {"meal": "lunch", "protein_min": 40,
-                                       "budget": 45, "select": "saver"}, "POST")
+    # 省钱选项现在有门槛：便宜不到 2.00 元就不返回，也就没有「省钱方案」可选。
+    # 30 g / 35 元：主方案 32 g / 31.50 元，省钱方案 28 g / 24.00 元（省 7.50 元）。
+    status, saver = call("/api/meal", {"meal": "lunch", "protein_min": 30,
+                                       "budget": 35, "select": "saver"}, "POST")
     check("选择省钱选项后成为主方案",
           status == 200 and saver.get("selected") == "saver"
           and saver.get("protein_status") == "near"
-          and saver.get("cost") == 40.5,
+          and saver.get("cost") == 24.0,
           f"{saver.get('cost')} {saver.get('protein_status')}")
+
+    # 省不到 2.00 元时没有省钱选项，select=saver 退回主方案
+    status, quiet = call("/api/meal", {"meal": "lunch", "protein_min": 40,
+                                        "budget": 45, "select": "saver"}, "POST")
+    check("省不到 2 元时没有省钱选项",
+          status == 200 and quiet.get("saver") is None
+          and quiet.get("selected") == "main",
+          f"saver={quiet.get('saver')} selected={quiet.get('selected')}")
 
     # ------------------------------------------------------- context change
     status, changed = call("/api/settings", {"date": "2026-10-21"}, "POST")

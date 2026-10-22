@@ -359,6 +359,50 @@ class StructureTest(unittest.TestCase):
         widths = {len(r) for r in combo_rows}
         self.assertEqual(widths, {1, 2})
 
+    def test_multi_main_combo_fills_the_whole_allowance(self):
+        """堡堡随心拼（2 个主食）在 max_mains=2 时只能单独出现，也不能点两份。"""
+        big = combo_item(50, price=39, code="BB")
+        big.combo_mains = 2
+        big.combo_x2_price = 78.0
+        mains = [main_item(10, code="M1")]
+        rows = planner_mod.build_meal_options(mains, [], [], max_mains=2, combos=[big])
+        for row in rows:
+            mine = [i for i in row if i.kind == "combo"]
+            if not mine:
+                continue
+            self.assertEqual(len(mine), 1)
+            self.assertEqual(mine[0].quantity, 1)
+            self.assertFalse([i for i in row if i.kind == "main"])
+
+    def test_multi_main_combo_is_excluded_when_the_cap_is_1(self):
+        big = combo_item(50, price=39, code="BB")
+        big.combo_mains = 2
+        rows = planner_mod.build_meal_options([], [], [], max_mains=1, combos=[big])
+        self.assertFalse([r for r in rows if any(i.kind == "combo" for i in r)])
+
+    def test_two_portion_of_a_two_main_combo_is_four_mains(self):
+        big = combo_item(50, price=39, code="BB")
+        big.combo_mains = 2
+        big.combo_x2_price = 78.0
+        rows = planner_mod.build_meal_options([], [], [], max_mains=2, combos=[big])
+        self.assertFalse([r for r in rows if any(i.quantity == 2 for i in r)])
+
+    def test_main_count_reads_the_rounds(self):
+        rounds = [{"role": "主食", "quantity": 2}, {"role": "小食", "quantity": 3},
+                  {"role": "饮品", "quantity": 2}]
+        self.assertEqual(combos_mod.main_count(rounds), 2)
+        self.assertEqual(combos_mod.main_count([{"role": "小食", "quantity": 3}]), 1)
+        self.assertEqual(combos_mod.main_count([]), 1)
+        self.assertEqual(combos_mod.main_count([{"role": "主食", "quantity": 1},
+                                                {"role": "主食", "quantity": 1}]), 2)
+
+    def test_saver_only_when_it_saves_two_yuan(self):
+        self.assertFalse(planner_mod.saver_worthwhile(29.8, 28.8))
+        self.assertFalse(planner_mod.saver_worthwhile(29.8, 27.9))
+        self.assertTrue(planner_mod.saver_worthwhile(29.8, 27.8))
+        self.assertTrue(planner_mod.saver_worthwhile(37.4, 28.8))
+        self.assertFalse(planner_mod.saver_worthwhile(None, 20.0))
+
     def test_at_most_two_combo_portions_and_no_extra_side_or_drink(self):
         rows = planner_mod.build_meal_options(
             [main_item(10)], [main_item(2, code="S")], [main_item(1, code="D")],
@@ -415,6 +459,20 @@ class StructureTest(unittest.TestCase):
 
 
 class ServiceTest(unittest.TestCase):
+    def test_shared_combos_are_not_recommended(self):
+        """多人分享套餐：清单里的套餐不进单人推荐，但门店说明里要写出来。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = service_with_fixture_catalog(tmp)
+            (Path(tmp) / "shared_combos.json").write_text(json.dumps({
+                "combos": {"9900011126": {"name": "酥脆无双套餐", "reason": "测试用"}},
+            }, ensure_ascii=False), "utf-8")
+            names = {i.name for i in svc.combo_items("lunch")}
+            self.assertNotIn("酥脆无双套餐", names)
+            report = svc.combo_report("lunch")
+            self.assertEqual(report["shared_count"], 1)
+            self.assertEqual(report["shared_combos"][0]["name"], "酥脆无双套餐")
+            self.assertEqual(report["shared_combos"][0]["reason"], "测试用")
+
     def test_quote_keeps_the_replacement_note(self):
         """/api/quote 从字典重建商品，替换说明不能在重建时丢掉。"""
         from service import Service

@@ -66,7 +66,7 @@
       nutrition: variant.nutrition,
       removable: [],
       combo: { variant: variant.variant, rounds: variant.rounds, menu_price: variant.menu_price,
-               replacements: variant.replacements || [] },
+               mains: variant.mains || 1, replacements: variant.replacements || [] },
     };
   }
 
@@ -263,8 +263,12 @@
       rows.push(build(data, raw, lim));
     });
     (data.comboCombos || []).forEach(function (raw) {
-      var mains = (raw[1] >= 0 ? 1 : 0) + (raw[2] >= 0 ? 1 : 0);
-      if (mains + 1 > maxMains) return;   // the combo itself counts as one main
+      var variant = data.comboVariants[raw[0]];
+      if (!variant) return;
+      var own = variant.mains || 1;
+      var extras = (raw[1] >= 0 ? 1 : 0) + (raw[2] >= 0 ? 1 : 0);
+      // 套餐自带的主食也占额度：堡堡随心拼 2 个，加 1 个就到 3
+      if (extras + own > maxMains) return;
       var items = expandCombo(data, raw);
       var t = totalsOf(items);
       rows.push({ items: items, totals: t.totals, cost: costOf(items), row: raw });
@@ -275,6 +279,10 @@
         var a = data.comboVariants[raw[0]];
         var b = data.comboVariants[raw[1]];
         if (!a || !b) return;
+        var need = raw[0] === raw[1]
+          ? 2 * (a.mains || 1)
+          : (a.mains || 1) + (b.mains || 1);
+        if (need > maxMains) return;
         var items = raw[0] === raw[1]
           ? [comboItem(a, 2)]
           : [comboItem(a, 1), comboItem(b, 1)];
@@ -321,7 +329,8 @@
       accepted.forEach(function (r) {
         if (!cheap || betterPrice(r, cheap)) cheap = r;
       });
-      if (cheap && cheap.cost < main.cost - EPS) {
+      // 省不到 2 元就不单独出一张卡（和服务端同一个门槛）
+      if (cheap && main.cost - cheap.cost >= 2 - EPS) {
         var mainProtein = main.totals.protein || 0;
         saver = {
           items: cheap.items.map(function (i) {

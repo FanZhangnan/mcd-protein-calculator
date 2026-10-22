@@ -128,16 +128,14 @@ async function main() {
         && Math.abs(align.chartRight - align.inputRight) <= 1,
         JSON.stringify(align));
 
-  // 省钱选项文案：与目标比 + 写出省钱方案自己的克数
-  const saver = await evalJs(`JSON.stringify({
+  // 省钱门槛：44/45 只省 1.00 元（29.80 → 28.80），不单独出卡
+  const saverQuiet = await evalJs(`JSON.stringify({
       text: document.querySelector('#s-result .saver-row')?.textContent || '',
-      protein: S.saver ? S.saver.protein : null,
-      gap: S.saver ? S.saver.protein_gap : null
+      saver: S.saver
     })`).then(JSON.parse);
-  check("省钱文案与目标比并写出省钱方案蛋白质",
-        /比目标少|同样达标/.test(saver.text)
-        && String(saver.protein).replace(/\\.0$/, '') && saver.text.includes(String(saver.protein).replace(/\\.0$/, '')),
-        saver.text.replace(/\s+/g, " ").slice(0, 90));
+  check("省不到 2 元时不显示省钱卡片",
+        saverQuiet.saver === null && saverQuiet.text === "",
+        JSON.stringify(saverQuiet));
 
   // 进度条右侧预算信息
   const foot = await evalJs(`document.querySelector('#s-result .progress-foot').textContent`);
@@ -221,8 +219,31 @@ async function main() {
         saveRow: [pick('.saver-row'), bg('--save-bg')],
       };
     })())`).then(JSON.parse);
-  const colorOk = Object.values(colors).every(([got, want]) => got && want && got === want);
+  // 44/45 没有省钱卡，saveRow 必然是 null；颜色检查只验存在的元素
+  const colorOk = Object.entries(colors)
+    .every(([key, [got, want]]) => (got === null ? key === "saveRow" : got === want));
   check("结果卡/图表/按钮颜色取自 CSS 变量", colorOk, JSON.stringify(colors));
+
+  // 30 g / 30 元：主方案 27.80 元，省钱方案 14.90 元（省 12.90 元），才该有省钱卡
+  await plan("lunch", 30, 30);
+  await waitFor(`document.querySelector('#s-result .saver-row')`, "省钱卡片出现");
+  const saverCard = await evalJs(`JSON.stringify((() => {
+      const row = document.querySelector('#s-result .saver-row');
+      if (!row) return { text: '', bg: null };
+      const probe = document.createElement('span');
+      probe.style.background = 'var(--save-bg)';
+      document.body.appendChild(probe);
+      const want = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return { text: row.textContent.replace(/\\s+/g, ' ').trim(), bg: getComputedStyle(row).backgroundColor, want };
+    })())`).then(JSON.parse);
+  check("省 12.90 元时显示省钱文案",
+        /比目标少|同样达标/.test(saverCard.text) && saverCard.text.includes("27"),
+        saverCard.text.slice(0, 90));
+  check("省钱卡片底色取自 CSS 变量",
+        !!saverCard.bg && saverCard.bg === saverCard.want,
+        `${saverCard.bg} vs ${saverCard.want}`);
+  await plan("lunch", 44, 45);   // 回到主场景，后面的图表断言仍按 44 g / 45 元
 
   // SVG 文本：互不重叠、不超出视口（用屏幕坐标换算到 viewBox，旋转过的轴标签才算得准）
   const texts = await evalJs(`JSON.stringify((() => {

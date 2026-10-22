@@ -183,6 +183,26 @@ def muscle_selection(rounds: list[dict],
     return selection
 
 
+def main_count(rounds: list[dict]) -> int:
+    """How many main-dish portions a selected combo really contains (min 1).
+
+    堡堡随心拼 picks two burgers (主食轮 quantity=2), 薄皮V翅双拼十翅 two portions
+    of wings — counting either as "one main" let them stack on top of two
+    burgers. The floor of 1 covers the 酥脆无双 / 麦乐鸡 / BFF 四宫格 style combos
+    whose rounds are all sides and a drink: that is still a whole meal, so it
+    must take a main slot rather than ride along for free.
+    """
+    total = 0
+    for rnd in rounds:
+        if (rnd.get("role") or "") != "主食":
+            continue
+        try:
+            total += int(rnd.get("quantity") or 1)
+        except (TypeError, ValueError):
+            total += 1
+    return max(1, total)
+
+
 def selection_rounds(rounds: list[dict], selection: dict[str, dict]) -> list[dict]:
     out = []
     for rnd in rounds:

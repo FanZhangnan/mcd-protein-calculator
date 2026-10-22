@@ -607,6 +607,25 @@ class Service:
                   if e.get("combo_code")}
         return codes
 
+    def shared_combos(self) -> dict[str, dict[str, Any]]:
+        """多人分享套餐清单：这些套餐不进单人推荐。
+
+        The list is explicit on purpose — a heuristic ("two mains and the cap
+        is full") also catches single-person double-burger combos. Every entry
+        in ``data/shared_combos.json`` carries the reason it was listed.
+        """
+        path = self.base / "shared_combos.json"
+        if not path.exists():
+            fallback = Path(__file__).resolve().parents[1] / "data" / "shared_combos.json"
+            path = fallback if fallback.exists() else path
+        if not path.exists():
+            return {}
+        try:
+            raw = json.loads(path.read_text("utf-8"))
+        except (OSError, ValueError):
+            return {}
+        return {str(k): v for k, v in (raw.get("combos") or {}).items()}
+
     def combo_items(self, meal: str) -> list[planner_mod.Item]:
         """Only variants whose reference price equals the real quote and whose
         nutrition is fully official can become candidates.
@@ -614,10 +633,13 @@ class Service:
         ``combo_x2_price`` carries the build's two-portion quote; the solver
         only offers "same combo twice" for variants that have one.
         """
+        shared = self.shared_combos()
         items: list[planner_mod.Item] = []
         for v in self.combo_meal(meal).get("variants") or []:
             if not combos_mod.usable_variant(v):
                 continue
+            if str(v.get("combo_code")) in shared:
+                continue          # 多人分享套餐：只做展示，不进单人推荐
             items.append(planner_mod.Item(
                 code=str(v["combo_code"]), name=v.get("combo_name") or "",
                 kind="combo", nutrition=v.get("nutrition") or {},
@@ -630,15 +652,24 @@ class Service:
                 combo_variant=v.get("variant") or "default",
                 combo_menu_price=v.get("menu_price"),
                 combo_x2_price=v.get("quoted_price_2"),
+                combo_mains=combos_mod.main_count(v.get("rounds") or []),
             ))
         return items
 
     def combo_report(self, meal: str) -> dict[str, Any]:
         """What the build found, including everything it had to exclude."""
         catalog = self.combo_catalog()
-        return combos_mod.report_from_meal(
+        report = combos_mod.report_from_meal(
             self.combo_meal(meal),
             source=catalog.get("source"), built_at=catalog.get("built_at"))
+        shared = self.shared_combos()
+        report["shared_combos"] = [
+            {"code": code, "name": entry.get("name") or code,
+             "reason": entry.get("reason") or ""}
+            for code, entry in sorted(shared.items(), key=lambda kv: kv[1].get("name") or kv[0])
+        ]
+        report["shared_count"] = len(report["shared_combos"])
+        return report
 
     def unknown_items(self, meal: str) -> list[dict[str, Any]]:
         buckets = self.pools(meal)
@@ -953,7 +984,8 @@ class Service:
                     max_mains=max_mains,
                 )
                 cheap.basis = "single_meal"
-                if cheap.feasible and cheap.cost < strict.cost - 1e-9:
+                # 省不到 2 元就不值得单独给一张卡：默认不显示
+                if cheap.feasible and planner_mod.saver_worthwhile(strict.cost, cheap.cost):
                     saver_result = cheap
         else:
             result = planner_mod.plan_open(

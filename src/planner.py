@@ -8,8 +8,8 @@ Structure rules
 ---------------
 * 1..N mains (N = ``max_mains``; the product default is 2, the same SKU twice
   is allowed and is merged into one line with ``quantity = 2``)
-* 1..2 combo portions, each counting as one main; the same combo twice needs a
-  verified two-portion price (see :data:`MAX_COMBO_PORTIONS`)
+* 1..2 combo portions, counting the mains each one really carries; the same
+  combo twice needs a verified two-portion price (:data:`MAX_COMBO_PORTIONS`)
 * 0..1 drink, drawn from a whitelist built in :mod:`service`
 * 0..1 side, only when the caller allows it
 * purchase quantities are positive integers
@@ -32,8 +32,14 @@ MEAL_LABEL = {"breakfast": "早餐", "lunch": "午餐", "dinner": "晚餐"}
 NUTRI_KEYS = ["energyKj", "energyKcal", "protein", "fat", "carbohydrate", "sodium", "calcium"]
 
 #: One meal may hold up to two combo portions — the same combo twice, or two
-#: different combos. Each portion counts as one main towards ``max_mains``.
+#: different combos. A portion counts the mains it really carries (see
+#: ``Item.combo_mains``), so 堡堡随心拼 alone already fills ``max_mains = 2``.
 MAX_COMBO_PORTIONS = 2
+
+#: The saver card is only worth a separate card when it saves at least this
+#: much; below that it just adds noise next to the recommendation.
+SAVER_MIN_SAVING = 2.0
+
 
 
 @dataclass
@@ -134,6 +140,9 @@ class Item:
     #: verified (or disagreed with 2 × unit price), so the solver must not
     #: offer this combo twice.
     combo_x2_price: float | None = None
+    #: combo variants only: how many main dishes the combo actually contains
+    #: (堡堡随心拼 = 2, 酥脆无双 = 1 by the floor). Counts against ``max_mains``.
+    combo_mains: int = 1
 
     def copy(self) -> "Item":
         return Item(
@@ -150,6 +159,7 @@ class Item:
             combo_variant=self.combo_variant,
             combo_menu_price=self.combo_menu_price,
             combo_x2_price=self.combo_x2_price,
+            combo_mains=self.combo_mains,
         )
 
     def as_dict(self) -> dict[str, Any]:
@@ -160,6 +170,7 @@ class Item:
             "combo": (None if self.kind != "combo" else {
                 "variant": self.combo_variant,
                 "menu_price": self.combo_menu_price,
+                "mains": self.combo_mains,
                 "rounds": self.combo_rounds or [],
                 "round_list": self.round_list or [],
                 "replacements": self.combo_replacements or [],
@@ -277,6 +288,13 @@ def sum_reference_cost(items: Iterable[Item]) -> float | None:
             return None
         total += float(item.price_ref) * _qty(item)
     return round(total, 2)
+
+
+def saver_worthwhile(main_cost: float | None, saver_cost: float | None) -> bool:
+    """Only worth a separate card when it saves at least SAVER_MIN_SAVING."""
+    if main_cost is None or saver_cost is None:
+        return False
+    return float(main_cost) - float(saver_cost) >= SAVER_MIN_SAVING - 1e-9
 
 
 def _fmt_bound(low: float | None, high: float | None) -> str:
@@ -493,7 +511,11 @@ def build_meal_options(mains: list[Item], sides: list[Item], drinks: list[Item],
                 # 2 份同款没通过真实试算（或从未验证），不给这个方案
                 continue
             head = _merge_combos(picks)
-            for main_size in range(0, max_mains - size + 1):
+            # 套餐自带的主食也要占额度：堡堡随心拼 2 个、薄皮V翅 2 份，两份就是 4 个
+            used = sum(max(1, int(c.combo_mains or 1)) * int(_qty(c) or 0) for c in head)
+            if used > max_mains:
+                continue
+            for main_size in range(0, max_mains - used + 1):
                 for midx in combinations_with_replacement(range(len(usable_mains)), main_size):
                     extra = _merge_mains([usable_mains[i] for i in midx])
                     combos.append([c.copy() for c in head] + extra)
