@@ -141,10 +141,10 @@ async function main() {
 
   // 进度条右侧预算信息
   const foot = await evalJs(`document.querySelector('#s-result .progress-foot').textContent`);
-  // 本轮内替换后：54 g / 37.40（多 10 g、还剩 7.60 元）。
-  // 旧值 50 g / 40.50 更贵且蛋白质更少，故更新预期。
+  // 同款套餐点 2 份：54 g / 29.80（多 10 g、还剩 15.20 元）。
+  // 旧值 37.40 更贵、蛋白相同，故更新预期。
   check("进度条写出目标差额与预算余额",
-        /目标 44 g，多出 10 g/.test(foot) && /预算 45 元，还剩 7\.60 元/.test(foot),
+        /目标 44 g，多出 10 g/.test(foot) && /预算 45 元，还剩 15\.20 元/.test(foot),
         foot.replace(/\s+/g, " "));
 
   // 整数刻度
@@ -298,7 +298,7 @@ async function main() {
             return bad.length;
           })()`)) === 0);
 
-  // 按加预算卡片给的上限重新算（本轮内替换后：28.90 元 → 40 g）
+  // 按加预算卡片给的上限重新算（两份套餐：28.80 元 → 42 g）
   const upCost = await evalJs(`document.querySelector('#s-budget-up').dataset.cost`);
   await evalJs(`document.querySelector('#s-budget-up').click()`);
   await waitFor(`document.querySelector('#s_budget').value === '${upCost}'`, `价格改成 ${upCost}`);

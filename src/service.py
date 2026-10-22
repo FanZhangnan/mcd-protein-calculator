@@ -609,7 +609,11 @@ class Service:
 
     def combo_items(self, meal: str) -> list[planner_mod.Item]:
         """Only variants whose reference price equals the real quote and whose
-        nutrition is fully official can become candidates."""
+        nutrition is fully official can become candidates.
+
+        ``combo_x2_price`` carries the build's two-portion quote; the solver
+        only offers "same combo twice" for variants that have one.
+        """
         items: list[planner_mod.Item] = []
         for v in self.combo_meal(meal).get("variants") or []:
             if not combos_mod.usable_variant(v):
@@ -625,6 +629,7 @@ class Service:
                 combo_replacements=v.get("replacements") or [],
                 combo_variant=v.get("variant") or "default",
                 combo_menu_price=v.get("menu_price"),
+                combo_x2_price=v.get("quoted_price_2"),
             ))
         return items
 

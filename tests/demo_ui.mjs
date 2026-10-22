@@ -118,13 +118,13 @@ async function main() {
     items: S.items.map(i => i.name + '×' + i.quantity),
     saver: S.saver ? { cost: S.saver.cost, protein: S.saver.protein, items: S.saver.items } : null
   })`).then(JSON.parse);
-  // 套餐纳入 + 本轮内替换后：54 g / 37.40（人气经典随心配 + 双层吉士汉堡）。
-  // 人气经典默认饮品可乐麦炫酷没有官方营养，构建时换成无糖可口可乐中杯。
-  check("场景1 达标 54 g / 37.40 元",
-    c1.status === "met" && c1.protein === 54 && c1.cost === 37.4
-    && c1.items.join(" + ") === "人气经典随心配×1 + 双层吉士汉堡×1", JSON.stringify(c1.items));
-  check("场景1 有省钱选项 42 g / 31.40 元",
-    !!c1.saver && c1.saver.protein === 42 && c1.saver.cost === 31.4,
+  // 同款套餐可以点 2 份：54 g / 29.80（人气经典随心配×2）。
+  // 旧值「随心配 + 双层吉士」37.40 元，新方案更便宜且蛋白相同。
+  check("场景1 达标 54 g / 29.80 元",
+    c1.status === "met" && c1.protein === 54 && c1.cost === 29.8
+    && c1.items.join(" + ") === "人气经典随心配×2", JSON.stringify(c1.items));
+  check("场景1 有省钱选项 42 g / 28.80 元",
+    !!c1.saver && c1.saver.protein === 42 && c1.saver.cost === 28.8,
     JSON.stringify(c1.saver));
   // 套餐必须在结果卡里展开各轮内容（小食 / 饮品分别是什么）。
   // 之前 demo 桩漏传 combo 字段，页面上只剩「套餐」两个字。
@@ -191,8 +191,8 @@ async function main() {
   })`).then(JSON.parse);
   check("场景2 预算内最多 28 g / 25.00 元",
     c2.status === "under" && c2.protein === 28 && c2.cost === 25, JSON.stringify(c2));
-  // 本轮内替换让人气经典进入候选：加预算 28.90 元 → 40 g（人气经典 + 汉堡包）
-  check("场景2 显示加预算卡片", c2.text.includes("加预算到") && c2.text.includes("28.90"), "");
+  // 两份套餐：加预算 28.80 元 → 42 g（人气经典 + 精选超值）
+  check("场景2 显示加预算卡片", c2.text.includes("加预算到") && c2.text.includes("28.80"), "");
   const clicked = await evalJs(`(() => {
     const b = document.querySelector('#s-budget-up');
     if (!b) return false;
@@ -203,9 +203,9 @@ async function main() {
     budget: document.querySelector('#s_budget').value,
     status: S.protein_status, cost: S.cost, protein: S.totals.protein
   })`).then(JSON.parse);
-  check("场景2 按 28.90 元重算后达标",
-    clicked === true && Number(c2b.budget) === 28.9 && c2b.status === "met"
-    && c2b.protein === 40 && c2b.cost === 28.9, JSON.stringify(c2b));
+  check("场景2 按 28.80 元重算后达标",
+    clicked === true && Number(c2b.budget) === 28.8 && c2b.status === "met"
+    && c2b.protein === 42 && c2b.cost === 28.8, JSON.stringify(c2b));
 
   // 3) breakfast 25 / 20
   await setInputs("breakfast", 25, 20);

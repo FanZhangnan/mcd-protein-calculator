@@ -164,6 +164,32 @@ def main() -> int:
                         round(float(totals.get("energyKcal") or 0.0), 1),
                     ])
 
+        # 两份套餐：[变体 A, 变体 B, 成本, 蛋白, 脂肪, 热量]，A == B 就是同款两份。
+        # 同款两份只在该变体真的有「两份试算价」时才导出，和 planner 的规则一致。
+        combo_pairs: list[list] = []
+        for ia, a in enumerate(combo_items):
+            for ib in range(ia, len(combo_items)):
+                b = combo_items[ib]
+                if ia == ib:
+                    if a.combo_x2_price is None:
+                        continue
+                    doubled = a.copy()
+                    doubled.quantity = 2.0
+                    chosen = [doubled]
+                else:
+                    chosen = [a.copy(), b.copy()]
+                totals, _ = planner_mod.sum_nutrition(chosen)
+                cost = planner_mod.sum_reference_cost(chosen)
+                if totals.get("protein") is None or cost is None:
+                    continue
+                combo_pairs.append([
+                    ia, ib,
+                    round(float(cost), 2),
+                    round(float(totals.get("protein") or 0.0), 1),
+                    round(float(totals.get("fat") or 0.0), 1),
+                    round(float(totals.get("energyKcal") or 0.0), 1),
+                ])
+
         desserts = [item_row(i) for i in service.pools(meal)["dessert"]
                     if i.nutrition and i.price_ref is not None]
 
@@ -192,6 +218,7 @@ def main() -> int:
             "combos": combos,
             "comboVariants": combo_variants,
             "comboCombos": combo_combos,
+            "comboPairs": combo_pairs,
             # The "套餐核查" row must quote the catalog, not re-count the
             # variants: 17 of lunch's 50 combos survive, the other 45 are
             # excluded with a reason. Counting variants in the browser used to

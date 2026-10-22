@@ -78,8 +78,9 @@ async function main() {
     text: document.querySelector('#s-result').textContent
   })`).then(JSON.parse);
   // 本轮内替换让人气经典（14.90 元、27 g）进入候选：
-  // 默认 40 g / 45 元的最省解 = 人气经典 + 汉堡包 = 40 g / 28.90 元
-  check("默认值出 40 g / 28.90 元", info.protein === 40 && info.cost === 28.9,
+  // 默认 40 g / 45 元的最省解 = 人气经典 + 精选超值 = 42 g / 28.80 元
+  // （旧值「人气经典 + 汉堡包」40 g / 28.90：两个套餐比一个套餐 + 单品更划算）
+  check("默认值出 42 g / 28.80 元", info.protein === 42 && info.cost === 28.8,
     `${info.protein} g / ${info.cost} 元`);
   check("图上有推荐星标", info.rec === true);
 

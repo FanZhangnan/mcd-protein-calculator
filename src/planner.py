@@ -8,6 +8,8 @@ Structure rules
 ---------------
 * 1..N mains (N = ``max_mains``; the product default is 2, the same SKU twice
   is allowed and is merged into one line with ``quantity = 2``)
+* 1..2 combo portions, each counting as one main; the same combo twice needs a
+  verified two-portion price (see :data:`MAX_COMBO_PORTIONS`)
 * 0..1 drink, drawn from a whitelist built in :mod:`service`
 * 0..1 side, only when the caller allows it
 * purchase quantities are positive integers
@@ -28,6 +30,10 @@ from typing import Any, Iterable
 MEALS = ("breakfast", "lunch", "dinner")
 MEAL_LABEL = {"breakfast": "早餐", "lunch": "午餐", "dinner": "晚餐"}
 NUTRI_KEYS = ["energyKj", "energyKcal", "protein", "fat", "carbohydrate", "sodium", "calcium"]
+
+#: One meal may hold up to two combo portions — the same combo twice, or two
+#: different combos. Each portion counts as one main towards ``max_mains``.
+MAX_COMBO_PORTIONS = 2
 
 
 @dataclass
@@ -123,6 +129,11 @@ class Item:
     combo_replacements: list[dict[str, Any]] | None = None
     combo_variant: str = ""
     combo_menu_price: float | None = None
+    #: combo variants only: the real ``calculate-price`` answer for *two*
+    #: portions of this exact variant. ``None`` means the doubling was never
+    #: verified (or disagreed with 2 × unit price), so the solver must not
+    #: offer this combo twice.
+    combo_x2_price: float | None = None
 
     def copy(self) -> "Item":
         return Item(
@@ -138,6 +149,7 @@ class Item:
             combo_replacements=[dict(r) for r in (self.combo_replacements or [])] or None,
             combo_variant=self.combo_variant,
             combo_menu_price=self.combo_menu_price,
+            combo_x2_price=self.combo_x2_price,
         )
 
     def as_dict(self) -> dict[str, Any]:
@@ -402,15 +414,51 @@ def _merge_mains(picks: list[Item]) -> list[Item]:
     return out
 
 
+def _combo_signature(item: Item) -> tuple:
+    """Identity of a combo *line*: same SKU is not enough — the variant counts.
+
+    ``9900005464`` twice with two different ``roundList`` is two different POS
+    lines (default + muscle); merging them into ``quantity = 2`` would silently
+    price and describe the wrong thing.
+    """
+    rounds = tuple((str(r.get("round")), tuple(
+        (str(c.get("code")), int(c.get("quantity") or 1))
+        for c in (r.get("comboItemList") or []))) for r in (item.round_list or []))
+    return (str(item.code), item.combo_variant or "", rounds)
+
+
+def _merge_combos(picks: list[Item]) -> list[Item]:
+    """Same combo variant twice becomes one line with ``quantity = 2``."""
+    order: list[tuple] = []
+    counts: dict[tuple, int] = {}
+    by_key: dict[tuple, Item] = {}
+    for item in picks:
+        key = _combo_signature(item)
+        if key not in counts:
+            order.append(key)
+            counts[key] = 0
+            by_key[key] = item
+        counts[key] += 1
+    out = []
+    for key in order:
+        copy = by_key[key].copy()
+        copy.quantity = float(counts[key])
+        out.append(copy)
+    return out
+
+
 def build_meal_options(mains: list[Item], sides: list[Item], drinks: list[Item],
                        *, max_mains: int = 1,
                        combos: list[Item] | None = None) -> list[list[Item]]:
     """Every structure-legal combo.
 
     * no combo: 1..N mains × {no side, side} × {no drink, drink}
-    * combo: exactly one combo + 0..N-1 mains, and no extra side/drink — the
-      combo already carries them. The combo counts as one main towards
-      ``max_mains``, so ``max_mains = 1`` means "combo alone".
+    * combo: 1..2 combo portions + 0..N-k mains, and no extra side/drink — the
+      combos already carry them. Each portion counts as one main towards
+      ``max_mains``, so ``max_mains = 1`` means "one combo alone".
+    * the same combo twice is one POS line with ``quantity = 2`` and is only
+      offered when its doubling was really priced (``combo_x2_price``); two
+      different combos are two lines, each already priced on its own.
 
     Only items with official nutrition *and* a known price can enter: a price
     cap cannot be enforced against an unknown price, so such an item is not a
@@ -436,12 +484,19 @@ def build_meal_options(mains: list[Item], sides: list[Item], drinks: list[Item],
                         combo.append(drink.copy())
                     combos.append(combo)
 
-    # at most one combo per meal; with a combo there is no extra drink or side
-    for combo_item in usable_combos:
-        for size in range(0, max_mains):
-            for idx in combinations_with_replacement(range(len(usable_mains)), size):
-                picks = [usable_mains[i] for i in idx]
-                combos.append([combo_item.copy()] + _merge_mains(picks))
+    # 1..2 combo portions per meal; with combos there is no extra drink or side
+    limit = min(MAX_COMBO_PORTIONS, max_mains)
+    for size in range(1, limit + 1):
+        for idx in combinations_with_replacement(range(len(usable_combos)), size):
+            picks = [usable_combos[i] for i in idx]
+            if size == 2 and idx[0] == idx[1] and picks[0].combo_x2_price is None:
+                # 2 份同款没通过真实试算（或从未验证），不给这个方案
+                continue
+            head = _merge_combos(picks)
+            for main_size in range(0, max_mains - size + 1):
+                for midx in combinations_with_replacement(range(len(usable_mains)), main_size):
+                    extra = _merge_mains([usable_mains[i] for i in midx])
+                    combos.append([c.copy() for c in head] + extra)
     return combos
 
 

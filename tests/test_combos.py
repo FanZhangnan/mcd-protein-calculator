@@ -359,15 +359,49 @@ class StructureTest(unittest.TestCase):
         widths = {len(r) for r in combo_rows}
         self.assertEqual(widths, {1, 2})
 
-    def test_at_most_one_combo_and_no_extra_side_or_drink(self):
+    def test_at_most_two_combo_portions_and_no_extra_side_or_drink(self):
         rows = planner_mod.build_meal_options(
             [main_item(10)], [main_item(2, code="S")], [main_item(1, code="D")],
             max_mains=3, combos=[combo_item(20, code="C1"), combo_item(22, code="C2")])
         for row in rows:
             combos = [i for i in row if i.kind == "combo"]
-            self.assertLessEqual(len(combos), 1)
+            self.assertLessEqual(len(combos), 2)
+            self.assertLessEqual(sum(i.quantity for i in combos), 2)
             if combos:
                 self.assertFalse([i for i in row if i.kind in ("side", "drink")])
+
+    def test_same_combo_twice_needs_a_verified_two_portion_price(self):
+        plain = combo_item(20, price=15, code="C1")
+        plain.combo_x2_price = None          # never priced as two portions
+        rows = planner_mod.build_meal_options([], [], [], max_mains=2, combos=[plain])
+        self.assertFalse([r for r in rows if sum(i.quantity for i in r) >= 2])
+
+        priced = combo_item(20, price=15, code="C1")
+        priced.combo_x2_price = 30.0
+        rows = planner_mod.build_meal_options([], [], [], max_mains=2, combos=[priced])
+        doubled = [r for r in rows if r and r[0].quantity == 2]
+        self.assertEqual(len(doubled), 1)
+        self.assertEqual(planner_mod.sum_reference_cost(doubled[0]), 30.0)
+        self.assertEqual(planner_mod.sum_nutrition(doubled[0])[0]["protein"], 40.0)
+
+    def test_two_different_combos_are_two_lines(self):
+        a = combo_item(20, price=15, code="C1")
+        a.combo_variant = "default"
+        b = combo_item(25, price=18, code="C2")
+        b.combo_variant = "default"
+        rows = planner_mod.build_meal_options([], [], [], max_mains=2, combos=[a, b])
+        pair = next(r for r in rows if len(r) == 2 and all(i.kind == "combo" for i in r))
+        self.assertEqual([i.quantity for i in pair], [1, 1])
+        self.assertEqual(planner_mod.sum_reference_cost(pair), 33.0)
+        self.assertEqual(planner_mod.sum_nutrition(pair)[0]["protein"], 45.0)
+
+    def test_two_combos_do_not_fit_when_max_mains_is_one(self):
+        a = combo_item(20, price=15, code="C1")
+        a.combo_x2_price = 30.0
+        b = combo_item(25, price=18, code="C2")
+        rows = planner_mod.build_meal_options([], [], [], max_mains=1, combos=[a, b])
+        self.assertTrue(rows)
+        self.assertFalse([r for r in rows if sum(i.quantity for i in r) > 1])
 
     def test_combo_totals_include_everything(self):
         combo = combo_item(20, price=18)
@@ -545,12 +579,25 @@ class LiveCatalogScenariosTest(unittest.TestCase):
                 max_mains=2)
         self.assertTrue(payload["combos"]["applied"])
         self.assertEqual(payload["totals"]["protein"], 54.0)
-        self.assertAlmostEqual(payload["cost"], 37.4)
-        self.assertEqual([i["name"] for i in payload["items"]],
-                         ["人气经典随心配", "双层吉士汉堡"])
+        # 同一套餐 2 份：29.80 元 = 14.90 × 2，比「随心配 + 双层吉士」的 37.40 更便宜
+        self.assertAlmostEqual(payload["cost"], 29.8)
+        self.assertEqual([(i["name"], i["quantity"]) for i in payload["items"]],
+                         [("人气经典随心配", 2)])
         combo = next(i for i in payload["items"] if i["kind"] == "combo")
         # 可乐麦炫酷没有官方营养，构建时换成无糖可口可乐中杯并验价
         self.assertEqual(combo["combo"]["replacements"][0]["to"], "无糖可口可乐中杯")
+
+    def test_two_different_combos_in_one_meal(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = self._service(tmp)
+            payload = svc.plan_meal(
+                "lunch", planner_mod.Targets(protein_min=40, budget=45, protein_tolerance=3),
+                max_mains=2)
+        combos = [i for i in payload["items"] if i["kind"] == "combo"]
+        self.assertEqual(len(combos), 2)
+        self.assertEqual([i["quantity"] for i in combos], [1, 1])
+        self.assertAlmostEqual(payload["cost"], 28.8)
+        self.assertEqual(payload["totals"]["protein"], 42.0)
 
     def test_lunch_35_25(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -560,10 +607,10 @@ class LiveCatalogScenariosTest(unittest.TestCase):
                 max_mains=2)
         self.assertEqual([i["name"] for i in payload["items"]], ["双层深海鳕鱼堡"])
         self.assertAlmostEqual(payload["cost"], 25.0)
-        # 加预算卡片：人气经典 + 汉堡包 = 40 g，28.90 元
+        # 加预算卡片：人气经典 + 精选超值 = 42 g，28.80 元
         reach = payload["frontier"]["reach_price"]
-        self.assertAlmostEqual(reach["cost"], 28.9)
-        self.assertEqual(reach["protein"], 40.0)
+        self.assertAlmostEqual(reach["cost"], 28.8)
+        self.assertEqual(reach["protein"], 42.0)
 
     def test_breakfast_25_20(self):
         with tempfile.TemporaryDirectory() as tmp:

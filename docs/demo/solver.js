@@ -56,19 +56,23 @@
   }
 
   // Combo row: [comboIdx, main1, main2, cost, protein, fat, kcal]
-  function expandCombo(mealData, row) {
-    var variant = mealData.comboVariants[row[0]];
-    var items = [{
+  function comboItem(variant, quantity) {
+    return {
       code: variant.code,
       name: variant.name,
       kind: "combo",
-      quantity: 1,
+      quantity: quantity,
       price_ref: variant.price,
       nutrition: variant.nutrition,
       removable: [],
       combo: { variant: variant.variant, rounds: variant.rounds, menu_price: variant.menu_price,
                replacements: variant.replacements || [] },
-    }];
+    };
+  }
+
+  function expandCombo(mealData, row) {
+    var variant = mealData.comboVariants[row[0]];
+    var items = [comboItem(variant, 1)];
     for (var i = 1; i <= 2; i++) {
       var idx = row[i];
       if (idx >= 0) {
@@ -265,6 +269,19 @@
       var t = totalsOf(items);
       rows.push({ items: items, totals: t.totals, cost: costOf(items), row: raw });
     });
+    // 两份套餐：每份也算一个主食，所以 maxMains < 2 时没有这种方案
+    if (maxMains >= 2) {
+      (data.comboPairs || []).forEach(function (raw) {
+        var a = data.comboVariants[raw[0]];
+        var b = data.comboVariants[raw[1]];
+        if (!a || !b) return;
+        var items = raw[0] === raw[1]
+          ? [comboItem(a, 2)]
+          : [comboItem(a, 1), comboItem(b, 1)];
+        var t = totalsOf(items);
+        rows.push({ items: items, totals: t.totals, cost: costOf(items), row: raw });
+      });
+    }
 
     var strict = rows.filter(function (r) { return feasible(r.totals, r.cost, lim, target); });
     var accepted = rows.filter(function (r) { return feasible(r.totals, r.cost, lim, acceptMin); });

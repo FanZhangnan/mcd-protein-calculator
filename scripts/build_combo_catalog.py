@@ -104,7 +104,39 @@ def price_variant(combo_code: str, variant: dict, ctx: dict, when: str) -> dict:
                 "detail": f"参考价 {variant['reference_price']:.2f} / 试算 {quoted:.2f}",
                 "quoted_price": quoted}
     return {**variant, "status": "ok", "quoted_price": quoted,
-            "quoted_at": payload.get("datetime")}
+            "quoted_at": payload.get("datetime"),
+            **price_double(combo_code, variant, quoted, ctx, when)}
+
+
+def price_double(combo_code: str, variant: dict, unit_price: float,
+                 ctx: dict, when: str) -> dict:
+    """Quote *two* portions of the same variant.
+
+    The solver may offer "same combo twice" only when the POS really charges
+    2 × unit price — a bundle discount or a purchase limit would make the plan
+    cheaper or impossible, and the card must not promise either.
+    """
+    items = [{
+        "productCode": str(combo_code), "quantity": 2,
+        "roundList": variant["round_list"],
+    }]
+    try:
+        payload = WORKER.call("calculate-price", {
+            "storeCode": ctx["store_code"], "orderType": ctx["order_type"],
+            "beType": ctx["be_type"], "reservationDate": when, "items": items,
+        })
+    except McpError as exc:
+        return {"x2_status": "failed", "x2_detail": f"两份试算失败：{exc}"}
+    data = payload.get("data") or {}
+    if not payload.get("success") or data.get("price") is None:
+        return {"x2_status": "failed",
+                "x2_detail": f"两份试算失败：{payload.get('code')} {payload.get('message')}"}
+    two = round(float(data["price"]) / 100, 2)
+    expect = round(float(unit_price) * 2, 2)
+    if abs(two - expect) > 0.005:
+        return {"x2_status": "mismatch", "quoted_price_2": two,
+                "x2_detail": f"两份参考价 {expect:.2f} / 试算 {two:.2f}"}
+    return {"x2_status": "ok", "quoted_price_2": two, "x2_at": payload.get("datetime")}
 
 
 def main() -> int:
@@ -327,6 +359,11 @@ def main() -> int:
             stats["reasons"][reason] = stats["reasons"].get(reason, 0) + 1
         stats["variants"] += len(variants)
         stats["excluded"] += len(excluded)
+        doubles: dict[str, int] = {}
+        for variant in variants:
+            key = variant.get("x2_status") or "failed"
+            doubles[key] = doubles.get(key, 0) + 1
+        stats.setdefault("x2", {})[meal] = doubles
         out["meals"][meal] = {
             "checked": len(codes),
             "combo_count": len(combos_found),
