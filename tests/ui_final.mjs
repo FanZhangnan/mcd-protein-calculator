@@ -10,9 +10,9 @@ const OUT = new URL("../data/fixtures/ui/", import.meta.url).pathname;
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const PORT = 9341;
 
-const CN = new Date(Date.now() + 8 * 3600 * 1000);
-CN.setUTCDate(CN.getUTCDate() + 1);
-const DATE = CN.toISOString().slice(0, 10);
+// 规划日由服务端决定（服务器日期 + 1 天）。这里**不要**再写死日期：
+// 写死会把服务切到另一个日期，而套餐目录是按某一个日期校验的，
+// 目录一旦对不上就会被整批拒用，页面上的推荐也会跟着变。
 
 const results = [];
 const check = (name, ok, detail = "") => {
@@ -37,10 +37,7 @@ async function main() {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   }).then((r) => r.json());
-  await post("/api/settings", {
-    date: DATE, store: { code: "1440054" },
-    meal_times: { breakfast: "08:15", lunch: "12:15", dinner: "18:30" },
-  });
+  // 只刷新，不改日期：刷新会保留服务端当前的规划日
   const refreshed = await post("/api/refresh", {});
   check("菜单来源实时", refreshed.source === "live", String(refreshed.source));
 
