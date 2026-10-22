@@ -74,7 +74,7 @@
         available: true,
         source: "snapshot",
         built_at: SNAP.meta.fetched_at,
-        checked: (m.mains || []).length,
+        checked: m.sku_count || (m.mains || []).length,
         combos_found: Object.keys(codes).length,
         variants_used: variants.length,
         excluded: 0,
@@ -202,6 +202,8 @@
         price_ref: i.price_ref,
         nutrition: i.nutrition,
         removable: i.removable || [],
+        // 套餐要带上各轮内容，否则结果卡只显示「套餐」两个字
+        combo: i.combo || null,
         nutrition_basis: "standard",
         nutrition_status: "official",
       };

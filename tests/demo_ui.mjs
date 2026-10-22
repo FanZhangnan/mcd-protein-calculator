@@ -113,6 +113,22 @@ async function main() {
   check("场景1 有省钱选项 42 g / 39.00 元",
     !!c1.saver && c1.saver.protein === 42 && c1.saver.cost === 39,
     JSON.stringify(c1.saver));
+  // 套餐必须在结果卡里展开各轮内容（小食 / 饮品分别是什么）。
+  // 之前 demo 桩漏传 combo 字段，页面上只剩「套餐」两个字。
+  const c1parts = await evalJs(`JSON.stringify({
+    parts: (document.querySelector('.combo-parts') || {}).textContent || '',
+    rounds: (S.items.find(i => i.kind === 'combo') || {}).combo?.rounds || [],
+    audit: (document.querySelector('.combo-audit summary') || {}).textContent || ''
+  })`).then(JSON.parse);
+  check("场景1 套餐列出各轮内容",
+    c1parts.parts.length > 0 && c1parts.parts.includes("小食") && c1parts.parts.includes("饮品"),
+    c1parts.parts.slice(0, 80));
+  check("场景1 套餐各轮数据在方案里",
+    c1parts.rounds.length >= 2 && c1parts.rounds.every(r => r.name && r.role),
+    JSON.stringify(c1parts.rounds.map(r => r.role + "：" + r.name)));
+  check("场景1 套餐核查写出真实 SKU 数",
+    /已查 \d+ 个 SKU/.test(c1parts.audit) && !/已查 11 个 SKU/.test(c1parts.audit),
+    c1parts.audit.slice(0, 90));
   await shot("demo-desktop", 1280);
 
   // 2) lunch 35 / 25 → under, then the budget card

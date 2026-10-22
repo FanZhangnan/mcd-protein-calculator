@@ -92,6 +92,10 @@ def main() -> int:
     meals: dict[str, dict] = {}
     total_combos = 0
     for meal in MEALS:
+        # 菜单上这一餐共有多少个 SKU（不是候选池里剩多少）——
+        # 页面上的「已查 N 个 SKU」要说的是这个数。
+        menu_payload = (service.ensure_cache()["menus"].get(meal) or {}).get("data") or {}
+        sku_count = len(menu_payload.get("meals") or {})
         pools = service.single_pools(meal, allow_side=True)[meal]
         mains = [i for i in pools["main"] if i.nutrition and i.price_ref is not None]
         drinks = [i for i in pools["drink"] if i.nutrition and i.price_ref is not None]
@@ -187,6 +191,7 @@ def main() -> int:
             "comboVariants": combo_variants,
             "comboCombos": combo_combos,
             "desserts": desserts,
+            "sku_count": sku_count,
         }
         total_combos += len(combos) + len(combo_combos)
         print(f"{meal}: {len(mains)} mains, {len(drinks)} drinks, {len(sides)} sides, "
