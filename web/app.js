@@ -819,10 +819,11 @@ function renderSingle(s) {
   const comboAudit = comboInfo.available ? (() => {
     const r = comboInfo.reasons || {};
     const parts = [];
+    // 先写最常见的两种：会员价（没有账户上下文，价位不可信）、营养未知
+    if (r.membership) parts.push(`会员价 ${r.membership}`);
     if (r.nutrition_unknown) parts.push(`营养未知 ${r.nutrition_unknown}`);
     if (r.price_mismatch) parts.push(`价格不一致 ${r.price_mismatch}`);
     if (r.price_failed) parts.push(`试算失败 ${r.price_failed}`);
-    if (r.membership) parts.push(`会员价 ${r.membership}`);
     const list = (comboInfo.items || []).slice(0, 12).map((x) =>
       `<li>${x.name}${x.variant === "muscle" ? "（增肌组合）" : ""} · ${COMBOR[x.reason] || x.reason}${x.detail ? ` · ${x.detail}` : ""}</li>`).join("");
     return `<details class="combo-audit"><summary>套餐核查：已查 ${comboInfo.checked || 0} 个 SKU，识别 ${comboInfo.combos_found || 0} 个套餐，纳入 ${comboInfo.variants_used || 0} 个变体；排除 ${comboInfo.excluded || 0} 个${parts.length ? `（${parts.join("、")}）` : ""}</summary>

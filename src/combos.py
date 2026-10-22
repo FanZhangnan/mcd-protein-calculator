@@ -302,3 +302,50 @@ def summarise(variants: list[dict], excluded: list[dict]) -> dict[str, Any]:
     for item in excluded:
         counts[item.get("reason") or "other"] = counts.get(item.get("reason") or "other", 0) + 1
     return {"variants": len(variants), "excluded": len(excluded), "reasons": counts}
+
+
+def usable_variant(variant: dict) -> bool:
+    """A variant only becomes a candidate when price and nutrition are complete."""
+    if variant.get("status") != "ok" or variant.get("quoted_price") is None:
+        return False
+    nutrition = variant.get("nutrition") or {}
+    return all(nutrition.get(key) is not None for key in NUTRI_KEYS)
+
+
+REPORT_NOTE = ("套餐目录由构建脚本逐款核对营养与真实试算价；"
+               "营养未知、价格不一致与会员价套餐已排除。")
+
+
+def report_from_meal(meta: dict | None, *, source: str | None = None,
+                     built_at: str | None = None, limit: int = 30) -> dict[str, Any]:
+    """The "套餐核查" counts for one meal, derived from the catalog entry.
+
+    This is the only place these numbers are computed: the API, the static
+    snapshot and the page all read the same dict, so "识别 N 个套餐" can never
+    disagree with ``data/combo_catalog.json``.
+    """
+    meta = meta or {}
+    excluded = meta.get("excluded") or []
+    counts: dict[str, int] = {}
+    for item in excluded:
+        reason = item.get("reason") or "other"
+        counts[reason] = counts.get(reason, 0) + 1
+    variants = [v for v in meta.get("variants") or [] if usable_variant(v)]
+    return {
+        "available": bool(meta),
+        "source": source,
+        "built_at": built_at,
+        "single_round": len(meta.get("single_round") or []),
+        "single_round_excluded": len(meta.get("single_round_excluded") or []),
+        "checked": meta.get("checked") or 0,
+        # combos the POS reports (rounds >= 2), not the combos that survived
+        "combos_found": meta.get("combo_count") or 0,
+        "variants_used": len(variants),
+        "excluded": len(excluded),
+        "reasons": counts,
+        "excluded_categories": meta.get("excluded_categories") or [],
+        "items": [{"code": e.get("combo_code"), "name": e.get("combo_name"),
+                   "variant": e.get("variant"), "reason": e.get("reason"),
+                   "detail": e.get("detail")} for e in excluded[:limit]],
+        "note": REPORT_NOTE,
+    }

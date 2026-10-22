@@ -29,6 +29,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+import combos as combos_mod  # noqa: E402
 import planner as planner_mod  # noqa: E402
 from service import LiveProvider, Service  # noqa: E402
 
@@ -190,6 +191,16 @@ def main() -> int:
             "combos": combos,
             "comboVariants": combo_variants,
             "comboCombos": combo_combos,
+            # The "套餐核查" row must quote the catalog, not re-count the
+            # variants: 17 of lunch's 50 combos survive, the other 45 are
+            # excluded with a reason. Counting variants in the browser used to
+            # print "识别 17 个套餐…排除 0 个".
+            "comboReport": combos_mod.report_from_meal(
+                service.combo_meal(meal),
+                source=service.combo_catalog().get("source"),
+                built_at=service.combo_catalog().get("built_at"),
+                limit=200,
+            ),
             "desserts": desserts,
             "sku_count": sku_count,
         }

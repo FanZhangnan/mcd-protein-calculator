@@ -605,19 +605,14 @@ class Service:
         nutrition is fully official can become candidates."""
         items: list[planner_mod.Item] = []
         for v in self.combo_meal(meal).get("variants") or []:
-            if v.get("status") != "ok":
-                continue
-            nutrition = v.get("nutrition") or {}
-            if any(nutrition.get(k) is None for k in planner_mod.NUTRI_KEYS):
-                continue
-            price = v.get("quoted_price")
-            if price is None:
+            if not combos_mod.usable_variant(v):
                 continue
             items.append(planner_mod.Item(
                 code=str(v["combo_code"]), name=v.get("combo_name") or "",
-                kind="combo", nutrition=nutrition, nutrition_status="official",
+                kind="combo", nutrition=v.get("nutrition") or {},
+                nutrition_status="official",
                 nutrition_note="套餐各轮官方营养相加",
-                price_ref=float(price), meal=meal,
+                price_ref=float(v["quoted_price"]), meal=meal,
                 round_list=v.get("round_list") or [],
                 combo_rounds=v.get("rounds") or [],
                 combo_variant=v.get("variant") or "default",
@@ -627,33 +622,10 @@ class Service:
 
     def combo_report(self, meal: str) -> dict[str, Any]:
         """What the build found, including everything it had to exclude."""
-        meta = self.combo_meal(meal)
         catalog = self.combo_catalog()
-        excluded = meta.get("excluded") or []
-        counts: dict[str, int] = {}
-        for item in excluded:
-            reason = item.get("reason") or "other"
-            counts[reason] = counts.get(reason, 0) + 1
-        singles = meta.get("single_round") or []
-        single_excluded = meta.get("single_round_excluded") or []
-        return {
-            "available": bool(meta),
-            "source": catalog.get("source"),
-            "built_at": catalog.get("built_at"),
-            "single_round": len(singles),
-            "single_round_excluded": len(single_excluded),
-            "checked": meta.get("checked"),
-            "combos_found": meta.get("combo_count"),
-            "variants_used": len(self.combo_items(meal)),
-            "excluded": len(excluded),
-            "reasons": counts,
-            "excluded_categories": meta.get("excluded_categories") or [],
-            "items": [{"code": e.get("combo_code"), "name": e.get("combo_name"),
-                       "variant": e.get("variant"), "reason": e.get("reason"),
-                       "detail": e.get("detail")} for e in excluded[:30]],
-            "note": ("套餐目录由构建脚本逐款核对营养与真实试算价；"
-                     "营养未知、价格不一致与会员价套餐已排除。"),
-        }
+        return combos_mod.report_from_meal(
+            self.combo_meal(meal),
+            source=catalog.get("source"), built_at=catalog.get("built_at"))
 
     def unknown_items(self, meal: str) -> list[dict[str, Any]]:
         buckets = self.pools(meal)

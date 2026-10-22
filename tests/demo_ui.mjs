@@ -1,12 +1,20 @@
 // Static demo acceptance: three scenarios, no backend calls, desktop + mobile shots.
 // Usage: node tests/demo_ui.mjs [url] [outDir]
 import { spawn } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const URL_ = process.argv[2] || "http://127.0.0.1:8941/";
 const OUT = process.argv[3] || new URL("../docs/screenshots/", import.meta.url).pathname;
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const PORT = 9341;
+// 套餐核查那一行的唯一口径：构建脚本写下的套餐目录
+const CATALOG = JSON.parse(readFileSync(new URL("../data/combo_catalog.json", import.meta.url), "utf8"));
+const LUNCH = CATALOG.meals.lunch;
+const LUNCH_REASONS = LUNCH.excluded.reduce((acc, e) => {
+  const key = e.reason || "other";
+  acc[key] = (acc[key] || 0) + 1;
+  return acc;
+}, {});
 
 const results = [];
 const check = (name, ok, detail = "") => {
@@ -129,6 +137,26 @@ async function main() {
   check("场景1 套餐核查写出真实 SKU 数",
     /已查 \d+ 个 SKU/.test(c1parts.audit) && !/已查 11 个 SKU/.test(c1parts.audit),
     c1parts.audit.slice(0, 90));
+  // 这一行的四个数字必须等于 data/combo_catalog.json，而不是浏览器数变体：
+  // 午餐识别 50 个套餐、纳入 33 个变体、排除 45 个（会员价 16、营养未知 29）。
+  const auditRow = c1parts.audit.match(/已查 (\d+) 个 SKU，识别 (\d+) 个套餐，纳入 (\d+) 个变体；排除 (\d+) 个/);
+  check("场景1 套餐核查与 combo_catalog.json 一致",
+    !!auditRow
+      && Number(auditRow[1]) === LUNCH.checked
+      && Number(auditRow[2]) === LUNCH.combo_count
+      && Number(auditRow[3]) === LUNCH.variants.length
+      && Number(auditRow[4]) === LUNCH.excluded.length
+      && c1parts.audit.includes(`会员价 ${LUNCH_REASONS.membership || 0}`)
+      && c1parts.audit.includes(`营养未知 ${LUNCH_REASONS.nutrition_unknown || 0}`),
+    c1parts.audit.slice(0, 120));
+  const badge = await evalJs(`JSON.stringify({
+    text: document.querySelector('#data-source').textContent,
+    title: document.querySelector('#data-source').getAttribute('title') || ''
+  })`).then(JSON.parse);
+  check("页头徽标组合数与目录一致",
+    badge.text.includes(`已加载 ${LUNCH.combo_count} 个组合`)
+      && badge.title.includes(`${LUNCH.variants.length} 个可用变体`),
+    (badge.text + " | " + badge.title).slice(0, 200));
   await shot("demo-desktop", 1280);
 
   // 2) lunch 35 / 25 → under, then the budget card

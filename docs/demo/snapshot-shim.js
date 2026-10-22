@@ -62,27 +62,24 @@
     });
   }
 
-  // 套餐目录状态（在线版：快照里已经带上了套餐变体）
+  // 套餐目录状态（在线版：快照里带着构建脚本写下的「套餐核查」统计）
+  // 这些数字直接取自 combo_catalog.json，不再由浏览器数变体：
+  // 午餐 50 个套餐只活下来 33 个变体，另外 45 个带原因排除。
   function combosByMeal() {
     var out = {};
     ["breakfast", "lunch", "dinner"].forEach(function (meal) {
       var m = SNAP.meals[meal] || {};
-      var variants = m.comboVariants || [];
-      var codes = {};
-      variants.forEach(function (v) { codes[v.code] = true; });
-      out[meal] = {
-        available: true,
-        source: "snapshot",
-        built_at: SNAP.meta.fetched_at,
-        checked: m.sku_count || (m.mains || []).length,
-        combos_found: Object.keys(codes).length,
-        variants_used: variants.length,
-        excluded: 0,
-        reasons: {},
-        excluded_categories: [],
-        items: [],
-        note: "在线版使用静态快照里的套餐变体（构建时已逐款核对营养与真实试算价）。",
-      };
+      var report = m.comboReport || null;
+      if (!report) {
+        out[meal] = {
+          available: false, source: "snapshot", checked: 0, combos_found: 0,
+          variants_used: 0, excluded: 0, reasons: {}, excluded_categories: [],
+          items: [],
+          note: "快照里没有套餐统计，请重新运行 scripts/export_demo_snapshot.py。",
+        };
+        return;
+      }
+      out[meal] = report;
     });
     return out;
   }
