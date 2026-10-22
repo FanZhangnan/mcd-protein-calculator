@@ -12,11 +12,11 @@
   }
  },
  "source": "live",
- "built_at": "2026-10-22T20:03:25+08:00",
+ "built_at": "2026-10-22T22:36:59+08:00",
  "store_name": "麦当劳珠海屏湾一路餐厅",
  "meals": {
   "breakfast": {
-   "checked": 102,
+   "checked": 101,
    "combo_count": 45,
    "no_rounds": [
     "1088",
@@ -26,7 +26,6 @@
     "3505",
     "3755",
     "3757",
-    "4437",
     "4825",
     "4989",
     "5022",
@@ -116,10 +115,10 @@
      },
      "status": "ok",
      "quoted_price": 17.5,
-     "quoted_at": "2026-10-22 20:05:26",
+     "quoted_at": "2026-10-22 22:39:34",
      "x2_status": "ok",
      "quoted_price_2": 35.0,
-     "x2_at": "2026-10-22 20:05:30"
+     "x2_at": "2026-10-22 22:39:39"
     },
     {
      "combo_code": "9900005437",
@@ -160,10 +159,10 @@
      },
      "status": "ok",
      "quoted_price": 12.5,
-     "quoted_at": "2026-10-22 20:05:28",
+     "quoted_at": "2026-10-22 22:39:35",
      "x2_status": "ok",
      "quoted_price_2": 25.0,
-     "x2_at": "2026-10-22 20:05:32"
+     "x2_at": "2026-10-22 22:39:40"
     },
     {
      "combo_code": "9900005470",
@@ -213,10 +212,10 @@
      },
      "status": "ok",
      "quoted_price": 15.5,
-     "quoted_at": "2026-10-22 20:05:25",
+     "quoted_at": "2026-10-22 22:39:27",
      "x2_status": "ok",
      "quoted_price_2": 31.0,
-     "x2_at": "2026-10-22 20:05:32"
+     "x2_at": "2026-10-22 22:39:32"
     },
     {
      "combo_code": "9900005470",
@@ -276,10 +275,10 @@
      },
      "status": "ok",
      "quoted_price": 15.5,
-     "quoted_at": "2026-10-22 20:05:26",
+     "quoted_at": "2026-10-22 22:39:26",
      "x2_status": "ok",
      "quoted_price_2": 31.0,
-     "x2_at": "2026-10-22 20:05:32"
+     "x2_at": "2026-10-22 22:39:33"
     },
     {
      "combo_code": "9900013221",
@@ -338,10 +337,10 @@
      },
      "status": "ok",
      "quoted_price": 14.9,
-     "quoted_at": "2026-10-22 20:05:25",
+     "quoted_at": "2026-10-22 22:39:31",
      "x2_status": "ok",
      "quoted_price_2": 29.8,
-     "x2_at": "2026-10-22 20:05:37"
+     "x2_at": "2026-10-22 22:39:37"
     }
    ],
    "excluded": [
@@ -789,7 +788,7 @@
    "single_round_excluded": []
   },
   "lunch": {
-   "checked": 96,
+   "checked": 97,
    "combo_count": 45,
    "no_rounds": [
     "1100",
@@ -805,7 +804,6 @@
     "3505",
     "3755",
     "3757",
-    "4437",
     "4648",
     "4810",
     "506189",
@@ -815,6 +813,8 @@
     "507411",
     "510479",
     "510488",
+    "511781",
+    "511782",
     "514782",
     "514851",
     "515280",
@@ -886,10 +886,10 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 20:07:32",
+     "quoted_at": "2026-10-22 22:42:14",
      "x2_status": "ok",
      "quoted_price_2": 70.0,
-     "x2_at": "2026-10-22 20:07:38"
+     "x2_at": "2026-10-22 22:42:22"
     },
     {
      "combo_code": "9900004064",
@@ -949,10 +949,10 @@
      },
      "status": "ok",
      "quoted_price": 36.0,
-     "quoted_at": "2026-10-22 20:07:31",
+     "quoted_at": "2026-10-22 22:42:16",
      "x2_status": "ok",
      "quoted_price_2": 72.0,
-     "x2_at": "2026-10-22 20:07:40"
+     "x2_at": "2026-10-22 22:42:26"
     },
     {
      "combo_code": "9900004066",
@@ -1002,10 +1002,10 @@
      },
      "status": "ok",
      "quoted_price": 73.0,
-     "quoted_at": "2026-10-22 20:07:30",
+     "quoted_at": "2026-10-22 22:42:19",
      "x2_status": "ok",
      "quoted_price_2": 146.0,
-     "x2_at": "2026-10-22 20:07:35"
+     "x2_at": "2026-10-22 22:42:26"
     },
     {
      "combo_code": "9900004066",
@@ -1065,10 +1065,10 @@
      },
      "status": "ok",
      "quoted_price": 73.0,
-     "quoted_at": "2026-10-22 20:07:31",
+     "quoted_at": "2026-10-22 22:42:15",
      "x2_status": "ok",
      "quoted_price_2": 146.0,
-     "x2_at": "2026-10-22 20:07:36"
+     "x2_at": "2026-10-22 22:42:23"
     },
     {
      "combo_code": "9900004835",
@@ -1118,10 +1118,10 @@
      },
      "status": "ok",
      "quoted_price": 25.5,
-     "quoted_at": "2026-10-22 20:07:30",
+     "quoted_at": "2026-10-22 22:42:13",
      "x2_status": "ok",
      "quoted_price_2": 51.0,
-     "x2_at": "2026-10-22 20:07:36"
+     "x2_at": "2026-10-22 22:42:19"
     },
     {
      "combo_code": "9900004835",
@@ -1181,10 +1181,10 @@
      },
      "status": "ok",
      "quoted_price": 26.5,
-     "quoted_at": "2026-10-22 20:07:30",
+     "quoted_at": "2026-10-22 22:42:16",
      "x2_status": "ok",
      "quoted_price_2": 53.0,
-     "x2_at": "2026-10-22 20:07:35"
+     "x2_at": "2026-10-22 22:42:26"
     },
     {
      "combo_code": "9900005411",
@@ -1234,10 +1234,10 @@
      },
      "status": "ok",
      "quoted_price": 37.5,
-     "quoted_at": "2026-10-22 20:07:42",
+     "quoted_at": "2026-10-22 22:42:25",
      "x2_status": "ok",
      "quoted_price_2": 75.0,
-     "x2_at": "2026-10-22 20:07:50"
+     "x2_at": "2026-10-22 22:42:30"
     },
     {
      "combo_code": "9900005411",
@@ -1297,10 +1297,10 @@
      },
      "status": "ok",
      "quoted_price": 38.5,
-     "quoted_at": "2026-10-22 20:07:40",
+     "quoted_at": "2026-10-22 22:42:28",
      "x2_status": "ok",
      "quoted_price_2": 77.0,
-     "x2_at": "2026-10-22 20:07:45"
+     "x2_at": "2026-10-22 22:42:38"
     },
     {
      "combo_code": "9900005413",
@@ -1350,10 +1350,10 @@
      },
      "status": "ok",
      "quoted_price": 36.0,
-     "quoted_at": "2026-10-22 20:07:41",
+     "quoted_at": "2026-10-22 22:42:29",
      "x2_status": "ok",
      "quoted_price_2": 72.0,
-     "x2_at": "2026-10-22 20:07:46"
+     "x2_at": "2026-10-22 22:42:40"
     },
     {
      "combo_code": "9900005413",
@@ -1413,10 +1413,242 @@
      },
      "status": "ok",
      "quoted_price": 37.0,
-     "quoted_at": "2026-10-22 20:07:42",
+     "quoted_at": "2026-10-22 22:42:33",
      "x2_status": "ok",
      "quoted_price_2": 74.0,
-     "x2_at": "2026-10-22 20:07:47"
+     "x2_at": "2026-10-22 22:42:39"
+    },
+    {
+     "combo_code": "9900005428",
+     "combo_name": "培根安格斯厚牛堡三件套",
+     "variant": "default",
+     "menu_price": 45.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "培根安格斯厚牛堡",
+       "role": "主食",
+       "code": "511781",
+       "name": "培根安格斯厚牛堡",
+       "diff_price": 0.0,
+       "quantity": 1
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "小食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0,
+       "quantity": 1
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0,
+       "quantity": 1
+      }
+     ],
+     "replacements": [],
+     "round_list": [],
+     "reference_price": 45.5,
+     "nutrition": {
+      "energyKj": 4785.0,
+      "energyKcal": 1143.0,
+      "protein": 38.0,
+      "fat": 56.0,
+      "carbohydrate": 117.0,
+      "sodium": 1202.0,
+      "calcium": 189.0
+     },
+     "status": "ok",
+     "quoted_price": 45.5,
+     "quoted_at": "2026-10-22 22:42:37",
+     "x2_status": "ok",
+     "quoted_price_2": 91.0,
+     "x2_at": "2026-10-22 22:42:43"
+    },
+    {
+     "combo_code": "9900005428",
+     "combo_name": "培根安格斯厚牛堡三件套",
+     "variant": "muscle",
+     "menu_price": 45.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "培根安格斯厚牛堡",
+       "role": "主食",
+       "code": "511781",
+       "name": "培根安格斯厚牛堡",
+       "diff_price": 0.0,
+       "quantity": 1
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "小食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0,
+       "quantity": 1
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 1.0,
+       "quantity": 1
+      }
+     ],
+     "replacements": [],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "3755",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 46.5,
+     "nutrition": {
+      "energyKj": 4710.0,
+      "energyKcal": 1125.0,
+      "protein": 45.0,
+      "fat": 63.0,
+      "carbohydrate": 91.0,
+      "sodium": 1275.0,
+      "calcium": 410.0
+     },
+     "status": "ok",
+     "quoted_price": 46.5,
+     "quoted_at": "2026-10-22 22:42:31",
+     "x2_status": "ok",
+     "quoted_price_2": 93.0,
+     "x2_at": "2026-10-22 22:42:37"
+    },
+    {
+     "combo_code": "9900005430",
+     "combo_name": "芝士安格斯厚牛堡三件套",
+     "variant": "default",
+     "menu_price": 42.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "芝士安格斯厚牛堡",
+       "role": "主食",
+       "code": "511782",
+       "name": "芝士安格斯厚牛堡",
+       "diff_price": 0.0,
+       "quantity": 1
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "小食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0,
+       "quantity": 1
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3050",
+       "name": "可乐中杯",
+       "diff_price": 0.0,
+       "quantity": 1
+      }
+     ],
+     "replacements": [],
+     "round_list": [],
+     "reference_price": 42.5,
+     "nutrition": {
+      "energyKj": 4740.0,
+      "energyKcal": 1132.0,
+      "protein": 36.0,
+      "fat": 56.0,
+      "carbohydrate": 117.0,
+      "sodium": 1062.0,
+      "calcium": 178.0
+     },
+     "status": "ok",
+     "quoted_price": 42.5,
+     "quoted_at": "2026-10-22 22:42:38",
+     "x2_status": "ok",
+     "quoted_price_2": 85.0,
+     "x2_at": "2026-10-22 22:42:45"
+    },
+    {
+     "combo_code": "9900005430",
+     "combo_name": "芝士安格斯厚牛堡三件套",
+     "variant": "muscle",
+     "menu_price": 42.5,
+     "rounds": [
+      {
+       "round": "1",
+       "round_name": "芝士安格斯厚牛堡",
+       "role": "主食",
+       "code": "511782",
+       "name": "芝士安格斯厚牛堡",
+       "diff_price": 0.0,
+       "quantity": 1
+      },
+      {
+       "round": "2",
+       "round_name": "选择套餐内小食",
+       "role": "小食",
+       "code": "4810",
+       "name": "中薯条",
+       "diff_price": 0.0,
+       "quantity": 1
+      },
+      {
+       "round": "3",
+       "round_name": "选择套餐内饮料",
+       "role": "饮品",
+       "code": "3755",
+       "name": "纯牛奶",
+       "diff_price": 1.0,
+       "quantity": 1
+      }
+     ],
+     "replacements": [],
+     "round_list": [
+      {
+       "round": "3",
+       "comboItemList": [
+        {
+         "code": "3755",
+         "quantity": 1
+        }
+       ]
+      }
+     ],
+     "reference_price": 43.5,
+     "nutrition": {
+      "energyKj": 4665.0,
+      "energyKcal": 1114.0,
+      "protein": 43.0,
+      "fat": 63.0,
+      "carbohydrate": 91.0,
+      "sodium": 1135.0,
+      "calcium": 399.0
+     },
+     "status": "ok",
+     "quoted_price": 43.5,
+     "quoted_at": "2026-10-22 22:42:45",
+     "x2_status": "ok",
+     "quoted_price_2": 87.0,
+     "x2_at": "2026-10-22 22:42:49"
     },
     {
      "combo_code": "9900005449",
@@ -1466,10 +1698,10 @@
      },
      "status": "ok",
      "quoted_price": 26.0,
-     "quoted_at": "2026-10-22 20:07:45",
+     "quoted_at": "2026-10-22 22:42:48",
      "x2_status": "ok",
      "quoted_price_2": 52.0,
-     "x2_at": "2026-10-22 20:07:50"
+     "x2_at": "2026-10-22 22:42:55"
     },
     {
      "combo_code": "9900005449",
@@ -1529,10 +1761,10 @@
      },
      "status": "ok",
      "quoted_price": 27.0,
-     "quoted_at": "2026-10-22 20:07:46",
+     "quoted_at": "2026-10-22 22:42:45",
      "x2_status": "ok",
      "quoted_price_2": 54.0,
-     "x2_at": "2026-10-22 20:07:53"
+     "x2_at": "2026-10-22 22:42:52"
     },
     {
      "combo_code": "9900005453",
@@ -1582,10 +1814,10 @@
      },
      "status": "ok",
      "quoted_price": 27.5,
-     "quoted_at": "2026-10-22 20:07:52",
+     "quoted_at": "2026-10-22 22:42:47",
      "x2_status": "ok",
      "quoted_price_2": 55.0,
-     "x2_at": "2026-10-22 20:07:58"
+     "x2_at": "2026-10-22 22:43:04"
     },
     {
      "combo_code": "9900005453",
@@ -1645,10 +1877,10 @@
      },
      "status": "ok",
      "quoted_price": 28.5,
-     "quoted_at": "2026-10-22 20:07:51",
+     "quoted_at": "2026-10-22 22:42:50",
      "x2_status": "ok",
      "quoted_price_2": 57.0,
-     "x2_at": "2026-10-22 20:07:56"
+     "x2_at": "2026-10-22 22:42:58"
     },
     {
      "combo_code": "9900005456",
@@ -1698,10 +1930,10 @@
      },
      "status": "ok",
      "quoted_price": 34.0,
-     "quoted_at": "2026-10-22 20:07:53",
+     "quoted_at": "2026-10-22 22:42:51",
      "x2_status": "ok",
      "quoted_price_2": 68.0,
-     "x2_at": "2026-10-22 20:07:58"
+     "x2_at": "2026-10-22 22:42:58"
     },
     {
      "combo_code": "9900005456",
@@ -1761,10 +1993,10 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 20:07:56",
+     "quoted_at": "2026-10-22 22:42:56",
      "x2_status": "ok",
      "quoted_price_2": 70.0,
-     "x2_at": "2026-10-22 20:08:03"
+     "x2_at": "2026-10-22 22:43:02"
     },
     {
      "combo_code": "9900005460",
@@ -1814,10 +2046,10 @@
      },
      "status": "ok",
      "quoted_price": 33.0,
-     "quoted_at": "2026-10-22 20:07:56",
+     "quoted_at": "2026-10-22 22:42:57",
      "x2_status": "ok",
      "quoted_price_2": 66.0,
-     "x2_at": "2026-10-22 20:08:02"
+     "x2_at": "2026-10-22 22:43:03"
     },
     {
      "combo_code": "9900005460",
@@ -1877,10 +2109,10 @@
      },
      "status": "ok",
      "quoted_price": 34.0,
-     "quoted_at": "2026-10-22 20:07:59",
+     "quoted_at": "2026-10-22 22:43:02",
      "x2_status": "ok",
      "quoted_price_2": 68.0,
-     "x2_at": "2026-10-22 20:08:05"
+     "x2_at": "2026-10-22 22:43:10"
     },
     {
      "combo_code": "9900005462",
@@ -1930,10 +2162,10 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 20:08:01",
+     "quoted_at": "2026-10-22 22:43:06",
      "x2_status": "ok",
      "quoted_price_2": 70.0,
-     "x2_at": "2026-10-22 20:08:10"
+     "x2_at": "2026-10-22 22:43:12"
     },
     {
      "combo_code": "9900005462",
@@ -1993,10 +2225,10 @@
      },
      "status": "ok",
      "quoted_price": 36.0,
-     "quoted_at": "2026-10-22 20:08:02",
+     "quoted_at": "2026-10-22 22:43:04",
      "x2_status": "ok",
      "quoted_price_2": 72.0,
-     "x2_at": "2026-10-22 20:08:08"
+     "x2_at": "2026-10-22 22:43:13"
     },
     {
      "combo_code": "9900005464",
@@ -2046,10 +2278,10 @@
      },
      "status": "ok",
      "quoted_price": 33.5,
-     "quoted_at": "2026-10-22 20:08:04",
+     "quoted_at": "2026-10-22 22:43:08",
      "x2_status": "ok",
      "quoted_price_2": 67.0,
-     "x2_at": "2026-10-22 20:08:11"
+     "x2_at": "2026-10-22 22:43:21"
     },
     {
      "combo_code": "9900005464",
@@ -2109,10 +2341,10 @@
      },
      "status": "ok",
      "quoted_price": 34.5,
-     "quoted_at": "2026-10-22 20:08:09",
+     "quoted_at": "2026-10-22 22:43:10",
      "x2_status": "ok",
      "quoted_price_2": 69.0,
-     "x2_at": "2026-10-22 20:08:15"
+     "x2_at": "2026-10-22 22:43:17"
     },
     {
      "combo_code": "9900005466",
@@ -2162,10 +2394,10 @@
      },
      "status": "ok",
      "quoted_price": 37.5,
-     "quoted_at": "2026-10-22 20:08:09",
+     "quoted_at": "2026-10-22 22:43:15",
      "x2_status": "ok",
      "quoted_price_2": 75.0,
-     "x2_at": "2026-10-22 20:08:15"
+     "x2_at": "2026-10-22 22:43:23"
     },
     {
      "combo_code": "9900005466",
@@ -2225,10 +2457,10 @@
      },
      "status": "ok",
      "quoted_price": 38.5,
-     "quoted_at": "2026-10-22 20:08:11",
+     "quoted_at": "2026-10-22 22:43:17",
      "x2_status": "ok",
      "quoted_price_2": 77.0,
-     "x2_at": "2026-10-22 20:08:15"
+     "x2_at": "2026-10-22 22:43:23"
     },
     {
      "combo_code": "9900005468",
@@ -2278,10 +2510,10 @@
      },
      "status": "ok",
      "quoted_price": 35.5,
-     "quoted_at": "2026-10-22 20:08:12",
+     "quoted_at": "2026-10-22 22:43:21",
      "x2_status": "ok",
      "quoted_price_2": 71.0,
-     "x2_at": "2026-10-22 20:08:18"
+     "x2_at": "2026-10-22 22:43:35"
     },
     {
      "combo_code": "9900005468",
@@ -2341,10 +2573,10 @@
      },
      "status": "ok",
      "quoted_price": 36.5,
-     "quoted_at": "2026-10-22 20:08:15",
+     "quoted_at": "2026-10-22 22:43:22",
      "x2_status": "ok",
      "quoted_price_2": 73.0,
-     "x2_at": "2026-10-22 20:08:20"
+     "x2_at": "2026-10-22 22:43:30"
     },
     {
      "combo_code": "9900006332",
@@ -2385,126 +2617,10 @@
      },
      "status": "ok",
      "quoted_price": 49.9,
-     "quoted_at": "2026-10-22 20:08:17",
+     "quoted_at": "2026-10-22 22:43:25",
      "x2_status": "ok",
      "quoted_price_2": 99.8,
-     "x2_at": "2026-10-22 20:08:23"
-    },
-    {
-     "combo_code": "9900009245",
-     "combo_name": "牛气满满套餐",
-     "variant": "default",
-     "menu_price": 34.0,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "培根蔬萃双层牛堡",
-       "role": "主食",
-       "code": "1106",
-       "name": "培根蔬萃双层牛堡",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "小杯玉米杯",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "选择饮料",
-       "role": "饮品",
-       "code": "3071",
-       "name": "无糖可口可乐中杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [],
-     "reference_price": 34.0,
-     "nutrition": {
-      "energyKj": 2073.0,
-      "energyKcal": 495.0,
-      "protein": 26.0,
-      "fat": 24.0,
-      "carbohydrate": 42.0,
-      "sodium": 764.0,
-      "calcium": 79.0
-     },
-     "status": "ok",
-     "quoted_price": 34.0,
-     "quoted_at": "2026-10-22 20:08:21",
-     "x2_status": "ok",
-     "quoted_price_2": 68.0,
-     "x2_at": "2026-10-22 20:08:27"
-    },
-    {
-     "combo_code": "9900009245",
-     "combo_name": "牛气满满套餐",
-     "variant": "muscle",
-     "menu_price": 34.0,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "培根蔬萃双层牛堡",
-       "role": "主食",
-       "code": "1106",
-       "name": "培根蔬萃双层牛堡",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "小杯玉米杯",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "选择饮料",
-       "role": "饮品",
-       "code": "3757",
-       "name": "纯悦",
-       "diff_price": -2.5,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [
-      {
-       "round": "3",
-       "comboItemList": [
-        {
-         "code": "3757",
-         "quantity": 1
-        }
-       ]
-      }
-     ],
-     "reference_price": 31.5,
-     "nutrition": {
-      "energyKj": 2073.0,
-      "energyKcal": 495.0,
-      "protein": 26.0,
-      "fat": 24.0,
-      "carbohydrate": 41.0,
-      "sodium": 729.0,
-      "calcium": 79.0
-     },
-     "status": "ok",
-     "quoted_price": 31.5,
-     "quoted_at": "2026-10-22 20:08:20",
-     "x2_status": "ok",
-     "quoted_price_2": 63.0,
-     "x2_at": "2026-10-22 20:08:29"
+     "x2_at": "2026-10-22 22:43:32"
     },
     {
      "combo_code": "9900011123",
@@ -2554,10 +2670,10 @@
      },
      "status": "ok",
      "quoted_price": 24.0,
-     "quoted_at": "2026-10-22 20:08:22",
+     "quoted_at": "2026-10-22 22:43:30",
      "x2_status": "ok",
      "quoted_price_2": 48.0,
-     "x2_at": "2026-10-22 20:08:31"
+     "x2_at": "2026-10-22 22:43:37"
     },
     {
      "combo_code": "9900011123",
@@ -2617,10 +2733,10 @@
      },
      "status": "ok",
      "quoted_price": 33.0,
-     "quoted_at": "2026-10-22 20:08:23",
+     "quoted_at": "2026-10-22 22:43:30",
      "x2_status": "ok",
      "quoted_price_2": 66.0,
-     "x2_at": "2026-10-22 20:08:29"
+     "x2_at": "2026-10-22 22:43:38"
     },
     {
      "combo_code": "9900011126",
@@ -2670,10 +2786,10 @@
      },
      "status": "ok",
      "quoted_price": 20.5,
-     "quoted_at": "2026-10-22 20:08:25",
+     "quoted_at": "2026-10-22 22:43:30",
      "x2_status": "ok",
      "quoted_price_2": 41.0,
-     "x2_at": "2026-10-22 20:08:29"
+     "x2_at": "2026-10-22 22:43:36"
     },
     {
      "combo_code": "9900011126",
@@ -2733,10 +2849,10 @@
      },
      "status": "ok",
      "quoted_price": 29.5,
-     "quoted_at": "2026-10-22 20:08:31",
+     "quoted_at": "2026-10-22 22:43:39",
      "x2_status": "ok",
      "quoted_price_2": 59.0,
-     "x2_at": "2026-10-22 20:08:37"
+     "x2_at": "2026-10-22 22:43:50"
     },
     {
      "combo_code": "9900013304",
@@ -2795,10 +2911,10 @@
      },
      "status": "ok",
      "quoted_price": 14.9,
-     "quoted_at": "2026-10-22 20:08:33",
+     "quoted_at": "2026-10-22 22:43:40",
      "x2_status": "ok",
      "quoted_price_2": 29.8,
-     "x2_at": "2026-10-22 20:08:38"
+     "x2_at": "2026-10-22 22:43:46"
     },
     {
      "combo_code": "9900015568",
@@ -2873,10 +2989,10 @@
      },
      "status": "ok",
      "quoted_price": 13.9,
-     "quoted_at": "2026-10-22 20:08:35",
+     "quoted_at": "2026-10-22 22:43:46",
      "x2_status": "ok",
      "quoted_price_2": 27.8,
-     "x2_at": "2026-10-22 20:08:41"
+     "x2_at": "2026-10-22 22:43:53"
     },
     {
      "combo_code": "9900015730",
@@ -2917,10 +3033,10 @@
      },
      "status": "ok",
      "quoted_price": 40.3,
-     "quoted_at": "2026-10-22 20:08:35",
+     "quoted_at": "2026-10-22 22:43:41",
      "x2_status": "ok",
      "quoted_price_2": 80.6,
-     "x2_at": "2026-10-22 20:08:40"
+     "x2_at": "2026-10-22 22:44:01"
     },
     {
      "combo_code": "9900015730",
@@ -2971,13 +3087,27 @@
      },
      "status": "ok",
      "quoted_price": 45.3,
-     "quoted_at": "2026-10-22 20:08:36",
+     "quoted_at": "2026-10-22 22:43:44",
      "x2_status": "ok",
      "quoted_price_2": 90.6,
-     "x2_at": "2026-10-22 20:08:41"
+     "x2_at": "2026-10-22 22:43:55"
     }
    ],
    "excluded": [
+    {
+     "combo_code": "9900000881",
+     "combo_name": "培根安格斯厚牛堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 37.0
+    },
+    {
+     "combo_code": "9900000882",
+     "combo_name": "芝士安格斯厚牛堡四件套",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 37.0
+    },
     {
      "combo_code": "9900000885",
      "combo_name": "培根蔬萃双层牛堡四件套",
@@ -3131,118 +3261,11 @@
      ]
     },
     {
-     "combo_code": "9900009242",
-     "combo_name": "“苹板”支撑Pro套餐",
-     "variant": "default",
-     "menu_price": 39.5,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "新升级板烧鸡腿堡",
-       "role": "主食",
-       "code": "1406",
-       "name": "板烧鸡腿堡",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "小杯玉米杯",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "苹果片一袋(60g)",
-       "role": "小食",
-       "code": "6102",
-       "name": "苹果片一袋(60g)",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "4",
-       "round_name": "选择饮料",
-       "role": "饮品",
-       "code": "3071",
-       "name": "无糖可口可乐中杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [],
-     "reference_price": 39.5,
-     "reason": "nutrition_unknown",
-     "detail": "缺官方营养：苹果片一袋(60g)",
-     "missing": [
-      "苹果片一袋(60g)"
-     ]
-    },
-    {
-     "combo_code": "9900009242",
-     "combo_name": "“苹板”支撑Pro套餐",
-     "variant": "muscle",
-     "menu_price": 39.5,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "新升级板烧鸡腿堡",
-       "role": "主食",
-       "code": "1406",
-       "name": "板烧鸡腿堡",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "小杯玉米杯",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "苹果片一袋(60g)",
-       "role": "小食",
-       "code": "6102",
-       "name": "苹果片一袋(60g)",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "4",
-       "round_name": "选择饮料",
-       "role": "饮品",
-       "code": "3757",
-       "name": "纯悦",
-       "diff_price": -2.5,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [
-      {
-       "round": "4",
-       "comboItemList": [
-        {
-         "code": "3757",
-         "quantity": 1
-        }
-       ]
-      }
-     ],
-     "reference_price": 37.0,
-     "reason": "nutrition_unknown",
-     "detail": "缺官方营养：苹果片一袋(60g)",
-     "missing": [
-      "苹果片一袋(60g)"
-     ]
+     "combo_code": "9900006957",
+     "combo_name": "安格斯厚牛堡四件套随心选",
+     "reason": "membership",
+     "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
+     "declared_price": 37.0
     },
     {
      "combo_code": "9900010110",
@@ -3257,120 +3280,6 @@
      "reason": "membership",
      "detail": "标签「麦金卡」；优惠「随单购麦金卡优惠」；需随单购买权益卡",
      "declared_price": 49.9
-    },
-    {
-     "combo_code": "9900011121",
-     "combo_name": "“苹”水相“鱼”套餐",
-     "variant": "default",
-     "menu_price": 36.0,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "麦香鱼",
-       "role": "主食",
-       "code": "1600",
-       "name": "麦香鱼",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "小杯玉米杯",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "苹果片一袋(60g)",
-       "role": "小食",
-       "code": "6102",
-       "name": "苹果片一袋(60g)",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "4",
-       "round_name": "选择饮料",
-       "role": "饮品",
-       "code": "3505",
-       "name": "锡兰红茶",
-       "diff_price": 0.0,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [],
-     "reference_price": 36.0,
-     "reason": "nutrition_unknown",
-     "detail": "缺官方营养：苹果片一袋(60g)",
-     "missing": [
-      "苹果片一袋(60g)"
-     ]
-    },
-    {
-     "combo_code": "9900011121",
-     "combo_name": "“苹”水相“鱼”套餐",
-     "variant": "muscle",
-     "menu_price": 36.0,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "麦香鱼",
-       "role": "主食",
-       "code": "1600",
-       "name": "麦香鱼",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "小杯玉米杯",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "苹果片一袋(60g)",
-       "role": "小食",
-       "code": "6102",
-       "name": "苹果片一袋(60g)",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "4",
-       "round_name": "选择饮料",
-       "role": "饮品",
-       "code": "507411",
-       "name": "麦咖啡™冰美式中杯",
-       "diff_price": 7.5,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [
-      {
-       "round": "4",
-       "comboItemList": [
-        {
-         "code": "507411",
-         "quantity": 1
-        }
-       ]
-      }
-     ],
-     "reference_price": 43.5,
-     "reason": "nutrition_unknown",
-     "detail": "缺官方营养：苹果片一袋(60g)",
-     "missing": [
-      "苹果片一袋(60g)"
-     ]
     },
     {
      "combo_code": "9900011128",
@@ -3583,265 +3492,6 @@
      ]
     },
     {
-     "combo_code": "9900016055",
-     "combo_name": "开心亲子双人餐",
-     "variant": "default",
-     "menu_price": 59.5,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "板烧鸡腿堡",
-       "role": "主食",
-       "code": "1406",
-       "name": "板烧鸡腿堡",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "4麦乐鸡",
-       "role": "小食",
-       "code": "2846",
-       "name": "麦乐鸡-4块",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "开心乐园餐小玉米",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "4",
-       "round_name": "开心乐园餐苹果片",
-       "role": "小食",
-       "code": "6102",
-       "name": "苹果片一袋(60g)",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "5",
-       "round_name": "选择套餐内小食",
-       "role": "小食",
-       "code": "4810",
-       "name": "中薯条",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "6",
-       "round_name": "选择开心乐园餐饮料",
-       "role": "饮品",
-       "code": "3755",
-       "name": "纯牛奶",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "7",
-       "round_name": "选择套餐内饮料",
-       "role": "饮品",
-       "code": "3050",
-       "name": "可乐中杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "8",
-       "round_name": "海绵宝宝×航海王系列玩具",
-       "role": "主食",
-       "code": "521991",
-       "name": "海绵宝宝×航海王系列玩具",
-       "diff_price": 0.0,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [],
-     "reference_price": 59.5,
-     "reason": "nutrition_unknown",
-     "detail": "缺官方营养：苹果片一袋(60g)、海绵宝宝×航海王系列玩具",
-     "missing": [
-      "苹果片一袋(60g)",
-      "海绵宝宝×航海王系列玩具"
-     ]
-    },
-    {
-     "combo_code": "9900016055",
-     "combo_name": "开心亲子双人餐",
-     "variant": "muscle",
-     "menu_price": 59.5,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "板烧鸡腿堡",
-       "role": "主食",
-       "code": "1406",
-       "name": "板烧鸡腿堡",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "4麦乐鸡",
-       "role": "小食",
-       "code": "2846",
-       "name": "麦乐鸡-4块",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "开心乐园餐小玉米",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "4",
-       "round_name": "开心乐园餐苹果片",
-       "role": "小食",
-       "code": "6102",
-       "name": "苹果片一袋(60g)",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "5",
-       "round_name": "选择套餐内小食",
-       "role": "小食",
-       "code": "4820",
-       "name": "大薯条",
-       "diff_price": 1.5,
-       "quantity": 1
-      },
-      {
-       "round": "6",
-       "round_name": "选择开心乐园餐饮料",
-       "role": "饮品",
-       "code": "3755",
-       "name": "纯牛奶",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "7",
-       "round_name": "选择套餐内饮料",
-       "role": "饮品",
-       "code": "3755",
-       "name": "纯牛奶",
-       "diff_price": 1.0,
-       "quantity": 1
-      },
-      {
-       "round": "8",
-       "round_name": "海绵宝宝×航海王系列玩具",
-       "role": "主食",
-       "code": "521991",
-       "name": "海绵宝宝×航海王系列玩具",
-       "diff_price": 0.0,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [
-      {
-       "round": "5",
-       "comboItemList": [
-        {
-         "code": "4820",
-         "quantity": 1
-        }
-       ]
-      },
-      {
-       "round": "7",
-       "comboItemList": [
-        {
-         "code": "3755",
-         "quantity": 1
-        }
-       ]
-      }
-     ],
-     "reference_price": 62.0,
-     "reason": "nutrition_unknown",
-     "detail": "缺官方营养：苹果片一袋(60g)、海绵宝宝×航海王系列玩具",
-     "missing": [
-      "苹果片一袋(60g)",
-      "海绵宝宝×航海王系列玩具"
-     ]
-    },
-    {
-     "combo_code": "9900016056",
-     "combo_name": "麦乐鸡开心乐园餐",
-     "variant": "default",
-     "menu_price": 25.0,
-     "rounds": [
-      {
-       "round": "1",
-       "round_name": "麦乐鸡-4块",
-       "role": "小食",
-       "code": "2846",
-       "name": "麦乐鸡-4块",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "2",
-       "round_name": "开心乐园餐苹果片",
-       "role": "小食",
-       "code": "6102",
-       "name": "苹果片一袋(60g)",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "3",
-       "round_name": "开心乐园餐小玉米",
-       "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "4",
-       "round_name": "选择开心乐园餐饮料",
-       "role": "饮品",
-       "code": "3755",
-       "name": "纯牛奶",
-       "diff_price": 0.0,
-       "quantity": 1
-      },
-      {
-       "round": "5",
-       "round_name": "海绵宝宝×航海王系列玩具",
-       "role": "主食",
-       "code": "521991",
-       "name": "海绵宝宝×航海王系列玩具",
-       "diff_price": 0.0,
-       "quantity": 1
-      }
-     ],
-     "replacements": [],
-     "round_list": [],
-     "reference_price": 25.0,
-     "reason": "nutrition_unknown",
-     "detail": "缺官方营养：苹果片一袋(60g)、海绵宝宝×航海王系列玩具",
-     "missing": [
-      "苹果片一袋(60g)",
-      "海绵宝宝×航海王系列玩具"
-     ]
-    },
-    {
      "combo_code": "9900016057",
      "combo_name": "汉堡开心乐园餐",
      "variant": "default",
@@ -3869,8 +3519,8 @@
        "round": "3",
        "round_name": "选择开心乐园餐小食",
        "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
        "diff_price": 0.0,
        "quantity": 1
       },
@@ -3893,30 +3543,13 @@
        "quantity": 1
       }
      ],
-     "replacements": [
-      {
-       "round": "3",
-       "round_name": "选择开心乐园餐小食",
-       "from": "苹果片一袋(60g)",
-       "to": "小杯玉米杯",
-       "reason": "原选项暂无官方营养"
-      }
-     ],
-     "round_list": [
-      {
-       "round": "3",
-       "comboItemList": [
-        {
-         "code": "4437",
-         "quantity": 1
-        }
-       ]
-      }
-     ],
+     "replacements": [],
+     "round_list": [],
      "reference_price": 23.5,
      "reason": "nutrition_unknown",
-     "detail": "缺官方营养：海绵宝宝×航海王系列玩具",
+     "detail": "缺官方营养：苹果片一袋(60g)、海绵宝宝×航海王系列玩具",
      "missing": [
+      "苹果片一袋(60g)",
       "海绵宝宝×航海王系列玩具"
      ]
     },
@@ -3948,8 +3581,8 @@
        "round": "3",
        "round_name": "选择开心乐园餐小食",
        "role": "小食",
-       "code": "4437",
-       "name": "小杯玉米杯",
+       "code": "6102",
+       "name": "苹果片一袋(60g)",
        "diff_price": 0.0,
        "quantity": 1
       },
@@ -3972,31 +3605,14 @@
        "quantity": 1
       }
      ],
-     "replacements": [
-      {
-       "round": "3",
-       "round_name": "选择开心乐园餐小食",
-       "from": "苹果片一袋(60g)",
-       "to": "小杯玉米杯",
-       "reason": "原选项暂无官方营养"
-      }
-     ],
-     "round_list": [
-      {
-       "round": "3",
-       "comboItemList": [
-        {
-         "code": "4437",
-         "quantity": 1
-        }
-       ]
-      }
-     ],
+     "replacements": [],
+     "round_list": [],
      "reference_price": 24.0,
      "reason": "nutrition_unknown",
-     "detail": "缺官方营养：鱼排堡、海绵宝宝×航海王系列玩具",
+     "detail": "缺官方营养：鱼排堡、苹果片一袋(60g)、海绵宝宝×航海王系列玩具",
      "missing": [
       "鱼排堡",
+      "苹果片一袋(60g)",
       "海绵宝宝×航海王系列玩具"
      ]
     },
@@ -4358,18 +3974,18 @@
  "stats": {
   "sku": 198,
   "combos": 90,
-  "variants": 42,
-  "excluded": 74,
+  "variants": 44,
+  "excluded": 70,
   "reasons": {
-   "membership": 53,
-   "nutrition_unknown": 21
+   "membership": 56,
+   "nutrition_unknown": 14
   },
   "x2": {
    "breakfast": {
     "ok": 5
    },
    "lunch": {
-    "ok": 37
+    "ok": 39
    }
   }
  }
