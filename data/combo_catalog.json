@@ -12,11 +12,11 @@
   }
  },
  "source": "live",
- "built_at": "2026-10-22T08:36:11+08:00",
+ "built_at": "2026-10-22T10:10:22+08:00",
  "store_name": "麦当劳珠海屏湾一路餐厅",
  "meals": {
   "breakfast": {
-   "checked": 96,
+   "checked": 95,
    "combo_count": 41,
    "no_rounds": [
     "1088",
@@ -40,11 +40,8 @@
     "507409",
     "507411",
     "510041",
-    "510427",
     "510479",
     "510488",
-    "513112",
-    "513113",
     "513606",
     "514700",
     "514851",
@@ -66,6 +63,8 @@
     "521951",
     "521981",
     "521982",
+    "521989",
+    "521990",
     "5888",
     "5889",
     "6362",
@@ -111,7 +110,7 @@
      },
      "status": "ok",
      "quoted_price": 17.5,
-     "quoted_at": "2026-10-22 08:37:53"
+     "quoted_at": "2026-10-22 10:12:07"
     },
     {
      "combo_code": "9900005437",
@@ -149,7 +148,7 @@
      },
      "status": "ok",
      "quoted_price": 12.5,
-     "quoted_at": "2026-10-22 08:37:53"
+     "quoted_at": "2026-10-22 10:12:08"
     },
     {
      "combo_code": "9900005470",
@@ -195,7 +194,7 @@
      },
      "status": "ok",
      "quoted_price": 15.5,
-     "quoted_at": "2026-10-22 08:37:54"
+     "quoted_at": "2026-10-22 10:12:07"
     },
     {
      "combo_code": "9900005470",
@@ -251,7 +250,7 @@
      },
      "status": "ok",
      "quoted_price": 15.5,
-     "quoted_at": "2026-10-22 08:37:53"
+     "quoted_at": "2026-10-22 10:12:08"
     }
    ],
    "excluded": [
@@ -275,20 +274,6 @@
      "reason": "membership",
      "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
      "declared_price": 13.2
-    },
-    {
-     "combo_code": "9900003428",
-     "combo_name": "火腿扒早安营养卷组合",
-     "reason": "membership",
-     "detail": "分类「6折起早餐卡专区」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
-     "declared_price": 11.4
-    },
-    {
-     "combo_code": "9900003429",
-     "combo_name": "图林根香肠早安营养卷组合",
-     "reason": "membership",
-     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
-     "declared_price": 12.0
     },
     {
      "combo_code": "9900003431",
@@ -366,20 +351,6 @@
      "reason": "membership",
      "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
      "declared_price": 15.9
-    },
-    {
-     "combo_code": "9900003468",
-     "combo_name": "火腿扒早安营养卷套餐",
-     "reason": "membership",
-     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
-     "declared_price": 14.1
-    },
-    {
-     "combo_code": "9900003469",
-     "combo_name": "图林根香肠早安营养卷套餐",
-     "reason": "membership",
-     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
-     "declared_price": 14.7
     },
     {
      "combo_code": "9900003491",
@@ -536,6 +507,20 @@
      "declared_price": 15.54
     },
     {
+     "combo_code": "9900016143",
+     "combo_name": "枫糖风味厚松饼猪柳蛋堡组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.3
+    },
+    {
+     "combo_code": "9900016144",
+     "combo_name": "枫糖风味厚松饼猪柳堡组合",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 12.9
+    },
+    {
      "combo_code": "9900016145",
      "combo_name": "巧克力味厚松饼猪柳蛋堡组合",
      "reason": "membership",
@@ -548,6 +533,20 @@
      "reason": "membership",
      "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
      "declared_price": 12.9
+    },
+    {
+     "combo_code": "9900016171",
+     "combo_name": "枫糖风味厚松饼猪柳蛋堡套餐",
+     "reason": "membership",
+     "detail": "标签「早餐卡专享价」；优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 17.94
+    },
+    {
+     "combo_code": "9900016176",
+     "combo_name": "枫糖风味厚松饼猪柳堡套餐",
+     "reason": "membership",
+     "detail": "优惠「随单购早餐卡优惠」；需随单购买权益卡",
+     "declared_price": 15.54
     },
     {
      "combo_code": "9900016178",
@@ -744,7 +743,7 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 08:39:47"
+     "quoted_at": "2026-10-22 10:14:02"
     },
     {
      "combo_code": "9900004064",
@@ -800,7 +799,7 @@
      },
      "status": "ok",
      "quoted_price": 36.5,
-     "quoted_at": "2026-10-22 08:39:47"
+     "quoted_at": "2026-10-22 10:14:01"
     },
     {
      "combo_code": "9900004835",
@@ -846,7 +845,7 @@
      },
      "status": "ok",
      "quoted_price": 25.5,
-     "quoted_at": "2026-10-22 08:39:47"
+     "quoted_at": "2026-10-22 10:14:01"
     },
     {
      "combo_code": "9900004835",
@@ -902,7 +901,7 @@
      },
      "status": "ok",
      "quoted_price": 27.0,
-     "quoted_at": "2026-10-22 08:39:47"
+     "quoted_at": "2026-10-22 10:14:00"
     },
     {
      "combo_code": "9900005411",
@@ -948,7 +947,7 @@
      },
      "status": "ok",
      "quoted_price": 37.5,
-     "quoted_at": "2026-10-22 08:39:47"
+     "quoted_at": "2026-10-22 10:14:01"
     },
     {
      "combo_code": "9900005411",
@@ -1004,7 +1003,7 @@
      },
      "status": "ok",
      "quoted_price": 39.0,
-     "quoted_at": "2026-10-22 08:39:47"
+     "quoted_at": "2026-10-22 10:14:01"
     },
     {
      "combo_code": "9900005428",
@@ -1050,7 +1049,7 @@
      },
      "status": "ok",
      "quoted_price": 45.5,
-     "quoted_at": "2026-10-22 08:39:51"
+     "quoted_at": "2026-10-22 10:14:07"
     },
     {
      "combo_code": "9900005428",
@@ -1106,7 +1105,7 @@
      },
      "status": "ok",
      "quoted_price": 47.0,
-     "quoted_at": "2026-10-22 08:39:52"
+     "quoted_at": "2026-10-22 10:14:06"
     },
     {
      "combo_code": "9900005430",
@@ -1152,7 +1151,7 @@
      },
      "status": "ok",
      "quoted_price": 42.5,
-     "quoted_at": "2026-10-22 08:39:52"
+     "quoted_at": "2026-10-22 10:14:06"
     },
     {
      "combo_code": "9900005430",
@@ -1208,7 +1207,7 @@
      },
      "status": "ok",
      "quoted_price": 44.0,
-     "quoted_at": "2026-10-22 08:39:52"
+     "quoted_at": "2026-10-22 10:14:06"
     },
     {
      "combo_code": "9900005449",
@@ -1254,7 +1253,7 @@
      },
      "status": "ok",
      "quoted_price": 26.0,
-     "quoted_at": "2026-10-22 08:39:52"
+     "quoted_at": "2026-10-22 10:14:08"
     },
     {
      "combo_code": "9900005449",
@@ -1310,7 +1309,7 @@
      },
      "status": "ok",
      "quoted_price": 27.5,
-     "quoted_at": "2026-10-22 08:39:53"
+     "quoted_at": "2026-10-22 10:14:08"
     },
     {
      "combo_code": "9900005453",
@@ -1356,7 +1355,7 @@
      },
      "status": "ok",
      "quoted_price": 27.5,
-     "quoted_at": "2026-10-22 08:39:56"
+     "quoted_at": "2026-10-22 10:14:11"
     },
     {
      "combo_code": "9900005453",
@@ -1412,7 +1411,7 @@
      },
      "status": "ok",
      "quoted_price": 29.0,
-     "quoted_at": "2026-10-22 08:39:58"
+     "quoted_at": "2026-10-22 10:14:10"
     },
     {
      "combo_code": "9900005456",
@@ -1458,7 +1457,7 @@
      },
      "status": "ok",
      "quoted_price": 34.0,
-     "quoted_at": "2026-10-22 08:39:57"
+     "quoted_at": "2026-10-22 10:14:12"
     },
     {
      "combo_code": "9900005456",
@@ -1514,7 +1513,7 @@
      },
      "status": "ok",
      "quoted_price": 35.5,
-     "quoted_at": "2026-10-22 08:39:58"
+     "quoted_at": "2026-10-22 10:14:12"
     },
     {
      "combo_code": "9900005460",
@@ -1560,7 +1559,7 @@
      },
      "status": "ok",
      "quoted_price": 33.0,
-     "quoted_at": "2026-10-22 08:39:57"
+     "quoted_at": "2026-10-22 10:14:13"
     },
     {
      "combo_code": "9900005460",
@@ -1616,7 +1615,7 @@
      },
      "status": "ok",
      "quoted_price": 34.5,
-     "quoted_at": "2026-10-22 08:39:58"
+     "quoted_at": "2026-10-22 10:14:14"
     },
     {
      "combo_code": "9900005462",
@@ -1662,7 +1661,7 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 08:40:01"
+     "quoted_at": "2026-10-22 10:14:18"
     },
     {
      "combo_code": "9900005462",
@@ -1718,7 +1717,7 @@
      },
      "status": "ok",
      "quoted_price": 36.5,
-     "quoted_at": "2026-10-22 08:40:02"
+     "quoted_at": "2026-10-22 10:14:17"
     },
     {
      "combo_code": "9900005464",
@@ -1764,7 +1763,7 @@
      },
      "status": "ok",
      "quoted_price": 33.5,
-     "quoted_at": "2026-10-22 08:40:02"
+     "quoted_at": "2026-10-22 10:14:16"
     },
     {
      "combo_code": "9900005464",
@@ -1820,7 +1819,7 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 08:40:03"
+     "quoted_at": "2026-10-22 10:14:17"
     },
     {
      "combo_code": "9900005466",
@@ -1866,7 +1865,7 @@
      },
      "status": "ok",
      "quoted_price": 37.5,
-     "quoted_at": "2026-10-22 08:40:03"
+     "quoted_at": "2026-10-22 10:14:18"
     },
     {
      "combo_code": "9900005466",
@@ -1922,7 +1921,7 @@
      },
      "status": "ok",
      "quoted_price": 39.0,
-     "quoted_at": "2026-10-22 08:40:03"
+     "quoted_at": "2026-10-22 10:14:19"
     },
     {
      "combo_code": "9900005468",
@@ -1968,7 +1967,7 @@
      },
      "status": "ok",
      "quoted_price": 35.5,
-     "quoted_at": "2026-10-22 08:40:06"
+     "quoted_at": "2026-10-22 10:14:22"
     },
     {
      "combo_code": "9900005468",
@@ -2024,7 +2023,7 @@
      },
      "status": "ok",
      "quoted_price": 37.0,
-     "quoted_at": "2026-10-22 08:40:07"
+     "quoted_at": "2026-10-22 10:14:22"
     },
     {
      "combo_code": "9900006332",
@@ -2062,7 +2061,7 @@
      },
      "status": "ok",
      "quoted_price": 49.9,
-     "quoted_at": "2026-10-22 08:40:08"
+     "quoted_at": "2026-10-22 10:14:22"
     },
     {
      "combo_code": "9900009245",
@@ -2108,7 +2107,7 @@
      },
      "status": "ok",
      "quoted_price": 34.0,
-     "quoted_at": "2026-10-22 08:40:09"
+     "quoted_at": "2026-10-22 10:14:24"
     },
     {
      "combo_code": "9900009245",
@@ -2164,7 +2163,7 @@
      },
      "status": "ok",
      "quoted_price": 31.5,
-     "quoted_at": "2026-10-22 08:40:08"
+     "quoted_at": "2026-10-22 10:14:24"
     },
     {
      "combo_code": "9900011126",
@@ -2210,7 +2209,7 @@
      },
      "status": "ok",
      "quoted_price": 20.5,
-     "quoted_at": "2026-10-22 08:40:08"
+     "quoted_at": "2026-10-22 10:14:24"
     },
     {
      "combo_code": "9900011126",
@@ -2266,7 +2265,7 @@
      },
      "status": "ok",
      "quoted_price": 18.0,
-     "quoted_at": "2026-10-22 08:40:11"
+     "quoted_at": "2026-10-22 10:14:27"
     },
     {
      "combo_code": "9900015730",
@@ -2304,7 +2303,7 @@
      },
      "status": "ok",
      "quoted_price": 40.3,
-     "quoted_at": "2026-10-22 08:40:13"
+     "quoted_at": "2026-10-22 10:14:27"
     },
     {
      "combo_code": "9900015730",
@@ -2352,7 +2351,7 @@
      },
      "status": "ok",
      "quoted_price": 45.3,
-     "quoted_at": "2026-10-22 08:40:13"
+     "quoted_at": "2026-10-22 10:14:27"
     }
    ],
    "excluded": [
@@ -3985,7 +3984,7 @@
   }
  },
  "stats": {
-  "sku": 199,
+  "sku": 198,
   "combos": 91,
   "variants": 37,
   "excluded": 83,
