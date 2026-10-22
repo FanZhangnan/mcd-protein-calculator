@@ -66,7 +66,8 @@
       price_ref: variant.price,
       nutrition: variant.nutrition,
       removable: [],
-      combo: { variant: variant.variant, rounds: variant.rounds, menu_price: variant.menu_price },
+      combo: { variant: variant.variant, rounds: variant.rounds, menu_price: variant.menu_price,
+               replacements: variant.replacements || [] },
     }];
     for (var i = 1; i <= 2; i++) {
       var idx = row[i];

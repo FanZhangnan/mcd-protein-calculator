@@ -452,7 +452,14 @@ class Service:
             for code, entry in (raw.get("codes") or {}).items():
                 aliases[str(code)] = entry["name"]
                 evidence[str(code)] = entry.get("evidence", "")
-        self._catalog = catalog_mod.NutritionCatalog(rows, aliases, evidence)
+        supplement_path = self.base / "combo_nutrition_map.json"
+        if not supplement_path.exists():
+            supplement_path = Path(__file__).resolve().parents[1] / "data" / "combo_nutrition_map.json"
+        supplemental: dict[str, dict[str, Any]] = {}
+        if supplement_path.exists():
+            raw = json.loads(supplement_path.read_text("utf-8"))
+            supplemental = {str(k): v for k, v in (raw.get("codes") or {}).items()}
+        self._catalog = catalog_mod.NutritionCatalog(rows, aliases, evidence, supplemental)
         self._catalog_key = key
         return self._catalog
 
@@ -615,6 +622,7 @@ class Service:
                 price_ref=float(v["quoted_price"]), meal=meal,
                 round_list=v.get("round_list") or [],
                 combo_rounds=v.get("rounds") or [],
+                combo_replacements=v.get("replacements") or [],
                 combo_variant=v.get("variant") or "default",
                 combo_menu_price=v.get("menu_price"),
             ))

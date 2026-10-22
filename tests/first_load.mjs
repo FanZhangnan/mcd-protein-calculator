@@ -67,7 +67,7 @@ async function main() {
   const t0 = Date.now();
   await send("Page.navigate", { url: URL_ });
   const appeared = await waitFor(
-    `!document.querySelector('#s-result-panel').hidden && document.querySelector('#s-result').textContent.includes('42')`,
+    `!document.querySelector('#s-result-panel').hidden && S && S.totals && S.totals.protein > 0`,
     "首屏自动结果", 8000);
   check("打开 3 秒内出现结果卡", appeared && Date.now() - t0 < 3000, `${Date.now() - t0}ms`);
 
@@ -77,9 +77,9 @@ async function main() {
     rec: !!document.querySelector('#chart .rec-marker'),
     text: document.querySelector('#s-result').textContent
   })`).then(JSON.parse);
-  // 菜单里麦香鸡 13.5 → 16.5 元、单轮商品「牛肉堡单品精选」以 14 元的汉堡包
-  // 进入主食池之后，默认 40 g / 45 元的最省解变成 双层吉士 + 汉堡包 = 40 g / 36.50 元
-  check("默认值出 40 g / 36.50 元", info.protein === 40 && info.cost === 36.5,
+  // 本轮内替换让人气经典（14.90 元、27 g）进入候选：
+  // 默认 40 g / 45 元的最省解 = 人气经典 + 汉堡包 = 40 g / 28.90 元
+  check("默认值出 40 g / 28.90 元", info.protein === 40 && info.cost === 28.9,
     `${info.protein} g / ${info.cost} 元`);
   check("图上有推荐星标", info.rec === true);
 

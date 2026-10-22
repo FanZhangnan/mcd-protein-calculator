@@ -114,6 +114,9 @@ async function main() {
     await sleep(600);
     const scroll = await evalJs(`document.documentElement.scrollWidth - window.innerWidth`);
     check(`${s.id} 手机无横向滚动`, scroll <= 1, `scroll=${scroll}`);
+    // 手机截图对准结果卡，套餐各轮与替换说明才看得见
+    await evalJs(`document.querySelector('#s-result').scrollIntoView({block: 'start'})`);
+    await sleep(400);
     const mobile = await send("Page.captureScreenshot", { format: "png" });
     writeFileSync(`${OUT}/combo-${s.id}-mobile.png`, Buffer.from(mobile.result.data, "base64"));
   }

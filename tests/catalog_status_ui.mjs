@@ -68,11 +68,19 @@ async function main() {
   const loaded = badge.includes("套餐目录：已加载");
   const meal = await evalJs(`document.querySelector('#s_meal') ? document.querySelector('#s_meal').value : 'lunch'`);
   const entry = CATALOG.meals[meal] || (meal === "dinner" ? CATALOG.meals.lunch : null);
-  const reasons = entry ? entry.excluded.reduce((acc, e) => {
-    const key = e.reason || "other";
-    acc[key] = (acc[key] || 0) + 1;
-    return acc;
-  }, {}) : {};
+  const usable = entry ? new Set(entry.variants.map((v) => v.combo_code)) : new Set();
+  const comboReasons = {};
+  const excludedCodes = new Set();
+  if (entry) {
+    for (const e of entry.excluded) {
+      if (!e.combo_code || usable.has(e.combo_code)) continue;
+      excludedCodes.add(e.combo_code);
+      const key = e.reason || "other";
+      (comboReasons[key] = comboReasons[key] || new Set()).add(e.combo_code);
+    }
+  }
+  const availableCombos = usable.size;
+  const excludedCombos = excludedCodes.size;
   if (loaded) {
     check("已加载时给出组合数与生成时间", /已加载（\d+ 个组合 \/ \d+ 个可用变体，生成于 /.test(tip),
       tip.slice(0, 160));
@@ -89,6 +97,12 @@ async function main() {
 
   const meta = await evalJs(`document.querySelector('#meta').textContent`);
   check("门店与数据说明里有套餐目录一行", meta.includes("套餐目录"), meta.replace(/\s+/g, " ").slice(0, 160));
+  const unknownText = await evalJs(`document.querySelector('#unknown').textContent`);
+  check("门店说明展开区列出暂无官方营养的商品",
+    unknownText.includes("以下商品暂无官方营养数据，暂不参与计算")
+      && unknownText.includes("苹果片一袋(60g)")
+      && unknownText.includes("“苹板”支撑Pro套餐"),
+    unknownText.replace(/\s+/g, " ").slice(0, 160));
 
   await waitFor(`!document.querySelector('#s-result-panel').hidden`, "结果卡");
   const card = await evalJs(`document.querySelector('#s-result').textContent`);
@@ -96,17 +110,20 @@ async function main() {
     check("已加载时结果卡不显示缺目录提示", !card.includes("套餐目录未加载"), "");
     check("已加载时结果卡显示套餐核查入口", card.includes("套餐核查"), "");
     if (entry) {
-      // 结果卡底部那一行：已查 / 识别 / 纳入 / 排除（会员价、营养未知）
-      const row = card.match(/已查 (\d+) 个 SKU，识别 (\d+) 个套餐，纳入 (\d+) 个变体；排除 (\d+) 个/);
+      // 结果卡底部：已查 / 识别 / 可用（变体）/ 排除（套餐级原因）
+      const row = card.match(
+        /已查 (\d+) 个 SKU，识别 (\d+) 个套餐；可用 (\d+) 个（(\d+) 个变体），排除 (\d+) 个/);
       check("套餐核查数字等于 combo_catalog.json",
         !!row
           && Number(row[1]) === entry.checked
           && Number(row[2]) === entry.combo_count
-          && Number(row[3]) === entry.variants.length
-          && Number(row[4]) === entry.excluded.length
-          && card.includes(`会员价 ${reasons.membership || 0}`)
-          && card.includes(`营养未知 ${reasons.nutrition_unknown || 0}`),
-        (row ? row[0] : card.replace(/\s+/g, " ").slice(0, 120)));
+          && Number(row[3]) === availableCombos
+          && Number(row[4]) === entry.variants.length
+          && Number(row[5]) === excludedCombos
+          && availableCombos + excludedCombos === entry.combo_count
+          && card.includes(`会员价 ${(comboReasons.membership || new Set()).size}`)
+          && card.includes(`营养未知 ${(comboReasons.nutrition_unknown || new Set()).size}`),
+        (row ? row[0] : card.replace(/\s+/g, " ").slice(0, 160)));
     }
   } else {
     check("未加载时结果卡顶部有提示", card.includes("套餐目录未加载，本次结果不含套餐"), "");

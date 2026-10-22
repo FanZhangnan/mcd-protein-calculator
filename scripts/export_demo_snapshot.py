@@ -134,6 +134,7 @@ def main() -> int:
             "nutrition": {k: (i.nutrition or {}).get(k) for k in NUTRI_KEYS},
             "rounds": i.combo_rounds or [],
             "round_list": i.round_list or [],
+            "replacements": i.combo_replacements or [],
         } for i in combo_items]
 
         combo_combos: list[list] = []

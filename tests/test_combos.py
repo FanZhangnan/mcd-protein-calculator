@@ -34,7 +34,9 @@ def nutrition_catalog() -> catalog_mod.NutritionCatalog:
         json.loads((FIX / "nutrition.json").read_text("utf-8")))
     aliases = {str(c): e["name"]
                for c, e in json.loads((ROOT / "data/aliases.json").read_text("utf-8"))["codes"].items()}
-    return catalog_mod.NutritionCatalog(rows, aliases, {})
+    supplemental = json.loads(
+        (ROOT / "data/combo_nutrition_map.json").read_text("utf-8"))["codes"]
+    return catalog_mod.NutritionCatalog(rows, aliases, {}, supplemental)
 
 
 def detail(code: str) -> dict:
@@ -270,9 +272,10 @@ class VariantTest(unittest.TestCase):
         variants, _ = combos_mod.build_variants(
             combo_input("9900003728", "脆香油条豆浆组合", 17.5), cat)
         default = next(v for v in variants if v["variant"] == "default")
-        # 豆浆 is the only protein source; swapping it for water would lose 7 g
+        # 这轮要 2 根油条（quantity=2）+ 1 杯豆浆：2×5 + 8 = 18 g。
+        # 旧模型按 1 根算成 13 g，是漏乘轮次数量的错。
         self.assertEqual(len(variants), 1)
-        self.assertEqual(default["nutrition"]["protein"], 13.0)
+        self.assertEqual(default["nutrition"]["protein"], 18.0)
 
     def test_parse_diff_price(self):
         self.assertEqual(combos_mod.parse_diff_price("+ ¥2.5"), 2.5)
@@ -460,6 +463,43 @@ class ServiceTest(unittest.TestCase):
         self.assertIn("note", report)
 
 
+class QuantityRoundTest(unittest.TestCase):
+    """堡堡随心拼 asks for 2 mains + 3 sides + 2 drinks in one round.
+
+    ``calculate-price`` rejects a 2-drink round when the roundList carries only
+    one drink (60006), so both the nutrition sum and the payload must use the
+    round's real quantity.
+    """
+
+    CODE = "9900004066"
+
+    def test_round_list_sends_the_round_quantity(self):
+        combo = combo_input(self.CODE, "堡堡随心拼（7件任选）", 73.0)
+        variants, excluded = combos_mod.build_variants(combo, nutrition_catalog())
+        self.assertEqual(excluded, [])
+        muscle = next(v for v in variants if v["variant"] == "muscle")
+        self.assertEqual(
+            muscle["round_list"],
+            [{"round": "3", "comboItemList": [{"code": "507411", "quantity": 2}]}])
+        self.assertEqual(muscle["reference_price"], 73.0)
+
+    def test_quote_sends_two_drinks_and_matches_73(self):
+        item = planner_mod.Item(
+            code=self.CODE, name="堡堡随心拼（7件任选）", kind="combo",
+            nutrition={k: 0.0 for k in planner_mod.NUTRI_KEYS},
+            nutrition_status="official", price_ref=73.0, meal="lunch",
+            round_list=[{"round": "3", "comboItemList": [{"code": "507411", "quantity": 2}]}])
+        plan = planner_mod.MealPlan(meal="lunch", items=[item],
+                                    nutrition=item.nutrition, price_ref=73.0)
+        with tempfile.TemporaryDirectory() as tmp:
+            svc = new_service(tmp, amount=73.0)
+            result = svc.quote_meal(plan)
+            line = svc.provider.price_calls[-1]["items"][0]
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["amount"], 73.0)
+        self.assertEqual(line["roundList"][0]["comboItemList"][0]["quantity"], 2)
+
+
 @unittest.skipUnless(LIVE_CATALOG.exists() and DEMO_CACHE.exists(),
                      "live combo catalog not built")
 class LiveCatalogScenariosTest(unittest.TestCase):
@@ -504,9 +544,13 @@ class LiveCatalogScenariosTest(unittest.TestCase):
                 "lunch", planner_mod.Targets(protein_min=44, budget=45, protein_tolerance=3),
                 max_mains=2)
         self.assertTrue(payload["combos"]["applied"])
-        self.assertGreaterEqual(payload["totals"]["protein"], 44)
-        self.assertLessEqual(payload["cost"], 43.0 + 1e-9)
-        self.assertTrue(any("酥脆无双" in i["name"] for i in payload["items"]))
+        self.assertEqual(payload["totals"]["protein"], 54.0)
+        self.assertAlmostEqual(payload["cost"], 37.4)
+        self.assertEqual([i["name"] for i in payload["items"]],
+                         ["人气经典随心配", "双层吉士汉堡"])
+        combo = next(i for i in payload["items"] if i["kind"] == "combo")
+        # 可乐麦炫酷没有官方营养，构建时换成无糖可口可乐中杯并验价
+        self.assertEqual(combo["combo"]["replacements"][0]["to"], "无糖可口可乐中杯")
 
     def test_lunch_35_25(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -516,6 +560,10 @@ class LiveCatalogScenariosTest(unittest.TestCase):
                 max_mains=2)
         self.assertEqual([i["name"] for i in payload["items"]], ["双层深海鳕鱼堡"])
         self.assertAlmostEqual(payload["cost"], 25.0)
+        # 加预算卡片：人气经典 + 汉堡包 = 40 g，28.90 元
+        reach = payload["frontier"]["reach_price"]
+        self.assertAlmostEqual(reach["cost"], 28.9)
+        self.assertEqual(reach["protein"], 40.0)
 
     def test_breakfast_25_20(self):
         with tempfile.TemporaryDirectory() as tmp:

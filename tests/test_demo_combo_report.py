@@ -49,11 +49,24 @@ class DemoComboReportTest(unittest.TestCase):
                 self.assertEqual(report["checked"], entry["checked"], "已查 SKU 数")
                 self.assertEqual(report["combos_found"], entry["combo_count"], "识别套餐数")
                 self.assertEqual(report["variants_used"], len(entry["variants"]), "纳入变体数")
-                self.assertEqual(report["excluded"], len(entry["excluded"]), "排除数")
+                self.assertEqual(report["variants_excluded"], len(entry["excluded"]), "排除变体数")
+                self.assertEqual(report["excluded"], len(entry["excluded"]), "排除记录数")
                 self.assertEqual(report["reasons"],
                                  dict(Counter(e.get("reason") or "other"
                                               for e in entry["excluded"])),
-                                 "排除原因")
+                                 "排除原因（变体级）")
+
+    def test_available_plus_excluded_equals_found(self) -> None:
+        for meal in ("breakfast", "lunch", "dinner"):
+            with self.subTest(meal=meal):
+                report = self.report(meal)
+                self.assertTrue(report["combos_consistent"], meal)
+                self.assertEqual(report["combos_available"] + report["combos_excluded"],
+                                 report["combos_found"])
+                self.assertEqual(sum(report["combo_reasons"].values()),
+                                 report["combos_excluded"])
+                # 可用变体来自 combos_available 个套餐，不可能来自更多套餐
+                self.assertLessEqual(report["combos_available"], report["variants_used"])
 
     def test_exclusions_add_up(self) -> None:
         for meal in ("breakfast", "lunch", "dinner"):

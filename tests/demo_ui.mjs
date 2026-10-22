@@ -10,9 +10,14 @@ const PORT = 9341;
 // 套餐核查那一行的唯一口径：构建脚本写下的套餐目录
 const CATALOG = JSON.parse(readFileSync(new URL("../data/combo_catalog.json", import.meta.url), "utf8"));
 const LUNCH = CATALOG.meals.lunch;
+const LUNCH_USABLE = new Set(LUNCH.variants.map((v) => v.combo_code));
+const LUNCH_EXCLUDED = new Set(LUNCH.excluded
+  .map((e) => e.combo_code)
+  .filter((code) => code && !LUNCH_USABLE.has(code)));
 const LUNCH_REASONS = LUNCH.excluded.reduce((acc, e) => {
+  if (!e.combo_code || LUNCH_USABLE.has(e.combo_code)) return acc;
   const key = e.reason || "other";
-  acc[key] = (acc[key] || 0) + 1;
+  (acc[key] = acc[key] || new Set()).add(e.combo_code);
   return acc;
 }, {});
 
@@ -113,13 +118,13 @@ async function main() {
     items: S.items.map(i => i.name + '×' + i.quantity),
     saver: S.saver ? { cost: S.saver.cost, protein: S.saver.protein, items: S.saver.items } : null
   })`).then(JSON.parse);
-  // 套餐纳入后：旧 54 g / 45.00（双层吉士汉堡×2）→ 新 50 g / 40.50
-  // （酥脆无双套餐 + 双层吉士汉堡）：更便宜、仍达标。
-  check("场景1 达标 50 g / 40.50 元",
-    c1.status === "met" && c1.protein === 50 && c1.cost === 40.5
-    && c1.items.join(" + ") === "酥脆无双套餐×1 + 双层吉士汉堡×1", JSON.stringify(c1.items));
-  check("场景1 有省钱选项 42 g / 39.00 元",
-    !!c1.saver && c1.saver.protein === 42 && c1.saver.cost === 39,
+  // 套餐纳入 + 本轮内替换后：54 g / 37.40（人气经典随心配 + 双层吉士汉堡）。
+  // 人气经典默认饮品可乐麦炫酷没有官方营养，构建时换成无糖可口可乐中杯。
+  check("场景1 达标 54 g / 37.40 元",
+    c1.status === "met" && c1.protein === 54 && c1.cost === 37.4
+    && c1.items.join(" + ") === "人气经典随心配×1 + 双层吉士汉堡×1", JSON.stringify(c1.items));
+  check("场景1 有省钱选项 42 g / 31.40 元",
+    !!c1.saver && c1.saver.protein === 42 && c1.saver.cost === 31.4,
     JSON.stringify(c1.saver));
   // 套餐必须在结果卡里展开各轮内容（小食 / 饮品分别是什么）。
   // 之前 demo 桩漏传 combo 字段，页面上只剩「套餐」两个字。
@@ -129,7 +134,7 @@ async function main() {
     audit: (document.querySelector('.combo-audit summary') || {}).textContent || ''
   })`).then(JSON.parse);
   check("场景1 套餐列出各轮内容",
-    c1parts.parts.length > 0 && c1parts.parts.includes("小食") && c1parts.parts.includes("饮品"),
+    c1parts.parts.length > 0 && c1parts.parts.includes("主食") && c1parts.parts.includes("饮品"),
     c1parts.parts.slice(0, 80));
   check("场景1 套餐各轮数据在方案里",
     c1parts.rounds.length >= 2 && c1parts.rounds.every(r => r.name && r.role),
@@ -137,18 +142,25 @@ async function main() {
   check("场景1 套餐核查写出真实 SKU 数",
     /已查 \d+ 个 SKU/.test(c1parts.audit) && !/已查 11 个 SKU/.test(c1parts.audit),
     c1parts.audit.slice(0, 90));
-  // 这一行的四个数字必须等于 data/combo_catalog.json，而不是浏览器数变体：
-  // 午餐识别 50 个套餐、纳入 33 个变体、排除 45 个（会员价 16、营养未知 29）。
-  const auditRow = c1parts.audit.match(/已查 (\d+) 个 SKU，识别 (\d+) 个套餐，纳入 (\d+) 个变体；排除 (\d+) 个/);
+  // 这一行的数字必须等于 data/combo_catalog.json；套餐数与变体数分开写。
+  const auditRow = c1parts.audit.match(
+    /已查 (\d+) 个 SKU，识别 (\d+) 个套餐；可用 (\d+) 个（(\d+) 个变体），排除 (\d+) 个/);
   check("场景1 套餐核查与 combo_catalog.json 一致",
     !!auditRow
       && Number(auditRow[1]) === LUNCH.checked
       && Number(auditRow[2]) === LUNCH.combo_count
-      && Number(auditRow[3]) === LUNCH.variants.length
-      && Number(auditRow[4]) === LUNCH.excluded.length
-      && c1parts.audit.includes(`会员价 ${LUNCH_REASONS.membership || 0}`)
-      && c1parts.audit.includes(`营养未知 ${LUNCH_REASONS.nutrition_unknown || 0}`),
-    c1parts.audit.slice(0, 120));
+      && Number(auditRow[3]) === LUNCH_USABLE.size
+      && Number(auditRow[4]) === LUNCH.variants.length
+      && Number(auditRow[5]) === LUNCH_EXCLUDED.size
+      && LUNCH_USABLE.size + LUNCH_EXCLUDED.size === LUNCH.combo_count
+      && c1parts.audit.includes(`会员价 ${(LUNCH_REASONS.membership || new Set()).size}`)
+      && c1parts.audit.includes(`营养未知 ${(LUNCH_REASONS.nutrition_unknown || new Set()).size}`),
+    c1parts.audit.slice(0, 160));
+  // 替换必须写在结果卡上：粉区 可乐麦炫酷 → 无糖可口可乐中杯
+  const replaceText = await evalJs(`(document.querySelector('.combo-replace') || {}).textContent || ''`);
+  check("场景1 结果卡写明本轮替换",
+    replaceText.includes("可乐麦炫酷") && replaceText.includes("无糖可口可乐中杯")
+      && replaceText.includes("原选项暂无官方营养"), replaceText.slice(0, 120));
   const badge = await evalJs(`JSON.stringify({
     text: document.querySelector('#data-source').textContent,
     title: document.querySelector('#data-source').getAttribute('title') || ''
@@ -157,6 +169,12 @@ async function main() {
     badge.text.includes(`已加载 ${LUNCH.combo_count} 个组合`)
       && badge.title.includes(`${LUNCH.variants.length} 个可用变体`),
     (badge.text + " | " + badge.title).slice(0, 200));
+  const unknownText = await evalJs(`document.querySelector('#unknown').textContent`);
+  check("在线页门店说明列出暂无官方营养的商品",
+    unknownText.includes("以下商品暂无官方营养数据，暂不参与计算")
+      && unknownText.includes("苹果片一袋(60g)")
+      && unknownText.includes("“苹板”支撑Pro套餐"),
+    unknownText.replace(/\s+/g, " ").slice(0, 160));
   await shot("demo-desktop", 1280);
 
   // 2) lunch 35 / 25 → under, then the budget card
@@ -167,8 +185,8 @@ async function main() {
   })`).then(JSON.parse);
   check("场景2 预算内最多 28 g / 25.00 元",
     c2.status === "under" && c2.protein === 28 && c2.cost === 25, JSON.stringify(c2));
-  // 套餐让「加预算」的上限从 39.00 降到 32.00（酥脆无双套餐 + 汉堡包 = 36 g）
-  check("场景2 显示加预算卡片", c2.text.includes("加预算到") && c2.text.includes("32.00"), "");
+  // 本轮内替换让人气经典进入候选：加预算 28.90 元 → 40 g（人气经典 + 汉堡包）
+  check("场景2 显示加预算卡片", c2.text.includes("加预算到") && c2.text.includes("28.90"), "");
   const clicked = await evalJs(`(() => {
     const b = document.querySelector('#s-budget-up');
     if (!b) return false;
@@ -179,9 +197,9 @@ async function main() {
     budget: document.querySelector('#s_budget').value,
     status: S.protein_status, cost: S.cost, protein: S.totals.protein
   })`).then(JSON.parse);
-  check("场景2 按 32 元重算后达标",
-    clicked === true && c2b.budget === "32" && c2b.status === "met"
-    && c2b.protein === 36 && c2b.cost === 32, JSON.stringify(c2b));
+  check("场景2 按 28.90 元重算后达标",
+    clicked === true && Number(c2b.budget) === 28.9 && c2b.status === "met"
+    && c2b.protein === 40 && c2b.cost === 28.9, JSON.stringify(c2b));
 
   // 3) breakfast 25 / 20
   await setInputs("breakfast", 25, 20);
@@ -214,7 +232,7 @@ async function main() {
     status: S.protein_status, protein: S.totals.protein
   })`).then(JSON.parse);
   check("手机 390px 无横向滚动", m.scroll <= m.inner + 1, `scroll=${m.scroll} inner=${m.inner}`);
-  check("手机结果正确", m.status === "met" && m.protein === 50, JSON.stringify(m));
+  check("手机结果正确", m.status === "met" && m.protein === 54, JSON.stringify(m));
   await shot("demo-mobile", 390);
 
   const failed = results.filter((r) => !r.ok);

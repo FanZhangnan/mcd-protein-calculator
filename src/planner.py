@@ -118,6 +118,9 @@ class Item:
     round_list: list[dict[str, Any]] | None = None
     #: combo variants only: ``[{role, code, name, diff_price}]`` for the card
     combo_rounds: list[dict[str, Any]] | None = None
+    #: combo variants only: rounds where an option without official nutrition
+    #: was replaced by another option of the same round
+    combo_replacements: list[dict[str, Any]] | None = None
     combo_variant: str = ""
     combo_menu_price: float | None = None
 
@@ -132,6 +135,7 @@ class Item:
             removal_notes=list(self.removal_notes or []),
             round_list=[dict(r) for r in (self.round_list or [])] or None,
             combo_rounds=[dict(r) for r in (self.combo_rounds or [])] or None,
+            combo_replacements=[dict(r) for r in (self.combo_replacements or [])] or None,
             combo_variant=self.combo_variant,
             combo_menu_price=self.combo_menu_price,
         )
@@ -146,6 +150,7 @@ class Item:
                 "menu_price": self.combo_menu_price,
                 "rounds": self.combo_rounds or [],
                 "round_list": self.round_list or [],
+                "replacements": self.combo_replacements or [],
             }),
             "nutrition": self.nutrition,
             "nutrition_status": self.nutrition_status,

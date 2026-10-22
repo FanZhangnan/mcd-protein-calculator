@@ -174,6 +174,18 @@ function renderUnknown() {
   if (dessertLine) {
     $("unknown").innerHTML += `<div class="unknown-box">${dessertLine}</div>`;
   }
+  // 套餐里仍然没有官方营养的商品：门店说明里明确列出，不按 0 处理
+  const comboInfo = comboCatalogInfo(meal);
+  const unavailable = (comboInfo && comboInfo.unavailable_products) || [];
+  if (unavailable.length) {
+    $("unknown").innerHTML +=
+      `<details class="unknown-box">
+         <summary>以下商品暂无官方营养数据，暂不参与计算（${unavailable.length} 个）</summary>
+         <div class="sub">这些商品出现在套餐的可选轮次里，官方营养表没有可核对的条目；相关套餐未纳入计算，不会按 0 处理。</div>
+         <ul class="unavailable-list">${unavailable.map((u) =>
+           `<li><b>${u.name}</b> · 出现在：${u.combos.join("、")}</li>`).join("")}</ul>
+       </details>`;
+  }
 }
 
 // ------------------------------------------------------------------ landscape
@@ -677,6 +689,15 @@ function comboRoundsText(combo) {
   return rounds.map((r) => `${r.role}：${r.name}`).join(" · ");
 }
 
+// 套餐里没有官方营养的选项被同轮其他选项替换时，点单时要让用户知道改了什么
+function comboReplaceText(combo) {
+  const rows = (combo && combo.replacements) || [];
+  if (!rows.length) return "";
+  return `<div class="combo-replace">${rows.map((r) =>
+    `替换 · ${r.round_name || `轮 ${r.round}`}：${r.from} → ${r.to}（${r.reason || "原选项暂无官方营养"}）`
+  ).join("<br>")}</div>`;
+}
+
 function itemRowsHtml(items) {
   return items.map((i) => `
     <div class="item">
@@ -685,6 +706,7 @@ function itemRowsHtml(items) {
         <div class="item-name">${i.name}${i.kind === "combo" ? ' <span class="combo-tag">套餐</span>' : ""}</div>
         <div class="item-sub">${num(i.price_ref, 2)} 元/份 · 蛋白质 ${nutri(i.nutrition?.protein)} g</div>
         ${i.kind === "combo" ? `<div class="combo-parts">${comboRoundsText(i.combo)}</div>` : ""}
+        ${i.kind === "combo" ? comboReplaceText(i.combo) : ""}
         <details class="item-detail">
           <summary>明细</summary>
           <div class="sub">${num(i.nutrition?.energyKcal, 0)} kcal · 蛋白质 ${nutri(i.nutrition?.protein)} g ·
@@ -817,7 +839,8 @@ function renderSingle(s) {
   }
 
   const comboAudit = comboInfo.available ? (() => {
-    const r = comboInfo.reasons || {};
+    // 套餐数用 combo_reasons（套餐级）；变体数另列，绝不把两种单位相加
+    const r = comboInfo.combo_reasons || comboInfo.reasons || {};
     const parts = [];
     // 先写最常见的两种：会员价（没有账户上下文，价位不可信）、营养未知
     if (r.membership) parts.push(`会员价 ${r.membership}`);
@@ -826,8 +849,19 @@ function renderSingle(s) {
     if (r.price_failed) parts.push(`试算失败 ${r.price_failed}`);
     const list = (comboInfo.items || []).slice(0, 12).map((x) =>
       `<li>${x.name}${x.variant === "muscle" ? "（增肌组合）" : ""} · ${COMBOR[x.reason] || x.reason}${x.detail ? ` · ${x.detail}` : ""}</li>`).join("");
-    return `<details class="combo-audit"><summary>套餐核查：已查 ${comboInfo.checked || 0} 个 SKU，识别 ${comboInfo.combos_found || 0} 个套餐，纳入 ${comboInfo.variants_used || 0} 个变体；排除 ${comboInfo.excluded || 0} 个${parts.length ? `（${parts.join("、")}）` : ""}</summary>
+    const hasComboCounts = comboInfo.combos_available !== undefined
+      && comboInfo.combos_excluded !== undefined;
+    const head = hasComboCounts
+      ? `已查 ${comboInfo.checked || 0} 个 SKU，识别 ${comboInfo.combos_found || 0} 个套餐；` +
+        `可用 ${comboInfo.combos_available} 个（${comboInfo.variants_used || 0} 个变体），` +
+        `排除 ${comboInfo.combos_excluded} 个${parts.length ? `（${parts.join("、")}）` : ""}`
+      : `已查 ${comboInfo.checked || 0} 个 SKU，识别 ${comboInfo.combos_found || 0} 个套餐，` +
+        `纳入 ${comboInfo.variants_used || 0} 个变体；排除 ${comboInfo.excluded || 0} 个${parts.length ? `（${parts.join("、")}）` : ""}`;
+    const variantNote = comboInfo.variants_excluded !== undefined
+      ? `<div class="sub">排除按变体计 ${comboInfo.variants_excluded} 条（含可用套餐里未纳入的变体）。</div>` : "";
+    return `<details class="combo-audit"><summary>套餐核查：${head}</summary>
       <ul>${list}</ul>
+      ${variantNote}
       <div class="sub">${comboInfo.note || ""}</div>
     </details>`;
   })() : "";

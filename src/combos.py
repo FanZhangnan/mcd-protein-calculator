@@ -189,15 +189,28 @@ def selection_rounds(rounds: list[dict], selection: dict[str, dict]) -> list[dic
         choice = selection.get(str(rnd.get("id")))
         if not choice:
             continue
+        # A mixed round (e.g. 随心配's 粉区 holds drinks and pies) still gets a
+        # per-choice label so the card never says「主食：无糖可口可乐」.
+        choice_kind = catalog_mod.classify(choice.get("name") or "")
         out.append({
             "round": str(rnd.get("id")),
             "round_name": rnd.get("name") or "",
-            "role": ROUND_ROLE.get(round_role(rnd), "主食"),
+            "role": ROUND_ROLE.get(choice_kind) or ROUND_ROLE.get(round_role(rnd), "主食"),
             "code": str(choice.get("code")),
             "name": choice.get("name") or "",
             "diff_price": parse_diff_price(choice.get("diffPrice")),
+            # A round may ask for 2 mains / 3 sides (``quantity``); both the
+            # nutrition sum and the roundList quantity must honour it.
+            "quantity": round_quantity(rnd),
         })
     return out
+
+
+def round_quantity(rnd: dict) -> int:
+    try:
+        return max(1, int(rnd.get("quantity") or 1))
+    except (TypeError, ValueError):
+        return 1
 
 
 def round_list(rounds: list[dict], selection: dict[str, dict]) -> list[dict]:
@@ -212,7 +225,8 @@ def round_list(rounds: list[dict], selection: dict[str, dict]) -> list[dict]:
             continue
         out.append({
             "round": key,
-            "comboItemList": [{"code": str(chosen.get("code")), "quantity": 1}],
+            "comboItemList": [{"code": str(chosen.get("code")),
+                               "quantity": round_quantity(rnd)}],
         })
     return out
 
@@ -223,7 +237,7 @@ def reference_price(menu_price: float, rounds: list[dict],
     for rnd in rounds:
         choice = selection.get(str(rnd.get("id")))
         if choice:
-            total += parse_diff_price(choice.get("diffPrice"))
+            total += parse_diff_price(choice.get("diffPrice")) * round_quantity(rnd)
     return round(total, 2)
 
 
@@ -240,8 +254,9 @@ def variant_nutrition(rounds: list[dict], selection: dict[str, dict],
         if nutrition is None:
             missing.append(choice.get("name") or str(choice.get("code")))
             continue
+        qty = round_quantity(rnd)
         for key in NUTRI_KEYS:
-            totals[key] += nutrition[key]
+            totals[key] += nutrition[key] * qty
     if missing:
         return None, missing
     return {k: round(v, 1) for k, v in totals.items()}, []
@@ -265,6 +280,85 @@ def membership_markers(categories: list[str], tags: list[str],
     return hits
 
 
+def _drink_rank(choice: dict, nutrition: dict) -> int | None:
+    """0 零度可乐 > 1 纯悦 > 2 纯牛奶 > 3 美式 > 4 other drink < 20 kcal."""
+    name = choice.get("name") or ""
+    if "零度" in name or "无糖可口可乐" in name:
+        return 0
+    if "纯悦" in name:
+        return 1
+    if "纯牛奶" in name:
+        return 2
+    if "美式" in name:
+        return 3
+    kcal = nutrition.get("energyKcal")
+    if kcal is not None and float(kcal) < DRINK_MAX_KCAL:
+        return 4
+    return None
+
+
+def replacement_candidates(round_payload: dict, chosen: dict,
+                           catalog: catalog_mod.NutritionCatalog) -> list[dict]:
+    """Only options this round really offers, never an item added from outside."""
+    kind = catalog_mod.classify(chosen.get("name") or "")
+    priced: list[tuple] = []
+    for index, choice in enumerate(round_payload.get("choices") or []):
+        if str(choice.get("code")) == str(chosen.get("code")):
+            continue
+        nutrition = nutrition_for(choice, catalog)
+        if nutrition is None:
+            continue
+        if kind == "drink":
+            rank = _drink_rank(choice, nutrition)
+            if rank is None:
+                continue
+            # within one rank keep the POS order ("first available")
+            priced.append((rank, index, 0.0, 0.0, str(choice.get("code")), choice))
+        elif kind in ("main", "side"):
+            diff = parse_diff_price(choice.get("diffPrice"))
+            protein = float(nutrition.get("protein") or 0.0)
+            fat = float(nutrition.get("fat") or 0.0)
+            # diff <= 0 first, then most protein, then least fat, then code
+            priced.append((0 if diff <= 0 else 1, diff if diff > 0 else 0.0,
+                           -protein, fat, str(choice.get("code")), choice))
+        # sauces / toys / desserts have no nutrition-bearing substitute
+    priced.sort(key=lambda row: row[:5])
+    return [row[5] for row in priced]
+
+
+def apply_replacements(rounds: list[dict], selection: dict[str, dict],
+                       catalog: catalog_mod.NutritionCatalog
+                       ) -> tuple[dict[str, dict], list[dict[str, Any]]]:
+    """Fill a round whose chosen item has no nutrition with another option.
+
+    The substitute must be one of *this round's* choices; nothing is invented.
+    If the round offers no option with official nutrition, the variant stays
+    unknown (and is excluded later).
+    """
+    out = dict(selection)
+    replacements: list[dict[str, Any]] = []
+    for rnd in rounds:
+        key = str(rnd.get("id"))
+        chosen = out.get(key)
+        if not chosen:
+            continue
+        if nutrition_for(chosen, catalog) is not None:
+            continue
+        candidates = replacement_candidates(rnd, chosen, catalog)
+        if not candidates:
+            continue
+        pick = candidates[0]
+        out[key] = pick
+        replacements.append({
+            "round": key,
+            "round_name": rnd.get("name") or "",
+            "from": chosen.get("name") or str(chosen.get("code")),
+            "to": pick.get("name") or str(pick.get("code")),
+            "reason": "原选项暂无官方营养",
+        })
+    return out, replacements
+
+
 def build_variants(combo: dict, catalog: catalog_mod.NutritionCatalog) -> tuple[list[dict], list[dict]]:
     """Return (variants, excluded). Each variant carries its own evidence."""
     rounds = combo["rounds"]
@@ -276,6 +370,7 @@ def build_variants(combo: dict, catalog: catalog_mod.NutritionCatalog) -> tuple[
              ("muscle", muscle_selection(rounds, catalog))]
     seen: set[tuple] = set()
     for name, selection in plans:
+        selection, replacements = apply_replacements(rounds, selection, catalog)
         picked = selection_rounds(rounds, selection)
         signature = tuple((p["round"], p["code"]) for p in picked)
         if signature in seen:
@@ -286,12 +381,14 @@ def build_variants(combo: dict, catalog: catalog_mod.NutritionCatalog) -> tuple[
             "combo_code": combo["code"], "combo_name": combo["name"],
             "variant": name, "menu_price": menu_price,
             "rounds": picked,
+            "replacements": replacements,
             "round_list": round_list(rounds, selection),
             "reference_price": reference_price(menu_price, rounds, selection),
         }
         if nutrition is None:
             excluded.append({**base, "reason": "nutrition_unknown",
-                             "detail": "缺官方营养：" + "、".join(missing)})
+                             "detail": "缺官方营养：" + "、".join(missing),
+                             "missing": missing})
             continue
         variants.append({**base, "nutrition": nutrition, "status": "pending"})
     return variants, excluded
@@ -320,17 +417,38 @@ def report_from_meal(meta: dict | None, *, source: str | None = None,
                      built_at: str | None = None, limit: int = 30) -> dict[str, Any]:
     """The "套餐核查" counts for one meal, derived from the catalog entry.
 
-    This is the only place these numbers are computed: the API, the static
-    snapshot and the page all read the same dict, so "识别 N 个套餐" can never
-    disagree with ``data/combo_catalog.json``.
+    ``combos_available + combos_excluded == combos_found`` by construction: a
+    combo is "available" as soon as one of its variants is usable, and
+    "excluded" otherwise. ``variants_excluded`` is a *variant*-level number and
+    is reported separately — mixing it into the combo count is what made the
+    page read "识别 50 … 排除 45" while 17 combos were in use.
     """
     meta = meta or {}
     excluded = meta.get("excluded") or []
-    counts: dict[str, int] = {}
+    reason_entries: dict[str, int] = {}
     for item in excluded:
         reason = item.get("reason") or "other"
-        counts[reason] = counts.get(reason, 0) + 1
+        reason_entries[reason] = reason_entries.get(reason, 0) + 1
     variants = [v for v in meta.get("variants") or [] if usable_variant(v)]
+    usable_codes = {str(v.get("combo_code")) for v in variants}
+
+    combo_reasons: dict[str, int] = {}
+    reason_of: dict[str, str] = {}
+    unavailable: dict[str, set[str]] = {}
+    for item in excluded:
+        code = str(item.get("combo_code") or "")
+        if not code or code in usable_codes:
+            continue
+        reason = item.get("reason") or "other"
+        if code not in reason_of:
+            reason_of[code] = reason
+            combo_reasons[reason] = combo_reasons.get(reason, 0) + 1
+        for name in item.get("missing") or []:
+            unavailable.setdefault(str(name), set()).add(item.get("combo_name") or code)
+
+    combos_found = int(meta.get("combo_count") or 0)
+    combos_available = len(usable_codes)
+    combos_excluded = len(reason_of)
     return {
         "available": bool(meta),
         "source": source,
@@ -339,10 +457,20 @@ def report_from_meal(meta: dict | None, *, source: str | None = None,
         "single_round_excluded": len(meta.get("single_round_excluded") or []),
         "checked": meta.get("checked") or 0,
         # combos the POS reports (rounds >= 2), not the combos that survived
-        "combos_found": meta.get("combo_count") or 0,
+        "combos_found": combos_found,
+        "combos_available": combos_available,
+        "combos_excluded": combos_excluded,
+        "combos_consistent": combos_available + combos_excluded == combos_found,
+        "combo_reasons": combo_reasons,
         "variants_used": len(variants),
+        "variants_excluded": len(excluded),
+        # legacy entry-level count (kept for the audit list / old snapshots)
         "excluded": len(excluded),
-        "reasons": counts,
+        "reasons": reason_entries,
+        "unavailable_products": [
+            {"name": name, "combos": sorted(combos)} for name, combos in
+            sorted(unavailable.items(), key=lambda kv: (-len(kv[1]), kv[0]))
+        ],
         "excluded_categories": meta.get("excluded_categories") or [],
         "items": [{"code": e.get("combo_code"), "name": e.get("combo_name"),
                    "variant": e.get("variant"), "reason": e.get("reason"),
