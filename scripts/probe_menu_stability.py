@@ -17,6 +17,7 @@ import hashlib
 import json
 import sys
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -44,7 +45,9 @@ def main() -> int:
 
     client = McpClient()
     for _ in range(args.rounds):
-        row = {"t": time.strftime("%H:%M:%S")}
+        # 北京时间：门店的菜单、餐次和日期都是这个时区的口径，
+        # 记录本机时间会让人误判变更时刻。
+        row = {"t": datetime.now(timezone(timedelta(hours=8))).strftime("%m-%d %H:%M:%S")}
         for day in days:
             for slot in slots:
                 try:
