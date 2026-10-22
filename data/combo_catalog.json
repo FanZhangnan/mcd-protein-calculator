@@ -12,7 +12,7 @@
   }
  },
  "source": "live",
- "built_at": "2026-10-22T17:58:09+08:00",
+ "built_at": "2026-10-22T20:03:25+08:00",
  "store_name": "麦当劳珠海屏湾一路餐厅",
  "meals": {
   "breakfast": {
@@ -116,7 +116,10 @@
      },
      "status": "ok",
      "quoted_price": 17.5,
-     "quoted_at": "2026-10-22 18:00:07"
+     "quoted_at": "2026-10-22 20:05:26",
+     "x2_status": "ok",
+     "quoted_price_2": 35.0,
+     "x2_at": "2026-10-22 20:05:30"
     },
     {
      "combo_code": "9900005437",
@@ -157,7 +160,10 @@
      },
      "status": "ok",
      "quoted_price": 12.5,
-     "quoted_at": "2026-10-22 18:00:07"
+     "quoted_at": "2026-10-22 20:05:28",
+     "x2_status": "ok",
+     "quoted_price_2": 25.0,
+     "x2_at": "2026-10-22 20:05:32"
     },
     {
      "combo_code": "9900005470",
@@ -207,7 +213,10 @@
      },
      "status": "ok",
      "quoted_price": 15.5,
-     "quoted_at": "2026-10-22 18:00:07"
+     "quoted_at": "2026-10-22 20:05:25",
+     "x2_status": "ok",
+     "quoted_price_2": 31.0,
+     "x2_at": "2026-10-22 20:05:32"
     },
     {
      "combo_code": "9900005470",
@@ -267,7 +276,10 @@
      },
      "status": "ok",
      "quoted_price": 15.5,
-     "quoted_at": "2026-10-22 18:00:07"
+     "quoted_at": "2026-10-22 20:05:26",
+     "x2_status": "ok",
+     "quoted_price_2": 31.0,
+     "x2_at": "2026-10-22 20:05:32"
     },
     {
      "combo_code": "9900013221",
@@ -326,7 +338,10 @@
      },
      "status": "ok",
      "quoted_price": 14.9,
-     "quoted_at": "2026-10-22 18:00:07"
+     "quoted_at": "2026-10-22 20:05:25",
+     "x2_status": "ok",
+     "quoted_price_2": 29.8,
+     "x2_at": "2026-10-22 20:05:37"
     }
    ],
    "excluded": [
@@ -871,7 +886,10 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 18:02:01"
+     "quoted_at": "2026-10-22 20:07:32",
+     "x2_status": "ok",
+     "quoted_price_2": 70.0,
+     "x2_at": "2026-10-22 20:07:38"
     },
     {
      "combo_code": "9900004064",
@@ -931,7 +949,10 @@
      },
      "status": "ok",
      "quoted_price": 36.0,
-     "quoted_at": "2026-10-22 18:02:00"
+     "quoted_at": "2026-10-22 20:07:31",
+     "x2_status": "ok",
+     "quoted_price_2": 72.0,
+     "x2_at": "2026-10-22 20:07:40"
     },
     {
      "combo_code": "9900004066",
@@ -981,7 +1002,10 @@
      },
      "status": "ok",
      "quoted_price": 73.0,
-     "quoted_at": "2026-10-22 18:01:59"
+     "quoted_at": "2026-10-22 20:07:30",
+     "x2_status": "ok",
+     "quoted_price_2": 146.0,
+     "x2_at": "2026-10-22 20:07:35"
     },
     {
      "combo_code": "9900004066",
@@ -1041,7 +1065,10 @@
      },
      "status": "ok",
      "quoted_price": 73.0,
-     "quoted_at": "2026-10-22 18:02:01"
+     "quoted_at": "2026-10-22 20:07:31",
+     "x2_status": "ok",
+     "quoted_price_2": 146.0,
+     "x2_at": "2026-10-22 20:07:36"
     },
     {
      "combo_code": "9900004835",
@@ -1091,7 +1118,10 @@
      },
      "status": "ok",
      "quoted_price": 25.5,
-     "quoted_at": "2026-10-22 18:02:00"
+     "quoted_at": "2026-10-22 20:07:30",
+     "x2_status": "ok",
+     "quoted_price_2": 51.0,
+     "x2_at": "2026-10-22 20:07:36"
     },
     {
      "combo_code": "9900004835",
@@ -1151,7 +1181,10 @@
      },
      "status": "ok",
      "quoted_price": 26.5,
-     "quoted_at": "2026-10-22 18:02:00"
+     "quoted_at": "2026-10-22 20:07:30",
+     "x2_status": "ok",
+     "quoted_price_2": 53.0,
+     "x2_at": "2026-10-22 20:07:35"
     },
     {
      "combo_code": "9900005411",
@@ -1201,7 +1234,10 @@
      },
      "status": "ok",
      "quoted_price": 37.5,
-     "quoted_at": "2026-10-22 18:02:05"
+     "quoted_at": "2026-10-22 20:07:42",
+     "x2_status": "ok",
+     "quoted_price_2": 75.0,
+     "x2_at": "2026-10-22 20:07:50"
     },
     {
      "combo_code": "9900005411",
@@ -1261,7 +1297,10 @@
      },
      "status": "ok",
      "quoted_price": 38.5,
-     "quoted_at": "2026-10-22 18:02:05"
+     "quoted_at": "2026-10-22 20:07:40",
+     "x2_status": "ok",
+     "quoted_price_2": 77.0,
+     "x2_at": "2026-10-22 20:07:45"
     },
     {
      "combo_code": "9900005413",
@@ -1311,7 +1350,10 @@
      },
      "status": "ok",
      "quoted_price": 36.0,
-     "quoted_at": "2026-10-22 18:02:06"
+     "quoted_at": "2026-10-22 20:07:41",
+     "x2_status": "ok",
+     "quoted_price_2": 72.0,
+     "x2_at": "2026-10-22 20:07:46"
     },
     {
      "combo_code": "9900005413",
@@ -1371,7 +1413,10 @@
      },
      "status": "ok",
      "quoted_price": 37.0,
-     "quoted_at": "2026-10-22 18:02:05"
+     "quoted_at": "2026-10-22 20:07:42",
+     "x2_status": "ok",
+     "quoted_price_2": 74.0,
+     "x2_at": "2026-10-22 20:07:47"
     },
     {
      "combo_code": "9900005449",
@@ -1421,7 +1466,10 @@
      },
      "status": "ok",
      "quoted_price": 26.0,
-     "quoted_at": "2026-10-22 18:02:08"
+     "quoted_at": "2026-10-22 20:07:45",
+     "x2_status": "ok",
+     "quoted_price_2": 52.0,
+     "x2_at": "2026-10-22 20:07:50"
     },
     {
      "combo_code": "9900005449",
@@ -1481,7 +1529,10 @@
      },
      "status": "ok",
      "quoted_price": 27.0,
-     "quoted_at": "2026-10-22 18:02:07"
+     "quoted_at": "2026-10-22 20:07:46",
+     "x2_status": "ok",
+     "quoted_price_2": 54.0,
+     "x2_at": "2026-10-22 20:07:53"
     },
     {
      "combo_code": "9900005453",
@@ -1531,7 +1582,10 @@
      },
      "status": "ok",
      "quoted_price": 27.5,
-     "quoted_at": "2026-10-22 18:02:10"
+     "quoted_at": "2026-10-22 20:07:52",
+     "x2_status": "ok",
+     "quoted_price_2": 55.0,
+     "x2_at": "2026-10-22 20:07:58"
     },
     {
      "combo_code": "9900005453",
@@ -1591,7 +1645,10 @@
      },
      "status": "ok",
      "quoted_price": 28.5,
-     "quoted_at": "2026-10-22 18:02:11"
+     "quoted_at": "2026-10-22 20:07:51",
+     "x2_status": "ok",
+     "quoted_price_2": 57.0,
+     "x2_at": "2026-10-22 20:07:56"
     },
     {
      "combo_code": "9900005456",
@@ -1641,7 +1698,10 @@
      },
      "status": "ok",
      "quoted_price": 34.0,
-     "quoted_at": "2026-10-22 18:02:10"
+     "quoted_at": "2026-10-22 20:07:53",
+     "x2_status": "ok",
+     "quoted_price_2": 68.0,
+     "x2_at": "2026-10-22 20:07:58"
     },
     {
      "combo_code": "9900005456",
@@ -1701,7 +1761,10 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 18:02:13"
+     "quoted_at": "2026-10-22 20:07:56",
+     "x2_status": "ok",
+     "quoted_price_2": 70.0,
+     "x2_at": "2026-10-22 20:08:03"
     },
     {
      "combo_code": "9900005460",
@@ -1751,7 +1814,10 @@
      },
      "status": "ok",
      "quoted_price": 33.0,
-     "quoted_at": "2026-10-22 18:02:13"
+     "quoted_at": "2026-10-22 20:07:56",
+     "x2_status": "ok",
+     "quoted_price_2": 66.0,
+     "x2_at": "2026-10-22 20:08:02"
     },
     {
      "combo_code": "9900005460",
@@ -1811,7 +1877,10 @@
      },
      "status": "ok",
      "quoted_price": 34.0,
-     "quoted_at": "2026-10-22 18:02:13"
+     "quoted_at": "2026-10-22 20:07:59",
+     "x2_status": "ok",
+     "quoted_price_2": 68.0,
+     "x2_at": "2026-10-22 20:08:05"
     },
     {
      "combo_code": "9900005462",
@@ -1861,7 +1930,10 @@
      },
      "status": "ok",
      "quoted_price": 35.0,
-     "quoted_at": "2026-10-22 18:02:15"
+     "quoted_at": "2026-10-22 20:08:01",
+     "x2_status": "ok",
+     "quoted_price_2": 70.0,
+     "x2_at": "2026-10-22 20:08:10"
     },
     {
      "combo_code": "9900005462",
@@ -1921,7 +1993,10 @@
      },
      "status": "ok",
      "quoted_price": 36.0,
-     "quoted_at": "2026-10-22 18:02:16"
+     "quoted_at": "2026-10-22 20:08:02",
+     "x2_status": "ok",
+     "quoted_price_2": 72.0,
+     "x2_at": "2026-10-22 20:08:08"
     },
     {
      "combo_code": "9900005464",
@@ -1971,7 +2046,10 @@
      },
      "status": "ok",
      "quoted_price": 33.5,
-     "quoted_at": "2026-10-22 18:02:18"
+     "quoted_at": "2026-10-22 20:08:04",
+     "x2_status": "ok",
+     "quoted_price_2": 67.0,
+     "x2_at": "2026-10-22 20:08:11"
     },
     {
      "combo_code": "9900005464",
@@ -2031,7 +2109,10 @@
      },
      "status": "ok",
      "quoted_price": 34.5,
-     "quoted_at": "2026-10-22 18:02:21"
+     "quoted_at": "2026-10-22 20:08:09",
+     "x2_status": "ok",
+     "quoted_price_2": 69.0,
+     "x2_at": "2026-10-22 20:08:15"
     },
     {
      "combo_code": "9900005466",
@@ -2081,7 +2162,10 @@
      },
      "status": "ok",
      "quoted_price": 37.5,
-     "quoted_at": "2026-10-22 18:02:19"
+     "quoted_at": "2026-10-22 20:08:09",
+     "x2_status": "ok",
+     "quoted_price_2": 75.0,
+     "x2_at": "2026-10-22 20:08:15"
     },
     {
      "combo_code": "9900005466",
@@ -2141,7 +2225,10 @@
      },
      "status": "ok",
      "quoted_price": 38.5,
-     "quoted_at": "2026-10-22 18:02:21"
+     "quoted_at": "2026-10-22 20:08:11",
+     "x2_status": "ok",
+     "quoted_price_2": 77.0,
+     "x2_at": "2026-10-22 20:08:15"
     },
     {
      "combo_code": "9900005468",
@@ -2191,7 +2278,10 @@
      },
      "status": "ok",
      "quoted_price": 35.5,
-     "quoted_at": "2026-10-22 18:02:21"
+     "quoted_at": "2026-10-22 20:08:12",
+     "x2_status": "ok",
+     "quoted_price_2": 71.0,
+     "x2_at": "2026-10-22 20:08:18"
     },
     {
      "combo_code": "9900005468",
@@ -2251,7 +2341,10 @@
      },
      "status": "ok",
      "quoted_price": 36.5,
-     "quoted_at": "2026-10-22 18:02:21"
+     "quoted_at": "2026-10-22 20:08:15",
+     "x2_status": "ok",
+     "quoted_price_2": 73.0,
+     "x2_at": "2026-10-22 20:08:20"
     },
     {
      "combo_code": "9900006332",
@@ -2292,7 +2385,10 @@
      },
      "status": "ok",
      "quoted_price": 49.9,
-     "quoted_at": "2026-10-22 18:02:25"
+     "quoted_at": "2026-10-22 20:08:17",
+     "x2_status": "ok",
+     "quoted_price_2": 99.8,
+     "x2_at": "2026-10-22 20:08:23"
     },
     {
      "combo_code": "9900009245",
@@ -2342,7 +2438,10 @@
      },
      "status": "ok",
      "quoted_price": 34.0,
-     "quoted_at": "2026-10-22 18:02:24"
+     "quoted_at": "2026-10-22 20:08:21",
+     "x2_status": "ok",
+     "quoted_price_2": 68.0,
+     "x2_at": "2026-10-22 20:08:27"
     },
     {
      "combo_code": "9900009245",
@@ -2402,7 +2501,10 @@
      },
      "status": "ok",
      "quoted_price": 31.5,
-     "quoted_at": "2026-10-22 18:02:27"
+     "quoted_at": "2026-10-22 20:08:20",
+     "x2_status": "ok",
+     "quoted_price_2": 63.0,
+     "x2_at": "2026-10-22 20:08:29"
     },
     {
      "combo_code": "9900011123",
@@ -2452,7 +2554,10 @@
      },
      "status": "ok",
      "quoted_price": 24.0,
-     "quoted_at": "2026-10-22 18:02:26"
+     "quoted_at": "2026-10-22 20:08:22",
+     "x2_status": "ok",
+     "quoted_price_2": 48.0,
+     "x2_at": "2026-10-22 20:08:31"
     },
     {
      "combo_code": "9900011123",
@@ -2512,7 +2617,10 @@
      },
      "status": "ok",
      "quoted_price": 33.0,
-     "quoted_at": "2026-10-22 18:02:27"
+     "quoted_at": "2026-10-22 20:08:23",
+     "x2_status": "ok",
+     "quoted_price_2": 66.0,
+     "x2_at": "2026-10-22 20:08:29"
     },
     {
      "combo_code": "9900011126",
@@ -2562,7 +2670,10 @@
      },
      "status": "ok",
      "quoted_price": 20.5,
-     "quoted_at": "2026-10-22 18:02:27"
+     "quoted_at": "2026-10-22 20:08:25",
+     "x2_status": "ok",
+     "quoted_price_2": 41.0,
+     "x2_at": "2026-10-22 20:08:29"
     },
     {
      "combo_code": "9900011126",
@@ -2622,7 +2733,10 @@
      },
      "status": "ok",
      "quoted_price": 29.5,
-     "quoted_at": "2026-10-22 18:02:29"
+     "quoted_at": "2026-10-22 20:08:31",
+     "x2_status": "ok",
+     "quoted_price_2": 59.0,
+     "x2_at": "2026-10-22 20:08:37"
     },
     {
      "combo_code": "9900013304",
@@ -2681,7 +2795,10 @@
      },
      "status": "ok",
      "quoted_price": 14.9,
-     "quoted_at": "2026-10-22 18:02:30"
+     "quoted_at": "2026-10-22 20:08:33",
+     "x2_status": "ok",
+     "quoted_price_2": 29.8,
+     "x2_at": "2026-10-22 20:08:38"
     },
     {
      "combo_code": "9900015568",
@@ -2756,7 +2873,10 @@
      },
      "status": "ok",
      "quoted_price": 13.9,
-     "quoted_at": "2026-10-22 18:02:31"
+     "quoted_at": "2026-10-22 20:08:35",
+     "x2_status": "ok",
+     "quoted_price_2": 27.8,
+     "x2_at": "2026-10-22 20:08:41"
     },
     {
      "combo_code": "9900015730",
@@ -2797,7 +2917,10 @@
      },
      "status": "ok",
      "quoted_price": 40.3,
-     "quoted_at": "2026-10-22 18:02:32"
+     "quoted_at": "2026-10-22 20:08:35",
+     "x2_status": "ok",
+     "quoted_price_2": 80.6,
+     "x2_at": "2026-10-22 20:08:40"
     },
     {
      "combo_code": "9900015730",
@@ -2848,7 +2971,10 @@
      },
      "status": "ok",
      "quoted_price": 45.3,
-     "quoted_at": "2026-10-22 18:02:33"
+     "quoted_at": "2026-10-22 20:08:36",
+     "x2_status": "ok",
+     "quoted_price_2": 90.6,
+     "x2_at": "2026-10-22 20:08:41"
     }
    ],
    "excluded": [
@@ -4237,6 +4363,14 @@
   "reasons": {
    "membership": 53,
    "nutrition_unknown": 21
+  },
+  "x2": {
+   "breakfast": {
+    "ok": 5
+   },
+   "lunch": {
+    "ok": 37
+   }
   }
  }
 }
