@@ -180,10 +180,21 @@ async function main() {
       && badge.title.includes(`${LUNCH.variants.length} 个可用变体`),
     (badge.text + " | " + badge.title).slice(0, 200));
   const unknownText = await evalJs(`document.querySelector('#unknown').textContent`);
+  // 名单来自目录：所有「营养未知」排除项里缺的那个商品，页面上都要写出来
+  const missNames = new Set();
+  for (const e of LUNCH.excluded) {
+    if ((e.reason || "") !== "nutrition_unknown") continue;
+    for (const n of e.missing || []) missNames.add(n);
+  }
   check("在线页门店说明列出暂无官方营养的商品",
     unknownText.includes("以下商品暂无官方营养数据，暂不参与计算")
-      && unknownText.includes("苹果片一袋(60g)")
-      && unknownText.includes("“苹板”支撑Pro套餐"),
+      && [...missNames].every((n) => unknownText.includes(n)),
+    unknownText.replace(/\s+/g, " ").slice(0, 160));
+  // 多人分享套餐：说明里写清有几个、是哪几个
+  check("在线页门店说明写出多人分享套餐名单",
+    SHARED_NAMES.length > 0
+      && unknownText.includes(`多人分享套餐${SHARED_NAMES.length} 个不参与单人推荐`)
+      && SHARED_NAMES.every((n) => unknownText.includes(n)),
     unknownText.replace(/\s+/g, " ").slice(0, 160));
   await shot("demo-desktop", 1280);
 
@@ -231,10 +242,12 @@ async function main() {
   check("场景5 高目标不含多人分享套餐",
     !c5.items.some((n) => SHARED_NAMES.some((x) => n.includes(x))), JSON.stringify(c5.items));
   check("场景5 主食数不超过上限", c5.mains <= 2, `mains=${c5.mains}`);
-  // 具体数字取决于清单是否生效：清单前 89 g / 73.00（堡堡），清单后 77 g / 71.50
+  // 清单生效后：81 g / 78.00 元（芝士安格斯厚牛堡三件套 + 双层吉士汉堡套餐），
+  // 省钱方案 77 g / 71.50 元（省 6.50 元，超过 2 元门槛才显示）
   check("场景5 高目标给出可接受的结果",
-    ["met", "near"].includes(c5.status) && c5.protein >= 77 && c5.cost <= 73, JSON.stringify(c5));
-  check("场景5 省不到 2 元不显示省钱选项", c5.saver === null, JSON.stringify(c5.saver));
+    ["met", "near"].includes(c5.status) && c5.protein >= 77 && c5.cost <= 78, JSON.stringify(c5));
+  check("场景5 省 6.50 元时显示省钱选项",
+    !!c5.saver && c5.saver.saved === 6.5, JSON.stringify(c5.saver));
 
   // 4) snapshot-only guarantees
   const apiReqs = requests.filter((u) => u.includes("/api/") || u.includes("127.0.0.1"));

@@ -230,12 +230,8 @@ def main() -> int:
             # variants: 17 of lunch's 50 combos survive, the other 45 are
             # excluded with a reason. Counting variants in the browser used to
             # print "识别 17 个套餐…排除 0 个".
-            "comboReport": combos_mod.report_from_meal(
-                service.combo_meal(meal),
-                source=service.combo_catalog().get("source"),
-                built_at=service.combo_catalog().get("built_at"),
-                limit=200,
-            ),
+            # 服务层的报告才是完整口径（带多人分享套餐名单）
+            "comboReport": service.combo_report(meal, limit=200),
             "desserts": desserts,
             "sku_count": sku_count,
         }

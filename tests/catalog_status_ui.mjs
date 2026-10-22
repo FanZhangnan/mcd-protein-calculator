@@ -1,7 +1,7 @@
 // 套餐目录状态：页头徽标 + 门店与数据说明 + 缺目录时的结果卡提示
 // Usage: node tests/catalog_status_ui.mjs [url]
 import { spawn } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 const URL_ = process.argv[2] || "http://127.0.0.1:8765/";
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -108,6 +108,18 @@ async function main() {
   }
   const missRow = unknownText.replace(/\s+/g, " ")
     .match(/以下商品暂无官方营养数据，暂不参与计算（(\d+) 个）/);
+  // 多人分享套餐：说明里必须写清有几个、是哪几个
+  const sharedFile = new URL("../data/shared_combos.json", import.meta.url);
+  const sharedNames = existsSync(sharedFile)
+    ? Object.values(JSON.parse(readFileSync(sharedFile, "utf8")).combos || {}).map((x) => x.name)
+    : [];
+  const unknownAll = await evalJs(`document.querySelector('#unknown').textContent`);
+  check("门店说明写出多人分享套餐名单",
+        sharedNames.length > 0
+        && unknownAll.includes(`多人分享套餐${sharedNames.length} 个不参与单人推荐`)
+        && sharedNames.every((n) => unknownAll.includes(n)),
+        unknownAll.replace(/\s+/g, " ").slice(0, 140));
+
   check("门店说明按目录列出暂无官方营养的商品",
     !!missRow && Number(missRow[1]) === missNames.size
       && [...missNames].every((n) => unknownText.includes(n)),

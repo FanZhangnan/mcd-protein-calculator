@@ -15,6 +15,8 @@ PY=/Users/zhangnanfan/.workbuddy/binaries/python/versions/3.13.12/bin/python3
 rm -rf "$DIR"
 mkdir -p "$DIR"
 cp data/aliases.json data/upgrade_ladder.json "$DIR/"
+# 多人分享套餐清单（没有它，服务会退回仓库里的那份）
+cp data/shared_combos.json "$DIR/"
 # 套餐目录：构建产物，按门店 + 日期 + 餐次校验后才会被采用
 cp data/combo_catalog.json "$DIR/"
 "$PY" - "$DIR" <<'PY'

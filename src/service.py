@@ -656,12 +656,13 @@ class Service:
             ))
         return items
 
-    def combo_report(self, meal: str) -> dict[str, Any]:
+    def combo_report(self, meal: str, limit: int = 30) -> dict[str, Any]:
         """What the build found, including everything it had to exclude."""
         catalog = self.combo_catalog()
         report = combos_mod.report_from_meal(
             self.combo_meal(meal),
-            source=catalog.get("source"), built_at=catalog.get("built_at"))
+            source=catalog.get("source"), built_at=catalog.get("built_at"),
+            limit=limit)
         shared = self.shared_combos()
         report["shared_combos"] = [
             {"code": code, "name": entry.get("name") or code,
