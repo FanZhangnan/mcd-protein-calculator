@@ -1458,6 +1458,9 @@ class Service:
                 removal_notes=list(i.get("removal_notes") or []),
                 round_list=combo.get("round_list") or None,
                 combo_rounds=combo.get("rounds") or None,
+                # 替换说明必须跟着商品一起回来：/api/quote 与 /api/recompute
+                # 都从这份字典重建，丢了它，点一次报价卡片上的「替换」就消失
+                combo_replacements=combo.get("replacements") or None,
                 combo_variant=combo.get("variant") or "",
                 combo_menu_price=combo.get("menu_price"),
             ))

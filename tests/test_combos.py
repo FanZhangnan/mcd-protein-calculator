@@ -415,6 +415,24 @@ class StructureTest(unittest.TestCase):
 
 
 class ServiceTest(unittest.TestCase):
+    def test_quote_keeps_the_replacement_note(self):
+        """/api/quote 从字典重建商品，替换说明不能在重建时丢掉。"""
+        from service import Service
+
+        item = planner_mod.Item(
+            code="9900013304", name="人气经典随心配", kind="combo",
+            nutrition={k: 1.0 for k in planner_mod.NUTRI_KEYS},
+            nutrition_status="official", price_ref=14.9, quantity=2,
+            round_list=[{"round": "2", "comboItemList": [{"code": "3071", "quantity": 1}]}],
+            combo_rounds=[{"round": "2", "round_name": "粉区", "role": "饮品",
+                           "name": "无糖可口可乐中杯"}],
+            combo_replacements=[{"round": "2", "round_name": "粉区", "from": "可乐麦炫酷",
+                                 "to": "无糖可口可乐中杯", "reason": "原选项暂无官方营养"}],
+            combo_variant="default", combo_menu_price=14.9)
+        back = Service._items_from_dicts([item.as_dict()], "lunch")[0]
+        self.assertEqual(back.combo_replacements, item.combo_replacements)
+        self.assertEqual(back.quantity, 2.0)
+
     def test_lunch_44_45_becomes_combo_plus_main(self):
         with tempfile.TemporaryDirectory() as tmp:
             svc = service_with_fixture_catalog(tmp)
