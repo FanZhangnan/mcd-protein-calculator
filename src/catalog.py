@@ -51,6 +51,7 @@ NUTRI_KEYS = ["energyKj", "energyKcal", "protein", "fat", "carbohydrate", "sodiu
 
 STATUS_OFFICIAL = "official"            # exact official single-item row
 STATUS_ALIAS = "official_alias"         # resolved through an evidenced alias
+STATUS_SUPPLEMENTAL = "official_supplemental"  # code -> spec-verified official name
 STATUS_AMBIGUOUS = "ambiguous_spec"     # several specs fit, refuse to merge
 STATUS_NOT_FOUND = "not_found"
 STATUS_DUPLICATE_CONFLICT = "duplicate_conflict"
@@ -107,22 +108,33 @@ class Match:
 
     @property
     def usable(self) -> bool:
-        return self.status in (STATUS_OFFICIAL, STATUS_ALIAS) and self.nutrition is not None
+        return self.status in (STATUS_OFFICIAL, STATUS_ALIAS, STATUS_SUPPLEMENTAL) \
+            and self.nutrition is not None
 
 
 class NutritionCatalog:
     def __init__(self, rows: list[dict[str, Any]], aliases: dict[str, str] | None = None,
-                 alias_evidence: dict[str, str] | None = None):
+                 alias_evidence: dict[str, str] | None = None,
+                 supplemental: dict[str, dict[str, Any]] | None = None):
         self.rows = rows
         self.by_name: dict[str, list[dict[str, Any]]] = {}
         self.by_norm: dict[str, list[str]] = {}
         for row in rows:
             name = row.get("productName") or ""
             self.by_name.setdefault(name, []).append(row)
-            self.by_norm.setdefault(normalise_name(name), []).append(name)
+            norm = normalise_name(name)
+            bucket = self.by_norm.setdefault(norm, [])
+            # duplicate rows with the same name are fine (identical values are
+            # merged by _pick_single); they must not look like two specs here
+            if name not in bucket:
+                bucket.append(name)
 
         self.aliases = dict(aliases or {})
         self.alias_evidence = dict(alias_evidence or {})
+        #: code -> {"name", "reason"}: name spellings verified to be the same
+        #: product and spec as a row in the nutrition table. Kept in a data
+        #: file; never produced by normalising the menu name here.
+        self.supplemental = dict(supplemental or {})
         self.duplicates: dict[str, dict[str, Any]] = {}
         for name, group in self.by_name.items():
             if len(group) > 1:
@@ -135,7 +147,8 @@ class NutritionCatalog:
 
     # ---------------------------------------------------------------- loading
     @classmethod
-    def from_files(cls, nutrition_path: Path, alias_path: Path | None = None) -> "NutritionCatalog":
+    def from_files(cls, nutrition_path: Path, alias_path: Path | None = None,
+                   supplement_path: Path | None = None) -> "NutritionCatalog":
         payload = json.loads(Path(nutrition_path).read_text("utf-8"))
         rows = parse_nutrition_payload(payload)
         aliases: dict[str, str] = {}
@@ -145,7 +158,11 @@ class NutritionCatalog:
             for code, payload_entry in (raw.get("codes") or {}).items():
                 aliases[code] = payload_entry["name"]
                 evidence[code] = payload_entry.get("evidence", "")
-        return cls(rows, aliases, evidence)
+        supplemental: dict[str, dict[str, Any]] = {}
+        if supplement_path and Path(supplement_path).exists():
+            raw = json.loads(Path(supplement_path).read_text("utf-8"))
+            supplemental = {str(k): v for k, v in (raw.get("codes") or {}).items()}
+        return cls(rows, aliases, evidence, supplemental)
 
     # ----------------------------------------------------------------- lookup
     def _pick_single(self, name: str) -> Match:
@@ -166,20 +183,23 @@ class NutritionCatalog:
         return Match(STATUS_OFFICIAL, name=name, nutrition=nutrition)
 
     def lookup(self, code: str, menu_name: str) -> Match:
-        # 1) evidenced alias
+        # 1) evidenced alias. A missing / ambiguous alias target is *not* the
+        # end of the road: the menu name may still match an official row.
         alias = self.aliases.get(str(code))
+        alias_note = ""
         if alias:
             match = self._pick_single(alias)
             if match.usable:
                 match.status = STATUS_ALIAS
                 match.note = self.alias_evidence.get(str(code), "code->name 别名")
                 return match
-            match.note = f"别名 {alias} 未能唯一命中：{match.note}"
-            return match
+            alias_note = f"别名「{alias}」未能命中：{match.note}；"
 
         # 2) exact name
         exact = self._pick_single(menu_name)
         if exact.usable or exact.status == STATUS_DUPLICATE_CONFLICT:
+            if alias_note and exact.usable:
+                exact.note = alias_note + "已改用菜单名称精确命中"
             return exact
 
         # 3) bracket-width normalised, only when unambiguous
@@ -187,22 +207,33 @@ class NutritionCatalog:
         if len(names) == 1:
             match = self._pick_single(names[0])
             if match.usable:
-                match.note = "括号宽度归一后唯一命中"
+                match.note = alias_note + "括号宽度归一后唯一命中"
             return match
         if len(names) > 1:
             return Match(
                 STATUS_AMBIGUOUS,
                 name=menu_name,
-                note="归一化后命中多个规格，拒绝合并",
+                note=alias_note + "归一化后命中多个规格，拒绝合并",
                 candidates=names,
             )
 
-        # 4) give up, but tell the user which specs *could* fit
+        # 4) spec-verified spelling map (data file; one entry per SKU)
+        supplement = self.supplemental.get(str(code))
+        if supplement:
+            match = self._pick_single(supplement.get("name") or "")
+            if match.usable:
+                match.status = STATUS_SUPPLEMENTAL
+                match.note = supplement.get("reason") or "code -> 官方名称（已核对规格）"
+                return match
+            alias_note += f"规格映射「{supplement.get('name')}」未能命中：{match.note}；"
+
+        # 5) give up, but tell the user which specs *could* fit
         near = [n for n in self.by_name if normalise_name(menu_name) in normalise_name(n)]
         return Match(
             STATUS_NOT_FOUND,
             name=menu_name,
-            note="菜单名与营养表名称不一致，且无 code 级证据" + (f"；疑似规格：{near[:4]}" if near else ""),
+            note=alias_note + "菜单名与营养表名称不一致，且无 code 级证据"
+                 + (f"；疑似规格：{near[:4]}" if near else ""),
             candidates=near[:4],
         )
 
