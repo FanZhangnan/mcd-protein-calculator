@@ -8,7 +8,7 @@
 
 麦当劳程序员创意开发大赛参赛作品 · 非麦当劳官方产品
 
-<p align="center"><img src="docs/brand/social-preview.png" alt="输入蛋白质目标和预算，算出最划算的点法：午餐 44 g / 45 元 → 酥脆无双套餐（饮品换纯悦）+ 双层吉士汉堡，50 g 蛋白质，40.50 元" width="720"></p>
+<p align="center"><img src="docs/brand/social-preview.png" alt="输入蛋白质目标和预算，算出最划算的点法：午餐 44 g / 45 元 → 人气经典随心配 ×2（蓝区 双层吉士 · 粉区 无糖可乐），54 g 蛋白质，29.80 元" width="720"></p>
 
 ---
 
